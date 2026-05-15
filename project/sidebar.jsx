@@ -12,7 +12,7 @@ function Sidebar({ route, setRoute, energy, setEnergy, collapsed, setCollapsed }
         {!collapsed && (
           <div className="brand-text">
             <div className="name">Lorenna OS</div>
-            <div className="sub">Agência Logue · Papel da Lola</div>
+            <div className="sub">@lorennagn · Papel da Lola · Agência Logue</div>
           </div>
         )}
       </div>
@@ -46,23 +46,6 @@ function Sidebar({ route, setRoute, energy, setEnergy, collapsed, setCollapsed }
           </div>
         ))}
       </nav>
-
-      {/* Energy quick-switch */}
-      {!collapsed && (
-        <div className="energy-switch">
-          <div className="title">Trocar energia</div>
-          <div className="grid">
-            {window.ENERGY_LIST.map(e => (
-              <button key={e.id}
-                className={energy === e.id ? 'active' : ''}
-                onClick={() => setEnergy(e.id)}
-                title={e.label}>
-                {e.emoji}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Collapse */}
       <div className="collapse-toggle">

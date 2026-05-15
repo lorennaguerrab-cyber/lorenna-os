@@ -8,8 +8,13 @@ const KANBAN_COLS = ['ideia', 'rascunho', 'filmando', 'editando', 'revisao', 'ag
 function ConteudoPage() {
   const [view, setView] = useState('kanban');
   const [search, setSearch] = useState('');
+  const [brand, setBrand] = useState(() => { const b = window.__presetBrand; window.__presetBrand = null; return b || 'todos'; });
   const data = window.DEMO_CONTENT;
-  const filtered = data.filter(c => !search || c.titulo.toLowerCase().includes(search.toLowerCase()));
+  const filtered = data.filter(c => {
+    const okS = !search || c.titulo.toLowerCase().includes(search.toLowerCase());
+    const okB = brand === 'todos' || c.brand === brand;
+    return okS && okB;
+  });
 
   return (
     <div className="content" style={{ maxWidth: 1200 }}>
@@ -34,14 +39,32 @@ function ConteudoPage() {
           }
         />
 
-        {/* Search */}
-        <div className="row gap-2" style={{
-          background:'var(--bg-surface)', border:'1px solid var(--border)',
-          borderRadius:'var(--r-md)', padding:'8px 12px', maxWidth: 360,
-        }}>
-          <Icon name="search" size={13} color="var(--text-muted)"/>
-          <input className="grow" style={{ background:'transparent', border:'none', fontSize: 13 }}
-            placeholder="Buscar conteúdos..." value={search} onChange={e=>setSearch(e.target.value)}/>
+        {/* Search + Brand filter */}
+        <div className="col gap-3">
+          <div className="row gap-2" style={{
+            background:'var(--bg-surface)', border:'1px solid var(--border)',
+            borderRadius:'var(--r-md)', padding:'8px 12px', maxWidth: 360,
+          }}>
+            <Icon name="search" size={13} color="var(--text-muted)"/>
+            <input className="grow" style={{ background:'transparent', border:'none', fontSize: 13 }}
+              placeholder="Buscar conteúdos..." value={search} onChange={e=>setSearch(e.target.value)}/>
+          </div>
+          <div className="row gap-1" style={{ flexWrap: 'wrap' }}>
+            {Object.entries(window.BRANDS).map(([k, b]) => (
+              <button key={k} onClick={() => setBrand(k)}
+                style={{
+                  fontSize: 12, padding: '6px 14px', borderRadius: 999,
+                  border: '1px solid',
+                  background: brand === k ? `color-mix(in oklch, ${b.color} 14%, var(--bg-surface))` : 'var(--bg-surface)',
+                  borderColor: brand === k ? b.color : 'var(--border)',
+                  color: brand === k ? b.color : 'var(--text-muted)',
+                  cursor: 'pointer', fontWeight: brand === k ? 600 : 400,
+                  fontFamily: 'var(--font-body)', transition: 'all .15s',
+                }}>
+                {b.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Stats */}
@@ -174,23 +197,23 @@ function PromptCard({ prompt }) {
           </div>
         </div>
 
-        {prompt.tool && (
-          <p className="tiny muted">🛠 {prompt.tool}</p>
-        )}
-
-        <div className="row gap-1" style={{ flexWrap: 'wrap' }}>
-          {prompt.etapas.map((etapa, i) => (
-            <span key={etapa} className="tiny" style={{
-              padding: '2px 8px', borderRadius: 999, background:'var(--bg-elevated)',
-              border: '1px solid var(--border)', color: 'var(--text-muted)',
-            }}>
-              <span style={{ color: 'var(--pink-deep)', marginRight: 4, fontWeight: 600 }}>{i+1}</span> {etapa}
-            </span>
-          ))}
-        </div>
-
         {open && (
           <div className="col gap-4" style={{ paddingTop: 'var(--s-3)', borderTop: '1px solid var(--border)' }}>
+            {prompt.tool && (
+              <p className="tiny muted">🛠 {prompt.tool}</p>
+            )}
+            {prompt.etapas.length > 0 && (
+              <div className="row gap-1" style={{ flexWrap: 'wrap' }}>
+                {prompt.etapas.map((etapa, i) => (
+                  <span key={etapa} className="tiny" style={{
+                    padding: '2px 8px', borderRadius: 999, background:'var(--bg-elevated)',
+                    border: '1px solid var(--border)', color: 'var(--text-muted)',
+                  }}>
+                    <span style={{ color: 'var(--pink-deep)', marginRight: 4, fontWeight: 600 }}>{i+1}</span> {etapa}
+                  </span>
+                ))}
+              </div>
+            )}
             <div>
               <div className="eyebrow" style={{ marginBottom: 'var(--s-2)' }}>Prompt completo</div>
               <div style={{

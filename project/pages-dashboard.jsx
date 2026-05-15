@@ -74,14 +74,186 @@ function DayFocusCard({ energy }) {
   );
 }
 
+/* ─── NÃO SEI AINDA Quiz ─── */
+const MOOD_QUIZ = [
+  {
+    id: 'q1', pergunta: 'Como está seu corpo agora?',
+    opcoes: [
+      { label: 'Pesado e cansado',   energy: 'cansada'     },
+      { label: 'Normal, ok',         energy: null          },
+      { label: 'Leve e disposto',    energy: 'criativa'    },
+    ],
+  },
+  {
+    id: 'q2', pergunta: 'Seus pensamentos estão...',
+    opcoes: [
+      { label: 'Espalhados, muitos ao mesmo tempo', energy: 'cansada'     },
+      { label: 'Moderados',                         energy: null          },
+      { label: 'Claros e organizados',              energy: 'foco'        },
+    ],
+  },
+  {
+    id: 'q3', pergunta: 'O que mais te atrai agora?',
+    opcoes: [
+      { label: 'Descanso e silêncio',   energy: 'cansada'     },
+      { label: 'Criar algo novo',        energy: 'criativa'    },
+      { label: 'Resolver e organizar',   energy: 'operacional' },
+      { label: 'Gravar e aparecer',      energy: 'gravacao'    },
+    ],
+  },
+  {
+    id: 'q4', pergunta: 'Você sente sobrecarga ou ansiedade?',
+    opcoes: [
+      { label: 'Sim, bastante',   energy: 'cansada'     },
+      { label: 'Um pouco',        energy: 'cansada'     },
+      { label: 'Não, estou bem',  energy: null          },
+    ],
+  },
+  {
+    id: 'q5', pergunta: 'Quanto foco você consegue manter agora?',
+    opcoes: [
+      { label: 'Quase nenhum',               energy: 'cansada'     },
+      { label: 'Médio, consigo com pausas',   energy: 'operacional' },
+      { label: 'Alto, consigo mergulhar',     energy: 'foco'        },
+    ],
+  },
+  {
+    id: 'q6', pergunta: 'Sua prioridade real agora é...',
+    opcoes: [
+      { label: 'Cuidar de mim ou dos filhos', energy: 'maternidade' },
+      { label: 'Conectar com pessoas',         energy: 'social'      },
+      { label: 'Criar e expressar',            energy: 'criativa'    },
+      { label: 'Cumprir entregas urgentes',    energy: 'operacional' },
+    ],
+  },
+];
+
+function NaoSeiAindaQuiz({ onClose, onResult }) {
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState([]);
+  const [result, setResult] = useState(null);
+
+  function choose(energy) {
+    const next = [...answers, energy];
+    if (step < MOOD_QUIZ.length - 1) {
+      setAnswers(next);
+      setStep(step + 1);
+    } else {
+      // Calculate result
+      const counts = {};
+      next.forEach(e => { if (e) counts[e] = (counts[e] || 0) + 1; });
+      const winner = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+      const suggested = winner ? winner[0] : 'cansada';
+      setResult(suggested);
+    }
+  }
+
+  const q = MOOD_QUIZ[step];
+  const e = result ? window.ENERGY[result] : null;
+
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed', inset: 0,
+      background: 'rgba(43,34,34,0.45)',
+      backdropFilter: 'blur(4px)',
+      zIndex: 200,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: 'var(--s-4)',
+    }}>
+      <div onClick={ev => ev.stopPropagation()} style={{
+        width: 'min(520px, 94vw)',
+        background: 'var(--white)',
+        borderRadius: 'var(--r-xl)',
+        border: '1px solid var(--gray-light)',
+        overflow: 'hidden',
+      }}>
+        <div style={{ height: 4, background: 'var(--pink)' }}/>
+        <div style={{ padding: 'var(--s-6)' }}>
+          {!result ? (
+            <>
+              <div className="row between" style={{ marginBottom: 'var(--s-5)' }}>
+                <div>
+                  <div className="eyebrow" style={{ color: 'var(--pink-deep)' }}>
+                    Pergunta {step + 1} de {MOOD_QUIZ.length}
+                  </div>
+                  <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 19, fontWeight: 600, marginTop: 6, lineHeight: 1.3 }}>
+                    {q.pergunta}
+                  </h3>
+                </div>
+                <button className="btn ghost icon" onClick={onClose} style={{ flexShrink: 0, alignSelf: 'flex-start' }}>
+                  <Icon name="x" size={14}/>
+                </button>
+              </div>
+              {/* Progress bar */}
+              <div style={{ height: 3, background: 'var(--gray-light)', borderRadius: 999, marginBottom: 'var(--s-5)', overflow: 'hidden' }}>
+                <div style={{ width: `${((step) / MOOD_QUIZ.length) * 100}%`, height: '100%', background: 'var(--pink)', transition: 'width .3s' }}/>
+              </div>
+              <div className="col gap-3">
+                {q.opcoes.map((op, i) => (
+                  <button key={i} onClick={() => choose(op.energy)}
+                    style={{
+                      padding: '14px 18px',
+                      borderRadius: 'var(--r-md)',
+                      border: '1.5px solid var(--gray-light)',
+                      background: 'var(--offwhite)',
+                      textAlign: 'left', cursor: 'pointer',
+                      fontSize: 14, color: 'var(--ink-soft)',
+                      fontFamily: 'var(--font-body)',
+                      transition: 'all .15s var(--easing)',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--pink)'; e.currentTarget.style.color = 'var(--ink)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--gray-light)'; e.currentTarget.style.color = 'var(--ink-soft)'; }}>
+                    {op.label}
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="col gap-5">
+              <div className="row between" style={{ alignItems: 'flex-start' }}>
+                <div>
+                  <div className="eyebrow" style={{ color: 'var(--pink-deep)' }}>Resultado do quiz</div>
+                  <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 600, marginTop: 6 }}>
+                    {e.emoji} {e.label}
+                  </h3>
+                </div>
+                <button className="btn ghost icon" onClick={onClose}><Icon name="x" size={14}/></button>
+              </div>
+              <div style={{ padding: 'var(--s-4)', background: 'var(--pink-tint)', borderRadius: 'var(--r-md)', border: '1px solid var(--pink-soft)' }}>
+                <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6 }}>{e.desc}</p>
+              </div>
+              <p className="small muted">O sistema vai adaptar suas tarefas e prioridades pra esse modo.</p>
+              <div className="row gap-3">
+                <Button variant="primary" onClick={() => { onResult(result); onClose(); }}>
+                  <Icon name="check" size={13} color="white"/> Aplicar esse modo
+                </Button>
+                <Button variant="ghost" onClick={() => { setStep(0); setAnswers([]); setResult(null); }}>
+                  Refazer quiz
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function EnergySelector({ energy, setEnergy }) {
+  const [showQuiz, setShowQuiz] = useState(false);
   return (
     <div>
+      {showQuiz && (
+        <NaoSeiAindaQuiz
+          onClose={() => setShowQuiz(false)}
+          onResult={(e) => { setEnergy(e); setShowQuiz(false); }}
+        />
+      )}
       <div className="row between" style={{ marginBottom: 'var(--s-3)' }}>
         <div>
           <div className="eyebrow">Sua energia agora</div>
           <p className="secondary" style={{ fontSize: 12, marginTop: 4 }}>
-            O sistema esconde o que não cabe nesse estado.
+            O sistema adapta tarefas e prioridades ao seu estado.
           </p>
         </div>
       </div>
@@ -92,14 +264,11 @@ function EnergySelector({ energy, setEnergy }) {
             <button key={e.id} onClick={() => setEnergy(e.id)}
               className="row gap-2"
               style={{
-                padding: '8px 14px',
-                borderRadius: 999,
-                border: '1px solid',
+                padding: '8px 14px', borderRadius: 999, border: '1px solid',
                 background: active ? `color-mix(in oklch, ${e.color} 14%, var(--bg-surface))` : 'var(--bg-surface)',
                 borderColor: active ? e.color : 'var(--border)',
                 color: active ? e.color : 'var(--text-secondary)',
-                cursor: 'pointer',
-                fontSize: 12.5,
+                cursor: 'pointer', fontSize: 12.5,
                 fontWeight: active ? 600 : 500,
                 transition: 'all .15s var(--easing)',
               }}>
@@ -108,6 +277,20 @@ function EnergySelector({ energy, setEnergy }) {
             </button>
           );
         })}
+        {/* NÃO SEI AINDA */}
+        <button onClick={() => setShowQuiz(true)}
+          className="row gap-2"
+          style={{
+            padding: '8px 14px', borderRadius: 999,
+            border: '1.5px dashed var(--pink-soft)',
+            background: 'var(--pink-tint)',
+            color: 'var(--pink-deep)',
+            cursor: 'pointer', fontSize: 12.5, fontWeight: 500,
+            transition: 'all .15s var(--easing)',
+          }}>
+          <span style={{ fontSize: 14 }}>🤍</span>
+          Não sei ainda
+        </button>
       </div>
     </div>
   );
@@ -385,6 +568,51 @@ function RoutinesWidget() {
   );
 }
 
+function PequenasVitorias() {
+  const vitorias = [
+    { icon: '🎯', text: 'Post Pratique entregue no prazo', tipo: 'entrega' },
+    { icon: '✍️', text: 'Newsletter escrita e agendada', tipo: 'conteudo' },
+    { icon: '🎬', text: 'Reel bastidores gravado e editado', tipo: 'conteudo' },
+    { icon: '💰', text: 'Ótica Igor Giordano — pagamento recebido', tipo: 'financeiro' },
+    { icon: '🌱', text: 'Blog: post sobre organização publicado', tipo: 'publicado' },
+    { icon: '💌', text: '3 DMs respondidas — networking ativo', tipo: 'social' },
+  ];
+  const [showing, setShowing] = useState(3);
+
+  return (
+    <div>
+      <div className="row between" style={{ marginBottom: 'var(--s-3)' }}>
+        <div>
+          <div className="eyebrow" style={{ color: '#7FB68C' }}>Pequenas vitórias</div>
+          <p className="tiny muted" style={{ marginTop: 4 }}>Tudo que você fez importa. Mesmo o que parece pequeno.</p>
+        </div>
+        <Button variant="ghost" size="sm" onClick={() => showToast('Adicionar vitória — em breve!')}>
+          <Icon name="plus" size={12}/>
+        </Button>
+      </div>
+      <div className="col gap-2">
+        {vitorias.slice(0, showing).map((v, i) => (
+          <div key={i} className="row gap-3" style={{
+            padding: '10px 14px',
+            background: 'color-mix(in oklch, #7FB68C 8%, var(--bg-surface))',
+            border: '1px solid color-mix(in oklch, #7FB68C 20%, transparent)',
+            borderRadius: 'var(--r-md)',
+          }}>
+            <span style={{ fontSize: 15, flexShrink: 0 }}>{v.icon}</span>
+            <span style={{ fontSize: 12.5, color: 'var(--ink-soft)', lineHeight: 1.4 }}>{v.text}</span>
+          </div>
+        ))}
+      </div>
+      {showing < vitorias.length && (
+        <button onClick={() => setShowing(vitorias.length)}
+          style={{ marginTop: 'var(--s-3)', fontSize: 12, color: '#7FB68C', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+          Ver todas ({vitorias.length}) →
+        </button>
+      )}
+    </div>
+  );
+}
+
 function ClientsWidget() {
   return (
     <div>
@@ -489,6 +717,12 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
             <Card>
               <CardBody>
                 <WeekView />
+              </CardBody>
+            </Card>
+
+            <Card>
+              <CardBody>
+                <PequenasVitorias />
               </CardBody>
             </Card>
           </div>

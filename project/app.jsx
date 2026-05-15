@@ -240,31 +240,43 @@ function App() {
   const sidebarWidth = collapsed ? 76 : 248;
 
   const PageMap = {
-    '/':         () => <DashboardPage   energy={energy} setEnergy={setEnergy} setRoute={setRoute} openCapture={() => setCapture(true)} />,
-    '/captura':  () => <CapturaPage     energy={energy} />,
-    '/ideias':   () => <IdeiasPage      />,
-    '/tarefas':  () => <TarefasPage     />,
-    '/conteudo': () => <ConteudoPage    />,
-    '/prompts':  () => <PromptsPage     />,
-    '/clientes': () => <ClientesPage    />,
-    '/crm':      () => <CRMPage         />,
-    '/mapa':     () => <MapaPage        />,
-    '/deploy':   () => <DeployPage      />,
+    '/':            () => <DashboardPage   energy={energy} setEnergy={setEnergy} setRoute={setRoute} openCapture={() => setCapture(true)} />,
+    '/captura':     () => <CapturaPage     energy={energy} />,
+    '/ideias':      () => <IdeiasPage      />,
+    '/tarefas':     () => <TarefasPage     />,
+    '/conteudo':    () => <ConteudoPage    />,
+    '/prompts':     () => <PromptsPage     />,
+    '/clientes':    () => <ClientesPage    setRoute={setRoute} />,
+    '/crm':         () => <CRMPage         />,
+    '/agenda':      () => <AgendaPage      />,
+    '/financeiro':  () => <FinanceiroPage  />,
+    '/sobre':       () => <SobrePage       />,
+    '/monetizacao': () => <MonetizacaoPage />,
+    '/impressos':   () => <ImpressosPage   />,
+    '/deploy':      () => <DeployPage      />,
+    '/mapa':        () => <MapaPage        />,
+    '/integracoes': () => <IntegrationPage />,
   };
   const Page = PageMap[route] || PageMap['/'];
 
   // Page-screen labels for review comments
   const screenLabels = {
-    '/':         '01 Dashboard',
-    '/captura':  '02 Captura Mental',
-    '/ideias':   '03 Banco de Ideias',
-    '/tarefas':  '04 Tarefas',
-    '/conteudo': '05 Conteúdo',
-    '/prompts':  '06 Prompts',
-    '/clientes': '07 Clientes',
-    '/crm':      '08 CRM Criativo',
-    '/mapa':     '09 Mapa Mental',
-    '/deploy':   '10 Como pôr no ar',
+    '/':            '01 Dashboard',
+    '/captura':     '02 Captura Mental',
+    '/ideias':      '03 Banco de Ideias',
+    '/tarefas':     '04 Tarefas',
+    '/conteudo':    '05 Conteúdos',
+    '/prompts':     '06 Prompts',
+    '/clientes':    '07 Clientes',
+    '/crm':         '08 CRM Criativo',
+    '/agenda':      '09 Agenda',
+    '/financeiro':  '10 Financeiro',
+    '/sobre':       '11 Sobre',
+    '/monetizacao': '12 Monetização',
+    '/impressos':   '13 Impressos Úteis',
+    '/deploy':      '14 Como Pôr no Ar',
+    '/mapa':        '15 Mapa Mental',
+    '/integracoes': '16 Integrações',
   };
 
   return (

@@ -3,6 +3,13 @@
    ────────────────────────────────────────────── */
 
 /* ─────────────────────── CLIENTES ─────────────────────── */
+const CLIENT_BRAND_MAP = {
+  'Ótica Igor Giordano': 'otica',
+  'Pratique': 'pratique',
+  'Cidades e Minerais': 'jornal',
+  'Espaço Criar': 'espaco',
+  'Agência Logue': 'agencia',
+};
 function Metric({ label, icon, valueLabel, valueColor, children }) {
   return (
     <div>
@@ -61,8 +68,61 @@ function ClientCard({ client, onOpen }) {
   );
 }
 
+function ClientConteudo({ client, setRoute }) {
+  const brandKey = CLIENT_BRAND_MAP[client.nome];
+  const brand = brandKey ? window.BRANDS[brandKey] : null;
+  const contentItems = window.DEMO_CONTENT.filter(c => c.brand === brandKey).slice(0, 4);
+
+  return (
+    <div className="col gap-5">
+      <div>
+        <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 19, fontWeight: 600 }}>
+          Conteúdos — {client.nome}
+        </h3>
+        <p className="small muted" style={{ marginTop: 6 }}>
+          {brand ? `Marca: ${brand.label}` : 'Conteúdos associados a este cliente'}
+        </p>
+      </div>
+
+      {contentItems.length > 0 && (
+        <div className="col gap-2">
+          {contentItems.map(c => {
+            const cfg = window.STATUS_CONTEUDO[c.status];
+            return (
+              <div key={c.id} style={{
+                padding: '12px 16px', background: 'var(--offwhite)',
+                border: '1px solid var(--gray-light)', borderRadius: 15,
+                display: 'flex', gap: 12, alignItems: 'center',
+              }}>
+                <span style={{ fontSize: 18 }}>{window.TYPE_EMOJI[c.tipo]}</span>
+                <div className="grow">
+                  <p style={{ fontSize: 13.5, fontWeight: 500 }}>{c.titulo}</p>
+                  <p className="tiny muted" style={{ marginTop: 2 }}>{c.data || '—'}</p>
+                </div>
+                <span className="tiny" style={{
+                  padding: '3px 10px', borderRadius: 999,
+                  background: `color-mix(in oklch, ${cfg.color} 16%, transparent)`,
+                  color: cfg.color, fontWeight: 500, flexShrink: 0,
+                }}>{cfg.label}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <Button variant="primary" onClick={() => {
+        if (brandKey) window.__presetBrand = brandKey;
+        setRoute && setRoute('/conteudo');
+      }}>
+        <Icon name="arrow" size={14} color="white"/>
+        Ver todos os conteúdos desta marca →
+      </Button>
+    </div>
+  );
+}
+
 /* ── Detail Drawer ── */
-function ClientDetail({ client, onClose }) {
+function ClientDetail({ client, onClose, setRoute }) {
   const [tab, setTab] = useState('overview');
   const cogLabel = client.custo_cog >= 5 ? 'Crítico' : client.custo_cog >= 4 ? 'Alto' : client.custo_cog >= 3 ? 'Médio' : 'Baixo';
   const cogColor = client.custo_cog >= 5 ? '#C44878' : client.custo_cog >= 4 ? '#E89B4C' : 'var(--pink)';
@@ -78,6 +138,7 @@ function ClientDetail({ client, onClose }) {
     { id: 'tarefas',    label: 'Tarefas'       },
     { id: 'arquivos',   label: 'Arquivos'      },
     { id: 'insights',   label: 'Insights'      },
+    { id: 'conteudo',   label: 'Conteúdos'     },
     { id: 'pedido',     label: 'Pedir post'    },
     { id: 'onboarding', label: 'Onboarding'    },
   ];
@@ -152,6 +213,7 @@ function ClientDetail({ client, onClose }) {
           {tab === 'tarefas' && <ClientTarefas client={client}/>}
           {tab === 'arquivos' && <ClientArquivos client={client}/>}
           {tab === 'insights' && <ClientInsights client={client}/>}
+          {tab === 'conteudo' && <ClientConteudo client={client} setRoute={setRoute}/>}
           {tab === 'pedido' && <FormPedidoPost client={client} onSent={onClose}/>}
           {tab === 'onboarding' && <FormOnboarding client={client} onSent={onClose}/>}
         </div>
@@ -511,7 +573,7 @@ function FormOnboarding({ client, onSent }) {
   );
 }
 
-function ClientesPage() {
+function ClientesPage({ setRoute }) {
   const [openId, setOpenId] = useState(null);
   const open = openId ? window.DEMO_CLIENTS.find(c => c.id === openId) : null;
   const total = window.DEMO_CLIENTS.reduce((s, c) => s + c.receita, 0);
@@ -554,7 +616,7 @@ function ClientesPage() {
         </div>
       </div>
 
-      {open && <ClientDetail client={open} onClose={() => setOpenId(null)}/>}
+      {open && <ClientDetail client={open} onClose={() => setOpenId(null)} setRoute={setRoute}/>}
     </div>
   );
 }
@@ -579,11 +641,13 @@ function CRMPage() {
   const [contacts, setContacts] = useState(window.DEMO_CRM);
   const [search, setSearch] = useState('');
   const [st, setSt] = useState('todos');
+  const [cat, setCat] = useState('todos');
 
   const filtered = contacts.filter(c => {
     const okS = !search || c.nome.toLowerCase().includes(search.toLowerCase()) || (c.proposta || '').toLowerCase().includes(search.toLowerCase());
     const okSt = st === 'todos' || c.status === st;
-    return okS && okSt;
+    const okCat = cat === 'todos' || c.categoria === cat;
+    return okS && okSt && okCat;
   });
   const followups = contacts.filter(c => c.followup && c.status !== 'arquivado');
 
@@ -645,21 +709,49 @@ function CRMPage() {
             <input className="grow" style={{ background: 'transparent', fontSize: 13 }}
               placeholder="Buscar contatos..." value={search} onChange={e => setSearch(e.target.value)}/>
           </div>
-          <div className="row gap-1" style={{ flexWrap: 'wrap' }}>
-            {['todos', ...Object.keys(CRM_STATUS)].map(s => (
-              <button key={s} onClick={() => setSt(s)}
+          <div className="col gap-2">
+            <div className="row gap-1" style={{ flexWrap: 'wrap' }}>
+              {['todos', ...Object.keys(CRM_STATUS)].map(s => (
+                <button key={s} onClick={() => setSt(s)}
+                  style={{
+                    fontSize: 12, padding: '8px 14px', borderRadius: 15,
+                    border: '1px solid',
+                    background: st === s ? 'var(--pink-tint)' : 'var(--white)',
+                    borderColor: st === s ? 'var(--pink-soft)' : 'var(--gray-light)',
+                    color: st === s ? 'var(--pink-deep)' : 'var(--ink-soft)',
+                    cursor: 'pointer', fontWeight: st === s ? 600 : 500,
+                    fontFamily: 'var(--font-body)',
+                  }}>
+                  {s === 'todos' ? 'Todos os status' : CRM_STATUS[s].label}
+                </button>
+              ))}
+            </div>
+            <div className="row gap-1" style={{ flexWrap: 'wrap' }}>
+              <button onClick={() => setCat('todos')}
                 style={{
-                  fontSize: 12, padding: '8px 14px', borderRadius: 15,
-                  border: '1px solid',
-                  background: st === s ? 'var(--pink-tint)' : 'var(--white)',
-                  borderColor: st === s ? 'var(--pink-soft)' : 'var(--gray-light)',
-                  color: st === s ? 'var(--pink-deep)' : 'var(--ink-soft)',
-                  cursor: 'pointer', fontWeight: st === s ? 600 : 500,
+                  fontSize: 12, padding: '6px 12px', borderRadius: 15, border: '1px solid',
+                  background: cat === 'todos' ? 'var(--bg-elevated)' : 'var(--white)',
+                  borderColor: cat === 'todos' ? 'var(--border)' : 'var(--gray-light)',
+                  color: cat === 'todos' ? 'var(--ink)' : 'var(--ink-soft)',
+                  cursor: 'pointer', fontWeight: cat === 'todos' ? 600 : 400,
                   fontFamily: 'var(--font-body)',
                 }}>
-                {s === 'todos' ? 'Todos' : CRM_STATUS[s].label}
+                Todas categorias
               </button>
-            ))}
+              {Object.entries(window.CRM_CATEGORIES).map(([k, cfg]) => (
+                <button key={k} onClick={() => setCat(k)}
+                  style={{
+                    fontSize: 12, padding: '6px 12px', borderRadius: 15, border: '1px solid',
+                    background: cat === k ? `color-mix(in oklch, ${cfg.color} 14%, var(--white))` : 'var(--white)',
+                    borderColor: cat === k ? cfg.color : 'var(--gray-light)',
+                    color: cat === k ? cfg.color : 'var(--ink-soft)',
+                    cursor: 'pointer', fontWeight: cat === k ? 600 : 400,
+                    fontFamily: 'var(--font-body)',
+                  }}>
+                  {cfg.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
