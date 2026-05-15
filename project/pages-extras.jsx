@@ -1464,6 +1464,22 @@ const IMPRESSOS_TEMPLATES = [
     ],
   },
   {
+    id: 'diario-terapia',
+    nome: 'Diário para Terapia',
+    desc: 'Registro semanal para levar à sessão',
+    icon: 'heart',
+    perguntas: [
+      { id: 'semana',    label: 'Semana de?', placeholder: 'Ex: 19 a 25 de maio' },
+      { id: 'humor',     label: 'Como foi sua semana emocionalmente? (0 a 10 e palavras)', placeholder: 'Ex: 6/10 — ansiosa na segunda, mais leve na quinta...' },
+      { id: 'pesado',    label: 'O que pesou mais essa semana?', placeholder: 'Ex: briga com fulano, sobrecarga, medo de...' },
+      { id: 'bom',       label: 'O que foi bom ou te surpreendeu positivamente?', placeholder: 'Ex: consegui descansar, recebi elogio, terminei...' },
+      { id: 'corpo',     label: 'Como seu corpo esteve? (sono, alimentação, dor, energia)', placeholder: 'Ex: dormi mal, dor de cabeça, muito cansaço...' },
+      { id: 'relacoes',  label: 'Como estiveram suas relações (filhos, trabalho, pessoas)?', placeholder: 'Ex: me senti sozinha, conflito com X, reconexão com...' },
+      { id: 'gatilhos',  label: 'Algum gatilho ou padrão que notou?', placeholder: 'Ex: quando me cobram prazo, tudo trava. Quando...' },
+      { id: 'sessao',    label: 'O que quer trabalhar na próxima sessão?', placeholder: 'Ex: quero falar sobre a sensação de não pertencer, sobre...' },
+    ],
+  },
+  {
     id: 'agenda-semanal',
     nome: 'Agenda Semanal',
     desc: 'Compromissos e horários',
