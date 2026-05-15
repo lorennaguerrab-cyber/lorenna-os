@@ -298,9 +298,11 @@ function EnergySelector({ energy, setEnergy }) {
 
 function TaskRow({ task, dense }) {
   const [open, setOpen] = useState(false);
+  const [concluida, setConcluida] = useState(task.status === 'concluida');
+  const [microDone, setMicroDone] = useState(() => Object.fromEntries(task.micro.map(m => [m.id, m.done])));
   const total = task.micro.length;
-  const done = task.micro.filter(m => m.done).length;
-  const nextStep = task.micro.find(m => !m.done);
+  const done = Object.values(microDone).filter(Boolean).length;
+  const nextStep = task.micro.find(m => !microDone[m.id]);
   const totalMin = task.micro.reduce((a, m) => a + (m.min || 0), 0);
 
   const prioColor = {
@@ -318,13 +320,18 @@ function TaskRow({ task, dense }) {
       transition: 'all .15s var(--easing)',
     }}>
       <div className="row gap-3" style={{ padding: dense ? '10px 14px' : '14px 16px', alignItems: 'flex-start' }}>
-        <div style={{
-          width: 18, height: 18, borderRadius: 999,
-          border: `1.5px solid ${prioColor}`,
-          background: task.status === 'concluida' ? prioColor : 'transparent',
-          marginTop: 1, flexShrink: 0,
-          cursor: 'pointer',
-        }} title={task.prioridade}/>
+        <div onClick={() => { setConcluida(v => !v); showToast(concluida ? 'Tarefa reaberta' : 'Tarefa concluída! ✓'); }}
+          style={{
+            width: 18, height: 18, borderRadius: 999,
+            border: `1.5px solid ${prioColor}`,
+            background: concluida ? prioColor : 'transparent',
+            marginTop: 1, flexShrink: 0,
+            cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            transition: 'all .15s',
+          }}>
+          {concluida && <Icon name="check" size={10} color="white"/>}
+        </div>
 
         <div className="grow">
           <div className="row between" style={{ alignItems: 'flex-start' }}>
@@ -371,20 +378,22 @@ function TaskRow({ task, dense }) {
           {open && (
             <div style={{ marginTop: 12 }} className="col gap-2">
               {task.micro.map((m, i) => (
-                <div key={m.id} className="row gap-3" style={{ padding: '8px 10px', background: m.done ? 'var(--bg-inset)' : 'var(--bg-elevated)', borderRadius: 'var(--r-sm)' }}>
+                <div key={m.id} className="row gap-3"
+                  onClick={() => setMicroDone(prev => ({ ...prev, [m.id]: !prev[m.id] }))}
+                  style={{ padding: '8px 10px', background: microDone[m.id] ? 'var(--bg-inset)' : 'var(--bg-elevated)', borderRadius: 'var(--r-sm)', cursor: 'pointer' }}>
                   <div style={{
                     width: 16, height: 16, borderRadius: 999,
-                    border: `1.5px solid ${m.done ? prioColor : 'var(--border-strong)'}`,
-                    background: m.done ? prioColor : 'transparent',
+                    border: `1.5px solid ${microDone[m.id] ? prioColor : 'var(--border-strong)'}`,
+                    background: microDone[m.id] ? prioColor : 'transparent',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    flexShrink: 0,
+                    flexShrink: 0, transition: 'all .15s',
                   }}>
-                    {m.done && <Icon name="check" size={10} color="white"/>}
+                    {microDone[m.id] && <Icon name="check" size={10} color="white"/>}
                   </div>
                   <span style={{
                     fontSize: 12.5,
-                    color: m.done ? 'var(--text-muted)' : 'var(--text-primary)',
-                    textDecoration: m.done ? 'line-through' : 'none',
+                    color: microDone[m.id] ? 'var(--text-muted)' : 'var(--text-primary)',
+                    textDecoration: microDone[m.id] ? 'line-through' : 'none',
                     flex: 1,
                   }}>{m.desc}</span>
                   {m.min && <span className="tiny muted">{m.min}min</span>}

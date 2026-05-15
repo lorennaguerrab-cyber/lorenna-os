@@ -1492,277 +1492,62 @@ const IMPRESSOS_TEMPLATES = [
   },
 ];
 
-function ImpressosModal({ template, onClose }) {
-  const [respostas, setRespostas] = useState({});
-  const [gerado, setGerado] = useState(false);
-
-  function handleGerar() {
-    setGerado(true);
-    showToast('Documento gerado! Pronto para imprimir.');
-  }
-
-  function handleImprimir() {
-    window.print();
-  }
-
-  if (!template) return null;
-
-  return (
-    <div
-      onClick={onClose}
-      style={{
-        position: 'fixed', inset: 0,
-        background: 'rgba(43, 43, 43, 0.45)',
-        backdropFilter: 'blur(4px)',
-        zIndex: 100,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: 'var(--s-4)',
-      }}
-    >
-      <div
-        onClick={e => e.stopPropagation()}
-        style={{
-          width: 'min(540px, 96vw)',
-          background: 'var(--white)',
-          borderRadius: 'var(--r-xl)',
-          border: '1px solid var(--gray-light)',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Top accent */}
-        <div style={{ height: 4, background: 'var(--pink)' }} />
-
-        {/* Header */}
-        <div style={{ padding: 'var(--s-5) var(--s-5) 0' }}>
-          <div className="row between" style={{ marginBottom: 'var(--s-3)' }}>
-            <div className="row gap-3">
-              <div style={{
-                width: 40, height: 40,
-                borderRadius: 'var(--r-md)',
-                background: 'var(--pink-tint)',
-                border: '1px solid var(--pink-soft)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0,
-              }}>
-                <Icon name={template.icon} size={18} color="var(--pink-deep)" />
-              </div>
-              <div>
-                <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 17, fontWeight: 700, marginBottom: 2 }}>
-                  {template.nome}
-                </h3>
-                <p style={{ fontSize: 12, color: 'var(--gray)', margin: 0 }}>{template.desc}</p>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              style={{
-                width: 30, height: 30, borderRadius: 999,
-                background: 'var(--offwhite)', border: '1px solid var(--gray-light)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer', flexShrink: 0,
-              }}
-            >
-              <Icon name="x" size={14} color="var(--gray)" />
-            </button>
-          </div>
-        </div>
-
-        {/* Body */}
-        <div style={{ padding: 'var(--s-4) var(--s-5) var(--s-5)' }}>
-          {!gerado ? (
-            <div className="col gap-4">
-              {template.perguntas.map(q => (
-                <div key={q.id}>
-                  <label style={{
-                    display: 'block',
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: 'var(--ink)',
-                    marginBottom: 6,
-                    fontFamily: 'var(--font-body)',
-                  }}>
-                    {q.label}
-                  </label>
-                  <input
-                    type="text"
-                    placeholder={q.placeholder}
-                    value={respostas[q.id] || ''}
-                    onChange={e => setRespostas(prev => ({ ...prev, [q.id]: e.target.value }))}
-                    style={{
-                      width: '100%',
-                      padding: '10px 14px',
-                      background: 'var(--offwhite)',
-                      border: '1px solid var(--gray-light)',
-                      borderRadius: 'var(--r-md)',
-                      fontSize: 13,
-                      color: 'var(--ink)',
-                      fontFamily: 'var(--font-body)',
-                      transition: 'border-color 0.15s var(--easing)',
-                    }}
-                    onFocus={e => e.target.style.borderColor = 'var(--pink-soft)'}
-                    onBlur={e => e.target.style.borderColor = 'var(--gray-light)'}
-                  />
-                </div>
-              ))}
-              <div className="row gap-3" style={{ marginTop: 'var(--s-2)', justifyContent: 'flex-end' }}>
-                <Button variant="ghost" onClick={onClose}>Cancelar</Button>
-                <Button variant="primary" onClick={handleGerar}>
-                  <Icon name="doc" size={13} color="white" />
-                  Gerar documento
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="col gap-4">
-              <div style={{
-                padding: 'var(--s-5)',
-                background: '#E8F5ED',
-                border: '1px solid #C3DEC9',
-                borderRadius: 'var(--r-md)',
-                textAlign: 'center',
-              }}>
-                <div style={{ fontSize: 30, marginBottom: 10 }}>
-                  <Icon name="check" size={32} color="#3A8C50" />
-                </div>
-                <div style={{ fontFamily: 'var(--font-title)', fontSize: 17, fontWeight: 700, color: '#3A8C50', marginBottom: 4 }}>
-                  Documento gerado!
-                </div>
-                <p style={{ fontSize: 13, color: '#5FAD74', margin: 0 }}>
-                  {template.nome} pronto para imprimir.
-                </p>
-              </div>
-
-              {/* Preview card */}
-              <div style={{
-                padding: 'var(--s-4)',
-                background: 'var(--offwhite)',
-                border: '1px solid var(--gray-light)',
-                borderRadius: 'var(--r-md)',
-              }}>
-                <div style={{ fontSize: 12, color: 'var(--gray)', marginBottom: 8, fontWeight: 600 }}>
-                  Visualização — {template.nome}
-                </div>
-                {template.perguntas.map(q => respostas[q.id] && (
-                  <div key={q.id} style={{ marginBottom: 6 }}>
-                    <span style={{ fontSize: 11, color: 'var(--gray)' }}>{q.label}: </span>
-                    <span style={{ fontSize: 12, color: 'var(--ink)', fontWeight: 500 }}>{respostas[q.id]}</span>
-                  </div>
-                ))}
-                {Object.values(respostas).every(v => !v) && (
-                  <p style={{ fontSize: 12, color: 'var(--gray)', fontStyle: 'italic', margin: 0 }}>
-                    Nenhuma informação adicionada — documento gerado com estrutura padrão.
-                  </p>
-                )}
-              </div>
-
-              <div className="row gap-3" style={{ justifyContent: 'flex-end' }}>
-                <Button variant="ghost" onClick={onClose}>Fechar</Button>
-                <Button variant="primary" onClick={handleImprimir}>
-                  <Icon name="doc" size={13} color="white" />
-                  Imprimir
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function ImpressosPage() {
-  const [selected, setSelected] = useState(null);
-
   return (
     <div className="content">
       <div className="col gap-5 fade-up">
         <PageHeader
-          title="Impressos"
-          subtitle={`${IMPRESSOS_TEMPLATES.length} modelos de documentos imprimíveis`}
+          title="Impressos Úteis"
+          subtitle={`${IMPRESSOS_TEMPLATES.length} modelos para imprimir`}
         />
 
-        {/* Templates grid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
           gap: 'var(--s-4)',
         }}>
           {IMPRESSOS_TEMPLATES.map(tpl => (
-            <div
-              key={tpl.id}
-              style={{
-                padding: 'var(--s-5)',
-                background: 'var(--white)',
-                border: '1px solid var(--gray-light)',
-                borderRadius: 'var(--r-lg)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 'var(--s-3)',
-                transition: 'border-color 0.15s var(--easing)',
-              }}
+            <div key={tpl.id} style={{
+              padding: 'var(--s-5)',
+              background: 'var(--white)',
+              border: '1px solid var(--gray-light)',
+              borderRadius: 'var(--r-lg)',
+              display: 'flex', flexDirection: 'column', gap: 'var(--s-3)',
+              transition: 'border-color 0.15s var(--easing)',
+            }}
               onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--pink-soft)'}
               onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--gray-light)'}
             >
-              {/* Icon */}
               <div style={{
-                width: 44, height: 44,
-                borderRadius: 'var(--r-md)',
-                background: 'var(--pink-tint)',
-                border: '1px solid var(--pink-soft)',
+                width: 44, height: 44, borderRadius: 'var(--r-md)',
+                background: 'var(--pink-tint)', border: '1px solid var(--pink-soft)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <Icon name={tpl.icon} size={20} color="var(--pink-deep)" />
               </div>
-
-              {/* Text */}
               <div style={{ flex: 1 }}>
-                <div style={{
-                  fontFamily: 'var(--font-title)',
-                  fontSize: 14.5,
-                  fontWeight: 700,
-                  color: 'var(--ink)',
-                  marginBottom: 4,
-                }}>
+                <div style={{ fontFamily: 'var(--font-title)', fontSize: 14.5, fontWeight: 700, color: 'var(--ink)', marginBottom: 4 }}>
                   {tpl.nome}
                 </div>
-                <p style={{
-                  fontSize: 12.5,
-                  color: 'var(--gray)',
-                  lineHeight: 1.5,
-                  margin: 0,
-                }}>
+                <p style={{ fontSize: 12.5, color: 'var(--gray)', lineHeight: 1.5, margin: 0 }}>
                   {tpl.desc}
                 </p>
               </div>
-
-              {/* Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSelected(tpl)}
-                style={{
-                  justifyContent: 'center',
-                  borderColor: 'var(--pink-soft)',
-                  color: 'var(--pink-deep)',
-                  fontWeight: 600,
-                  width: '100%',
-                }}
-              >
-                <Icon name="doc" size={13} color="var(--pink-deep)" />
-                Gerar
-              </Button>
             </div>
           ))}
         </div>
-      </div>
 
-      {/* Modal */}
-      {selected && (
-        <ImpressosModal
-          template={selected}
-          onClose={() => setSelected(null)}
-        />
-      )}
+        <div style={{
+          padding: 'var(--s-4)',
+          background: 'var(--pink-tint)',
+          border: '1px solid var(--pink-soft)',
+          borderRadius: 'var(--r-md)',
+        }}>
+          <p className="small" style={{ color: 'var(--pink-deep)', margin: 0 }}>
+            💡 <strong>Em breve:</strong> clique em qualquer modelo para preencher e imprimir direto do navegador com <strong>Ctrl + P</strong>.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
