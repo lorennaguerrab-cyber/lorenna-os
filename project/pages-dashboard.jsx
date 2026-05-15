@@ -320,7 +320,7 @@ function TaskRow({ task, dense }) {
       transition: 'all .15s var(--easing)',
     }}>
       <div className="row gap-3" style={{ padding: dense ? '10px 14px' : '14px 16px', alignItems: 'flex-start' }}>
-        <div onClick={() => { setConcluida(v => !v); showToast(concluida ? 'Tarefa reaberta' : 'Tarefa concluída! ✓'); }}
+        <div onClick={() => { const next = !concluida; setConcluida(next); window.DB.updateTarefaStatus(task.id, next ? 'concluida' : 'pendente'); showToast(concluida ? 'Tarefa reaberta' : 'Tarefa concluída! ✓'); }}
           style={{
             width: 18, height: 18, borderRadius: 999,
             border: `1.5px solid ${prioColor}`,

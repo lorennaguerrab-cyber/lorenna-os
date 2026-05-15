@@ -16,6 +16,7 @@ function QuickCapture({ open, setOpen, energy }) {
 
   function save() {
     if (!text.trim()) return;
+    window.DB.saveCaptura(text.trim(), energy);
     showToast('Captura salva! IA vai processar.');
     setText('');
     setOpen(false);
@@ -222,6 +223,12 @@ function App() {
   const [energy, setEnergy] = useState('criativa');
   const [collapsed, setCollapsed] = useState(false);
   const [capture, setCapture] = useState(false);
+  const [dbReady, setDbReady] = useState(false);
+
+  // Load data from Supabase on mount
+  useEffect(() => {
+    window.DB.loadAll().then(() => setDbReady(true));
+  }, []);
 
   // Hotkey: C opens capture
   useEffect(() => {
@@ -278,6 +285,14 @@ function App() {
     '/mapa':        '15 Mapa Mental',
     '/integracoes': '16 Integrações',
   };
+
+  if (!dbReady) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', fontFamily: 'var(--font-body)', color: 'var(--text-muted)', fontSize: 14 }}>
+        Carregando...
+      </div>
+    );
+  }
 
   return (
     <div className="app">
