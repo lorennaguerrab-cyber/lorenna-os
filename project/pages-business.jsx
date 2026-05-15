@@ -121,7 +121,7 @@ function ClientConteudo({ client, setRoute }) {
   );
 }
 
-/* ── Detail Drawer ── */
+/* ── Client Detail (full page) ── */
 function ClientDetail({ client, onClose, setRoute }) {
   const [tab, setTab] = useState('overview');
   const cogLabel = client.custo_cog >= 5 ? 'Crítico' : client.custo_cog >= 4 ? 'Alto' : client.custo_cog >= 3 ? 'Médio' : 'Baixo';
@@ -144,78 +144,78 @@ function ClientDetail({ client, onClose, setRoute }) {
   ];
 
   return (
-    <div onClick={onClose} style={{
-      position: 'fixed', inset: 0,
-      background: 'rgba(43, 43, 43, 0.45)',
-      zIndex: 100, display: 'flex', justifyContent: 'flex-end',
-    }} className="fade-up">
-      <div onClick={ev => ev.stopPropagation()} style={{
-        width: 'min(680px, 100vw)',
-        height: '100%',
-        background: 'var(--white)',
-        overflowY: 'auto',
-        display: 'flex', flexDirection: 'column',
-        borderLeft: '1px solid var(--gray-light)',
-      }}>
-        <div style={{ height: 5, background: client.cor }}/>
+    <div className="content fade-up" style={{ maxWidth: 1400 }}>
+      <div className="col gap-6">
+        {/* Back button */}
+        <div>
+          <button
+            onClick={onClose}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              background: 'transparent', border: 'none', cursor: 'pointer',
+              color: 'var(--ink-soft)', fontSize: 13.5, fontFamily: 'var(--font-body)',
+              fontWeight: 500, padding: '6px 0',
+            }}>
+            <Icon name="arrow" size={13} style={{ transform: 'rotate(180deg)' }}/>
+            Voltar para Clientes
+          </button>
+        </div>
 
-        {/* Header */}
-        <div style={{ padding: 'var(--s-5)', borderBottom: '1px solid var(--gray-light)' }}>
-          <div className="row between" style={{ alignItems: 'flex-start', marginBottom: 'var(--s-3)' }}>
-            <div className="row gap-3">
+        {/* Color bar + Header */}
+        <div style={{ borderRadius: 20, overflow: 'hidden', background: 'var(--white)', border: '1px solid var(--gray-light)' }}>
+          <div style={{ height: 5, background: client.cor }}/>
+          <div style={{ padding: 'var(--s-5)', borderBottom: '1px solid var(--gray-light)' }}>
+            <div className="row gap-3" style={{ alignItems: 'flex-start', marginBottom: 'var(--s-3)' }}>
               <div style={{
                 width: 60, height: 60, borderRadius: 15,
                 background: `color-mix(in oklch, ${client.cor} 22%, transparent)`,
                 color: client.cor,
                 display:'flex', alignItems:'center', justifyContent:'center',
-                fontFamily:'var(--font-title)', fontSize: 26, fontWeight: 700,
+                fontFamily:'var(--font-title)', fontSize: 26, fontWeight: 700, flexShrink: 0,
               }}>{client.nome[0]}</div>
               <div>
                 <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 24, fontWeight: 600, letterSpacing: '-0.025em', lineHeight: 1.1 }}>{client.nome}</h2>
                 <p className="small muted" style={{ marginTop: 4 }}>{client.setor} · desde {client.inicio}</p>
               </div>
             </div>
-            <button className="btn ghost icon" onClick={onClose}>
-              <Icon name="x" size={18}/>
-            </button>
+
+            {/* Quick info chips */}
+            <div className="row gap-2" style={{ flexWrap: 'wrap', marginTop: 'var(--s-3)' }}>
+              <Chip icon="users">{client.contato}</Chip>
+              <Chip icon="msg">{client.whatsapp}</Chip>
+              <Chip>{client.pacote}</Chip>
+            </div>
           </div>
 
-          {/* Quick info chips */}
-          <div className="row gap-2" style={{ flexWrap: 'wrap', marginTop: 'var(--s-3)' }}>
-            <Chip icon="users">{client.contato}</Chip>
-            <Chip icon="msg">{client.whatsapp}</Chip>
-            <Chip>{client.pacote}</Chip>
+          {/* Tabs */}
+          <div className="row" style={{ padding: '0 var(--s-5)', borderBottom: '1px solid var(--gray-light)', gap: 4, overflowX: 'auto' }}>
+            {TABS.map(t => (
+              <button key={t.id} onClick={() => setTab(t.id)}
+                style={{
+                  padding: '16px 14px',
+                  background: 'transparent',
+                  border: 'none',
+                  color: tab === t.id ? 'var(--pink-deep)' : 'var(--gray)',
+                  fontWeight: tab === t.id ? 600 : 500,
+                  fontSize: 13,
+                  fontFamily: 'var(--font-body)',
+                  cursor: 'pointer',
+                  borderBottom: tab === t.id ? '2px solid var(--pink)' : '2px solid transparent',
+                  marginBottom: -1,
+                  whiteSpace: 'nowrap',
+                }}>{t.label}</button>
+            ))}
           </div>
-        </div>
 
-        {/* Tabs */}
-        <div className="row" style={{ padding: '0 var(--s-5)', borderBottom: '1px solid var(--gray-light)', gap: 4, overflowX: 'auto' }}>
-          {TABS.map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)}
-              style={{
-                padding: '16px 14px',
-                background: 'transparent',
-                border: 'none',
-                color: tab === t.id ? 'var(--pink-deep)' : 'var(--gray)',
-                fontWeight: tab === t.id ? 600 : 500,
-                fontSize: 13,
-                fontFamily: 'var(--font-body)',
-                cursor: 'pointer',
-                borderBottom: tab === t.id ? '2px solid var(--pink)' : '2px solid transparent',
-                marginBottom: -1,
-                whiteSpace: 'nowrap',
-              }}>{t.label}</button>
-          ))}
-        </div>
-
-        <div style={{ flex: 1, padding: 'var(--s-5)', overflowY: 'auto' }}>
-          {tab === 'overview' && <ClientOverview client={client} cogLabel={cogLabel} cogColor={cogColor}/>}
-          {tab === 'tarefas' && <ClientTarefas client={client}/>}
-          {tab === 'arquivos' && <ClientArquivos client={client}/>}
-          {tab === 'insights' && <ClientInsights client={client}/>}
-          {tab === 'conteudo' && <ClientConteudo client={client} setRoute={setRoute}/>}
-          {tab === 'pedido' && <FormPedidoPost client={client} onSent={onClose}/>}
-          {tab === 'onboarding' && <FormOnboarding client={client} onSent={onClose}/>}
+          <div style={{ padding: 'var(--s-5)' }}>
+            {tab === 'overview' && <ClientOverview client={client} cogLabel={cogLabel} cogColor={cogColor}/>}
+            {tab === 'tarefas' && <ClientTarefas client={client}/>}
+            {tab === 'arquivos' && <ClientArquivos client={client}/>}
+            {tab === 'insights' && <ClientInsights client={client}/>}
+            {tab === 'conteudo' && <ClientConteudo client={client} setRoute={setRoute}/>}
+            {tab === 'pedido' && <FormPedidoPost client={client} onSent={onClose}/>}
+            {tab === 'onboarding' && <FormOnboarding client={client} onSent={onClose}/>}
+          </div>
         </div>
       </div>
     </div>
@@ -574,8 +574,13 @@ function FormOnboarding({ client, onSent }) {
 }
 
 function ClientesPage({ setRoute }) {
-  const [openId, setOpenId] = useState(null);
-  const open = openId ? window.DEMO_CLIENTS.find(c => c.id === openId) : null;
+  const [selectedId, setSelectedId] = useState(null);
+  const selected = selectedId ? window.DEMO_CLIENTS.find(c => c.id === selectedId) : null;
+
+  if (selected) {
+    return <ClientDetail client={selected} onClose={() => setSelectedId(null)} setRoute={setRoute}/>;
+  }
+
   const total = window.DEMO_CLIENTS.reduce((s, c) => s + c.receita, 0);
   const meta = 6000;
   const pendentes = window.DEMO_CLIENTS.reduce((s, c) => s + c.pendentes, 0);
@@ -612,193 +617,240 @@ function ClientesPage({ setRoute }) {
         </Card>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: 'var(--s-4)' }}>
-          {window.DEMO_CLIENTS.map(c => <ClientCard key={c.id} client={c} onOpen={() => setOpenId(c.id)}/>)}
+          {window.DEMO_CLIENTS.map(c => <ClientCard key={c.id} client={c} onOpen={() => setSelectedId(c.id)}/>)}
         </div>
       </div>
-
-      {open && <ClientDetail client={open} onClose={() => setOpenId(null)} setRoute={setRoute}/>}
     </div>
   );
 }
 
 /* ─────────────────────── CRM ─────────────────────── */
-const CRM_STATUS = {
-  potencial:  { label: 'Potencial',  variant: 'blue',   color: '#5A6F9C' },
-  em_contato: { label: 'Em contato', variant: 'yellow', color: '#E89B4C' },
-  negociando: { label: 'Negociando', variant: 'pink',   color: 'var(--pink)' },
-  fechado:    { label: 'Fechado',    variant: 'green',  color: '#7FB68C' },
-  arquivado:  { label: 'Arquivado',  variant: 'default',color: '#908F8E' },
+const CRM_NEW_STATUS = {
+  potencial:     { label: 'Potencial',     bg: 'var(--pink-soft)',  color: 'var(--pink-deep)' },
+  contato_feito: { label: 'Contato feito', bg: '#F5DDD0',           color: '#B05A2A' },
+  proposta:      { label: 'Proposta',      bg: '#EAE6F5',           color: '#5B4A8A' },
+  fechado:       { label: 'Fechado',       bg: '#D8EEE0',           color: '#2E6B42' },
+  perdido:       { label: 'Perdido',       bg: '#E8E7E7',           color: '#5A5958' },
 };
-const CRM_TYPES = {
-  marca:      { label: 'Marca',      emoji: '🏷️' },
-  influencer: { label: 'Influencer', emoji: '⭐' },
-  ugc:        { label: 'UGC',        emoji: '📱' },
-  collab:     { label: 'Collab',     emoji: '🤝' },
-  networking: { label: 'Network',    emoji: '🌐' },
-};
+
+const CRM_TABS = [
+  { id: 'agencia', label: 'Agência', desc: 'Potenciais clientes para agência' },
+  { id: 'ugc',     label: 'UGC / Publis', desc: 'Marcas para UGC e publis' },
+  { id: 'rede',    label: 'Rede', desc: 'Influencers, freelas, parceiros' },
+];
+
+const DEMO_CONTACTS_WITH_TIPO = (window.DEMO_CRM || []).map((c, i) => ({
+  ...c,
+  tipo: ['agencia', 'ugc', 'rede'][i % 3],
+  status: c.status === 'em_contato' ? 'contato_feito' : c.status === 'negociando' ? 'proposta' : c.status === 'arquivado' ? 'perdido' : (c.status || 'potencial'),
+  nota: c.notas || c.proposta || '',
+  empresa: c.plataforma || '',
+  phone: c.whatsapp || '',
+}));
+
+function CRMStatusBadge({ status }) {
+  const cfg = CRM_NEW_STATUS[status] || CRM_NEW_STATUS.potencial;
+  return (
+    <span style={{
+      padding: '3px 11px', borderRadius: 999, fontSize: 12, fontWeight: 600,
+      background: cfg.bg, color: cfg.color, flexShrink: 0,
+    }}>{cfg.label}</span>
+  );
+}
+
+const EMPTY_FORM = { nome: '', empresa: '', tipo: 'agencia', status: 'potencial', nota: '', phone: '' };
 
 function CRMPage() {
-  const [contacts, setContacts] = useState(window.DEMO_CRM);
+  const [contacts, setContacts] = useState(DEMO_CONTACTS_WITH_TIPO);
   const [search, setSearch] = useState('');
-  const [st, setSt] = useState('todos');
-  const [cat, setCat] = useState('todos');
+  const [activeTab, setActiveTab] = useState('agencia');
+  const [showForm, setShowForm] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [form, setForm] = useState(EMPTY_FORM);
 
+  const searchLower = search.toLowerCase();
   const filtered = contacts.filter(c => {
-    const okS = !search || c.nome.toLowerCase().includes(search.toLowerCase()) || (c.proposta || '').toLowerCase().includes(search.toLowerCase());
-    const okSt = st === 'todos' || c.status === st;
-    const okCat = cat === 'todos' || c.categoria === cat;
-    return okS && okSt && okCat;
+    if (c.tipo !== activeTab) return false;
+    if (!search) return true;
+    return (
+      c.nome.toLowerCase().includes(searchLower) ||
+      (c.empresa || '').toLowerCase().includes(searchLower) ||
+      (c.nota || '').toLowerCase().includes(searchLower)
+    );
   });
-  const followups = contacts.filter(c => c.followup && c.status !== 'arquivado');
 
-  function setStatus(id, newSt) {
-    setContacts(prev => prev.map(c => c.id === id ? { ...c, status: newSt } : c));
-    showToast('Status atualizado!');
+  function openNew() {
+    setForm({ ...EMPTY_FORM, tipo: activeTab });
+    setEditId(null);
+    setShowForm(true);
   }
+
+  function openEdit(c) {
+    setForm({ nome: c.nome, empresa: c.empresa || '', tipo: c.tipo, status: c.status, nota: c.nota || '', phone: c.phone || '' });
+    setEditId(c.id);
+    setShowForm(true);
+  }
+
+  function saveForm() {
+    if (!form.nome.trim()) { showToast('Preencha o nome'); return; }
+    if (editId) {
+      setContacts(prev => prev.map(c => c.id === editId ? { ...c, ...form } : c));
+      showToast('Contato atualizado!');
+    } else {
+      const newContact = { ...form, id: Date.now() };
+      setContacts(prev => [...prev, newContact]);
+      showToast('Contato adicionado!');
+    }
+    setShowForm(false);
+    setEditId(null);
+    setForm(EMPTY_FORM);
+  }
+
+  function cancelForm() {
+    setShowForm(false);
+    setEditId(null);
+    setForm(EMPTY_FORM);
+  }
+
+  const tabCounts = CRM_TABS.reduce((acc, t) => {
+    acc[t.id] = contacts.filter(c => c.tipo === t.id).length;
+    return acc;
+  }, {});
 
   return (
     <div className="content" style={{ maxWidth: 1100 }}>
       <div className="col gap-6 fade-up">
         <PageHeader
-          title="CRM Criativo"
-          subtitle="Marcas, collabs, influencers e networking em um lugar"
-          action={<Button variant="primary"><Icon name="plus" size={14} color="white"/> Novo contato</Button>}
+          title="CRM"
+          subtitle="Agência, UGC e rede — contatos organizados por contexto"
+          action={<Button variant="primary" onClick={openNew}><Icon name="plus" size={14} color="white"/> Novo contato</Button>}
         />
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 'var(--s-3)' }}>
-          {Object.entries(CRM_STATUS).map(([k, cfg]) => (
-            <Card key={k}>
-              <CardBody tight>
-                <div className="eyebrow">{cfg.label}</div>
-                <div style={{ fontFamily: 'var(--font-title)', fontSize: 24, fontWeight: 600, color: cfg.color, marginTop: 6 }}>
-                  {contacts.filter(c => c.status === k).length}
-                </div>
-              </CardBody>
-            </Card>
-          ))}
+        {/* Search bar */}
+        <div className="row gap-2" style={{
+          background: 'var(--white)', border: '1px solid var(--gray-light)',
+          borderRadius: 15, padding: '10px 16px', maxWidth: 400,
+        }}>
+          <Icon name="search" size={14} color="var(--gray)"/>
+          <input className="grow" style={{ background: 'transparent', fontSize: 13 }}
+            placeholder="Buscar contatos..." value={search} onChange={e => setSearch(e.target.value)}/>
+          {search && (
+            <button onClick={() => setSearch('')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--gray)', lineHeight: 1 }}>
+              <Icon name="x" size={12}/>
+            </button>
+          )}
         </div>
 
-        {followups.length > 0 && (
+        {/* Inline form */}
+        {showForm && (
           <Card variant="accent">
-            <CardBody>
-              <div className="row gap-2" style={{ marginBottom: 'var(--s-3)' }}>
-                <Icon name="bell" size={14} color="var(--pink-deep)"/>
-                <span className="eyebrow" style={{ color: 'var(--pink-deep)' }}>{followups.length} follow-up(s) próximo(s)</span>
+            <CardBody className="col gap-4">
+              <div className="eyebrow">{editId ? 'Editar contato' : 'Novo contato'}</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-3)' }}>
+                <Field label="Nome">
+                  <input className="input" placeholder="Nome do contato"
+                    value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })}/>
+                </Field>
+                <Field label="Empresa / Canal">
+                  <input className="input" placeholder="Empresa ou canal"
+                    value={form.empresa} onChange={e => setForm({ ...form, empresa: e.target.value })}/>
+                </Field>
+                <Field label="Tipo">
+                  <select className="select" value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value })}>
+                    <option value="agencia">Agência</option>
+                    <option value="ugc">UGC / Publis</option>
+                    <option value="rede">Rede</option>
+                  </select>
+                </Field>
+                <Field label="Status">
+                  <select className="select" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+                    {Object.entries(CRM_NEW_STATUS).map(([k, cfg]) => (
+                      <option key={k} value={k}>{cfg.label}</option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="WhatsApp (só números)">
+                  <input className="input" placeholder="11999999999"
+                    value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}/>
+                </Field>
+                <Field label="Nota" span={2}>
+                  <textarea className="textarea" rows={2} placeholder="Contexto, proposta, observações..."
+                    value={form.nota} onChange={e => setForm({ ...form, nota: e.target.value })}/>
+                </Field>
               </div>
-              <div className="row gap-2" style={{ flexWrap: 'wrap' }}>
-                {followups.map(c => (
-                  <span key={c.id} className="tiny" style={{
-                    padding: '6px 14px', borderRadius: 999,
-                    background: 'var(--white)', border: '1px solid var(--gray-light)',
-                    color: 'var(--ink-soft)',
-                  }}>
-                    <strong style={{ color: 'var(--ink)' }}>{c.nome}</strong> — {c.proxima} <span className="muted">· {c.followup}</span>
-                  </span>
-                ))}
+              <div className="row gap-2" style={{ paddingTop: 'var(--s-2)', borderTop: '1px solid var(--gray-light)' }}>
+                <Button variant="primary" onClick={saveForm}><Icon name="check" size={13} color="white"/> Salvar</Button>
+                <Button variant="ghost" onClick={cancelForm}>Cancelar</Button>
               </div>
             </CardBody>
           </Card>
         )}
 
-        <div className="row gap-3" style={{ flexWrap: 'wrap' }}>
-          <div className="row gap-2" style={{
-            background: 'var(--white)', border: '1px solid var(--gray-light)',
-            borderRadius: 15, padding: '10px 14px', flex: 1, minWidth: 220, maxWidth: 320,
-          }}>
-            <Icon name="search" size={14} color="var(--gray)"/>
-            <input className="grow" style={{ background: 'transparent', fontSize: 13 }}
-              placeholder="Buscar contatos..." value={search} onChange={e => setSearch(e.target.value)}/>
-          </div>
-          <div className="col gap-2">
-            <div className="row gap-1" style={{ flexWrap: 'wrap' }}>
-              {['todos', ...Object.keys(CRM_STATUS)].map(s => (
-                <button key={s} onClick={() => setSt(s)}
-                  style={{
-                    fontSize: 12, padding: '8px 14px', borderRadius: 15,
-                    border: '1px solid',
-                    background: st === s ? 'var(--pink-tint)' : 'var(--white)',
-                    borderColor: st === s ? 'var(--pink-soft)' : 'var(--gray-light)',
-                    color: st === s ? 'var(--pink-deep)' : 'var(--ink-soft)',
-                    cursor: 'pointer', fontWeight: st === s ? 600 : 500,
-                    fontFamily: 'var(--font-body)',
-                  }}>
-                  {s === 'todos' ? 'Todos os status' : CRM_STATUS[s].label}
-                </button>
-              ))}
-            </div>
-            <div className="row gap-1" style={{ flexWrap: 'wrap' }}>
-              <button onClick={() => setCat('todos')}
+        {/* Tabs */}
+        <div>
+          <div className="row" style={{ borderBottom: '1px solid var(--gray-light)', gap: 4 }}>
+            {CRM_TABS.map(t => (
+              <button key={t.id} onClick={() => setActiveTab(t.id)}
                 style={{
-                  fontSize: 12, padding: '6px 12px', borderRadius: 15, border: '1px solid',
-                  background: cat === 'todos' ? 'var(--bg-elevated)' : 'var(--white)',
-                  borderColor: cat === 'todos' ? 'var(--border)' : 'var(--gray-light)',
-                  color: cat === 'todos' ? 'var(--ink)' : 'var(--ink-soft)',
-                  cursor: 'pointer', fontWeight: cat === 'todos' ? 600 : 400,
-                  fontFamily: 'var(--font-body)',
+                  padding: '14px 18px',
+                  background: 'transparent', border: 'none',
+                  color: activeTab === t.id ? 'var(--pink-deep)' : 'var(--gray)',
+                  fontWeight: activeTab === t.id ? 600 : 500,
+                  fontSize: 13.5, fontFamily: 'var(--font-body)',
+                  cursor: 'pointer',
+                  borderBottom: activeTab === t.id ? '2px solid var(--pink)' : '2px solid transparent',
+                  marginBottom: -1, whiteSpace: 'nowrap',
                 }}>
-                Todas categorias
+                {t.label}
+                <span style={{
+                  marginLeft: 8, fontSize: 11, fontWeight: 600,
+                  padding: '2px 7px', borderRadius: 999,
+                  background: activeTab === t.id ? 'var(--pink-soft)' : 'var(--gray-light)',
+                  color: activeTab === t.id ? 'var(--pink-deep)' : 'var(--gray)',
+                }}>{tabCounts[t.id]}</span>
               </button>
-              {Object.entries(window.CRM_CATEGORIES).map(([k, cfg]) => (
-                <button key={k} onClick={() => setCat(k)}
-                  style={{
-                    fontSize: 12, padding: '6px 12px', borderRadius: 15, border: '1px solid',
-                    background: cat === k ? `color-mix(in oklch, ${cfg.color} 14%, var(--white))` : 'var(--white)',
-                    borderColor: cat === k ? cfg.color : 'var(--gray-light)',
-                    color: cat === k ? cfg.color : 'var(--ink-soft)',
-                    cursor: 'pointer', fontWeight: cat === k ? 600 : 400,
-                    fontFamily: 'var(--font-body)',
-                  }}>
-                  {cfg.label}
-                </button>
-              ))}
-            </div>
+            ))}
           </div>
-        </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 'var(--s-3)' }}>
-          {filtered.map(c => {
-            const stCfg = CRM_STATUS[c.status];
-            const tCfg = CRM_TYPES[c.tipo];
-            return (
-              <Card key={c.id} hoverable>
-                <CardBody className="col gap-3">
-                  <div className="row between" style={{ alignItems: 'flex-start' }}>
-                    <div className="row gap-3">
-                      <span style={{ fontSize: 20 }}>{tCfg.emoji}</span>
-                      <div>
-                        <p style={{ fontSize: 15, fontWeight: 600, fontFamily: 'var(--font-title)', letterSpacing: '-0.01em' }}>{c.nome}</p>
-                        <p className="tiny muted" style={{ marginTop: 2 }}>{tCfg.label} · {c.plataforma && window.PLATFORM_LABELS[c.plataforma]}</p>
+          <div style={{ paddingTop: 'var(--s-5)' }}>
+            {filtered.length === 0 ? (
+              <Empty icon="users" text={search ? 'Nenhum contato encontrado para esta busca.' : 'Nenhum contato nesta categoria ainda.'}/>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 'var(--s-3)' }}>
+                {filtered.map(c => (
+                  <Card key={c.id} hoverable>
+                    <CardBody className="col gap-3">
+                      <div className="row between" style={{ alignItems: 'flex-start' }}>
+                        <div>
+                          <p style={{ fontSize: 15, fontWeight: 600, fontFamily: 'var(--font-title)', letterSpacing: '-0.01em' }}>{c.nome}</p>
+                          {c.empresa && <p className="tiny muted" style={{ marginTop: 2 }}>{c.empresa}</p>}
+                        </div>
+                        <CRMStatusBadge status={c.status}/>
                       </div>
-                    </div>
-                    <Badge variant={stCfg.variant}>{stCfg.label}</Badge>
-                  </div>
 
-                  {c.proposta && <p className="small secondary" style={{ lineHeight: 1.55 }}>{c.proposta}</p>}
-                  {c.valor && <p style={{ fontFamily: 'var(--font-title)', fontWeight: 600, fontSize: 18, color: '#7FB68C' }}>R$ {c.valor.toLocaleString('pt-BR')}</p>}
+                      {c.nota && (
+                        <p className="small" style={{ color: 'var(--ink-soft)', lineHeight: 1.55, fontStyle: 'italic' }}>
+                          {c.nota.length > 120 ? c.nota.slice(0, 120) + '…' : c.nota}
+                        </p>
+                      )}
 
-                  {c.proxima && (
-                    <div className="row gap-2" style={{
-                      padding: '10px 14px',
-                      background: 'var(--offwhite)', border: '1px solid var(--gray-light)',
-                      borderRadius: 15,
-                    }}>
-                      <Icon name="msg" size={12} color="var(--gray)" style={{ flexShrink: 0 }}/>
-                      <span style={{ fontSize: 12.5 }}>{c.proxima}</span>
-                      {c.followup && <span className="tiny muted" style={{ marginLeft: 'auto' }}>{c.followup}</span>}
-                    </div>
-                  )}
-
-                  {c.notas && <p className="tiny muted" style={{ fontStyle: 'italic' }}>{c.notas}</p>}
-
-                  <div className="row gap-2" style={{ flexWrap: 'wrap' }}>
-                    {c.status === 'potencial'  && <Button size="sm" variant="secondary" onClick={() => setStatus(c.id, 'em_contato')}>Entrar em contato</Button>}
-                    {c.status === 'em_contato' && <Button size="sm" variant="secondary" onClick={() => setStatus(c.id, 'negociando')}>Iniciar negociação</Button>}
-                    {c.status === 'negociando' && <Button size="sm" variant="primary" onClick={() => setStatus(c.id, 'fechado')}>Fechar ✓</Button>}
-                  </div>
-                </CardBody>
-              </Card>
-            );
-          })}
+                      <div className="row gap-2" style={{ flexWrap: 'wrap', marginTop: 'var(--s-1)' }}>
+                        <Button size="sm" variant="secondary" onClick={() => openEdit(c)}>Editar</Button>
+                        {c.phone && (
+                          <a href={`https://wa.me/55${c.phone.replace(/\D/g,'')}`} target="_blank" rel="noopener noreferrer"
+                            style={{ textDecoration: 'none' }}>
+                            <Button size="sm" variant="ghost">
+                              <Icon name="msg" size={12}/> WhatsApp
+                            </Button>
+                          </a>
+                        )}
+                      </div>
+                    </CardBody>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

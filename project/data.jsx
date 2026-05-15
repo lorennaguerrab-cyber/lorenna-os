@@ -26,10 +26,10 @@ const NAV = [
   { href: '/agenda',       icon: 'calendar', label: 'Agenda'            },
   { href: '/monetizacao',  icon: 'tag',      label: 'Monetização'       },
   { href: '/financeiro',   icon: 'coin',     label: 'Financeiro'        },
+  { href: '/materiais',    icon: 'archive',  label: 'Materiais'         },
+  { href: '/precificacao', icon: 'tag',      label: 'Precificação'      },
   { href: '/sobre',        icon: 'flower',   label: 'Sobre'             },
-  { href: '/impressos',    icon: 'print',    label: 'Impressos Úteis'   },
   { href: '/deploy',       icon: 'cog',      label: 'Como Pôr no Ar'   },
-  { href: '/integracoes',  icon: 'link',     label: 'Integrações'       },
 ];
 
 const CATEGORY_LABELS = {

@@ -1,7 +1,7 @@
 /* ──────────────────────────────────────────────
    pages-extras.jsx
    AgendaPage · FinanceiroPage · SobrePage
-   MonetizacaoPage · ImpressosPage
+   MonetizacaoPage
    ────────────────────────────────────────────── */
 
 const { useState, useEffect, useRef } = React;
@@ -11,19 +11,35 @@ const { useState, useEffect, useRef } = React;
    ═══════════════════════════════════════════════ */
 
 const AGENDA_EVENTS = [
-  { id: 1,  dia: 0, data: '19/05', hora: '08:20', titulo: 'Futebol Mateus e Murilo', tipo: 'filho',    recorrente: true  },
-  { id: 2,  dia: 0, data: '19/05', hora: '14:00', titulo: 'Reunião cliente (Espaço Criar)', tipo: 'cliente',  recorrente: false },
-  { id: 3,  dia: 1, data: '20/05', hora: '09:00', titulo: 'Gravação conteúdo @lorennagn — reel bastidores', tipo: 'gravacao', recorrente: false },
-  { id: 4,  dia: 1, data: '20/05', hora: null,    titulo: 'Ótica — visita Sabrina Sachez (influencer)', tipo: 'cliente',  recorrente: false },
-  { id: 5,  dia: 2, data: '21/05', hora: '08:20', titulo: 'Futebol Mateus e Murilo', tipo: 'filho',    recorrente: true  },
-  { id: 6,  dia: 2, data: '21/05', hora: null,    titulo: 'Ótica — visita Waltencir (influencer)', tipo: 'cliente',  recorrente: false },
-  { id: 7,  dia: 2, data: '21/05', hora: '10:00', titulo: 'Entrega posts Pratique (semana)', tipo: 'conteudo', recorrente: false },
-  { id: 8,  dia: 3, data: '22/05', hora: null,    titulo: 'Ótica — visita Thais Lage (influencer)', tipo: 'cliente',  recorrente: false },
-  { id: 9,  dia: 3, data: '22/05', hora: '15:00', titulo: 'Gravação vídeo Jornal Cidades Minerais', tipo: 'gravacao', recorrente: false },
-  { id: 10, dia: 4, data: '23/05', hora: '08:20', titulo: 'Futebol Mateus e Murilo', tipo: 'filho',    recorrente: true  },
-  { id: 11, dia: 4, data: '23/05', hora: '16:00', titulo: 'Planejamento semana editorial', tipo: 'admin',    recorrente: false },
-  { id: 12, dia: 5, data: '24/05', hora: null,    titulo: 'Família — tempo com os meninos', tipo: 'filho',    recorrente: false },
-  { id: 13, dia: 6, data: '25/05', hora: null,    titulo: 'Revisão semana e planejamento próxima', tipo: 'admin',    recorrente: false },
+  // Week of 19–25 May
+  { id: 1,  date: '2026-05-19', hora: '08:20', titulo: 'Futebol Mateus e Murilo', tipo: 'filho',    recorrente: true  },
+  { id: 2,  date: '2026-05-19', hora: '14:00', titulo: 'Reunião cliente (Espaço Criar)', tipo: 'cliente',  recorrente: false },
+  { id: 3,  date: '2026-05-20', hora: '09:00', titulo: 'Gravação conteúdo @lorennagn — reel bastidores', tipo: 'gravacao', recorrente: false },
+  { id: 4,  date: '2026-05-20', hora: null,    titulo: 'Ótica — visita Sabrina Sachez (influencer)', tipo: 'cliente',  recorrente: false },
+  { id: 5,  date: '2026-05-21', hora: '08:20', titulo: 'Futebol Mateus e Murilo', tipo: 'filho',    recorrente: true  },
+  { id: 6,  date: '2026-05-21', hora: null,    titulo: 'Ótica — visita Waltencir (influencer)', tipo: 'cliente',  recorrente: false },
+  { id: 7,  date: '2026-05-21', hora: '10:00', titulo: 'Entrega posts Pratique (semana)', tipo: 'conteudo', recorrente: false },
+  { id: 8,  date: '2026-05-22', hora: null,    titulo: 'Ótica — visita Thais Lage (influencer)', tipo: 'cliente',  recorrente: false },
+  { id: 9,  date: '2026-05-22', hora: '15:00', titulo: 'Gravação vídeo Jornal Cidades Minerais', tipo: 'gravacao', recorrente: false },
+  { id: 10, date: '2026-05-23', hora: '08:20', titulo: 'Futebol Mateus e Murilo', tipo: 'filho',    recorrente: true  },
+  { id: 11, date: '2026-05-23', hora: '16:00', titulo: 'Planejamento semana editorial', tipo: 'admin',    recorrente: false },
+  { id: 12, date: '2026-05-24', hora: null,    titulo: 'Família — tempo com os meninos', tipo: 'filho',    recorrente: false },
+  { id: 13, date: '2026-05-25', hora: null,    titulo: 'Revisão semana e planejamento próxima', tipo: 'admin',    recorrente: false },
+  // Additional May 2026 events for monthly view
+  { id: 14, date: '2026-05-01', hora: '09:00', titulo: 'Reunião início do mês — Logue', tipo: 'admin',    recorrente: false },
+  { id: 15, date: '2026-05-05', hora: '14:00', titulo: 'Entrega posts Espaço Criar', tipo: 'conteudo', recorrente: false },
+  { id: 16, date: '2026-05-06', hora: '08:20', titulo: 'Futebol Mateus e Murilo', tipo: 'filho',    recorrente: true  },
+  { id: 17, date: '2026-05-07', hora: '11:00', titulo: 'Gravação reel Papel da Lola', tipo: 'gravacao', recorrente: false },
+  { id: 18, date: '2026-05-08', hora: '09:00', titulo: 'Atendimento cliente Pratique', tipo: 'cliente',  recorrente: false },
+  { id: 19, date: '2026-05-12', hora: '08:20', titulo: 'Futebol Mateus e Murilo', tipo: 'filho',    recorrente: true  },
+  { id: 20, date: '2026-05-13', hora: '10:00', titulo: 'Entrega posts Ótica Igor Giordano', tipo: 'conteudo', recorrente: false },
+  { id: 21, date: '2026-05-14', hora: '15:00', titulo: 'Sessão de terapia', tipo: 'admin',    recorrente: false },
+  { id: 22, date: '2026-05-15', hora: '14:00', titulo: 'Reunião Jornal Cidades Minerais', tipo: 'cliente',  recorrente: false },
+  { id: 23, date: '2026-05-26', hora: '08:20', titulo: 'Futebol Mateus e Murilo', tipo: 'filho',    recorrente: true  },
+  { id: 24, date: '2026-05-27', hora: '10:00', titulo: 'Gravação conteúdo UGC', tipo: 'gravacao', recorrente: false },
+  { id: 25, date: '2026-05-28', hora: '14:00', titulo: 'Entrega relatório clientes', tipo: 'admin',    recorrente: false },
+  { id: 26, date: '2026-05-29', hora: '09:00', titulo: 'Reunião planejamento junho', tipo: 'admin',    recorrente: false },
+  { id: 27, date: '2026-05-30', hora: '08:20', titulo: 'Futebol Mateus e Murilo', tipo: 'filho',    recorrente: true  },
 ];
 
 const AGENDA_TYPE_COLORS = {
@@ -33,18 +49,6 @@ const AGENDA_TYPE_COLORS = {
   gravacao: { bg: '#F2E8FF', border: '#D5BFEF', text: '#7A3DB5', dot: '#9E62D8' },
   admin:    { bg: '#FFF3E3', border: '#FDDBB0', text: '#B5720A', dot: '#E89B4C' },
 };
-
-const AGENDA_DAYS = [
-  { short: 'Seg', full: 'Segunda' },
-  { short: 'Ter', full: 'Terça'   },
-  { short: 'Qua', full: 'Quarta'  },
-  { short: 'Qui', full: 'Quinta'  },
-  { short: 'Sex', full: 'Sexta'   },
-  { short: 'Sab', full: 'Sábado'  },
-  { short: 'Dom', full: 'Domingo' },
-];
-
-const AGENDA_DATES = ['19/05', '20/05', '21/05', '22/05', '23/05', '24/05', '25/05'];
 
 function AgendaEventCard({ ev }) {
   const cfg = AGENDA_TYPE_COLORS[ev.tipo] || AGENDA_TYPE_COLORS.admin;
@@ -91,58 +95,77 @@ function AgendaEventCard({ ev }) {
 }
 
 function AgendaPage() {
-  const today = new Date();
-  const todayStr = today.toLocaleDateString('pt-BR').slice(0, 5);
+  const [currentView, setCurrentView] = useState('semana');
+  const [currentDate, setCurrentDate] = useState(new Date(2026, 4, 19)); // May 19, 2026
+  const [selectedDay, setSelectedDay] = useState(null);
 
-  const totalEvents = AGENDA_EVENTS.length;
-  const tipos = [...new Set(AGENDA_EVENTS.map(e => e.tipo))];
+  const todayStr = '2026-05-15'; // today per env
 
-  return (
-    <div className="content">
-      <div className="col gap-5 fade-up">
-        <PageHeader
-          title="Agenda"
-          subtitle={`Semana de 19 a 25 de maio · ${totalEvents} compromissos`}
-          action={
-            <Button
-              variant="ghost"
-              onClick={() => showToast('Em breve · integração Google Calendar')}
-            >
-              <Icon name="calendar" size={14} color="var(--pink-deep)" />
-              Integrar com Google Agenda
-            </Button>
-          }
-        />
+  // ── helpers ──────────────────────────────────
+  function isoDate(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
 
-        {/* Legenda de tipos */}
-        <div className="row gap-3" style={{ flexWrap: 'wrap' }}>
-          {Object.entries(AGENDA_TYPE_COLORS).map(([tipo, cfg]) => (
-            <div key={tipo} className="row gap-2" style={{
-              padding: '4px 12px',
-              borderRadius: 'var(--r-pill)',
-              background: cfg.bg,
-              border: `1px solid ${cfg.border}`,
-            }}>
-              <div style={{ width: 7, height: 7, borderRadius: 999, background: cfg.dot, flexShrink: 0 }} />
-              <span style={{ fontSize: 11.5, color: cfg.text, fontWeight: 500, textTransform: 'capitalize' }}>
-                {tipo === 'filho' ? 'Filhos' : tipo === 'gravacao' ? 'Gravação' : tipo.charAt(0).toUpperCase() + tipo.slice(1)}
-              </span>
-            </div>
-          ))}
+  function eventsForDate(dateStr) {
+    return AGENDA_EVENTS.filter(e => e.date === dateStr);
+  }
+
+  // ── navigation ───────────────────────────────
+  function navigate(dir) {
+    const d = new Date(currentDate);
+    if (currentView === 'semana') d.setDate(d.getDate() + dir * 7);
+    if (currentView === 'mes')    { d.setDate(1); d.setMonth(d.getMonth() + dir); }
+    if (currentView === 'dia')    d.setDate(d.getDate() + dir);
+    setCurrentDate(d);
+  }
+
+  function switchToDay(dateStr) {
+    const [y, m, day] = dateStr.split('-').map(Number);
+    setCurrentDate(new Date(y, m - 1, day));
+    setSelectedDay(dateStr);
+    setCurrentView('dia');
+  }
+
+  // ── WEEK VIEW ─────────────────────────────────
+  function getWeekDays() {
+    // Find Monday of the week
+    const d = new Date(currentDate);
+    const dow = d.getDay(); // 0=Sun
+    const diff = dow === 0 ? -6 : 1 - dow;
+    d.setDate(d.getDate() + diff);
+    return Array.from({ length: 7 }, (_, i) => {
+      const dd = new Date(d);
+      dd.setDate(d.getDate() + i);
+      return dd;
+    });
+  }
+
+  const WEEK_NAMES = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+
+  function WeekView() {
+    const days = getWeekDays();
+    const startStr = days[0].toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+    const endStr   = days[6].toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+
+    return (
+      <div className="col gap-4">
+        <div style={{ fontSize: 13, color: 'var(--gray)', fontWeight: 500 }}>
+          Semana de {startStr} a {endStr}
         </div>
-
-        {/* Grid semanal */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(7, 1fr)',
           gap: 'var(--s-3)',
           alignItems: 'start',
         }}>
-          {AGENDA_DAYS.map((day, i) => {
-            const events = AGENDA_EVENTS.filter(e => e.dia === i);
-            const isToday = AGENDA_DATES[i] === todayStr;
+          {days.map((day, i) => {
+            const ds = isoDate(day);
+            const events = eventsForDate(ds);
+            const isToday = ds === todayStr;
             const isWeekend = i >= 5;
-
             return (
               <div key={i} style={{
                 borderRadius: 'var(--r-lg)',
@@ -150,56 +173,28 @@ function AgendaPage() {
                 border: `1px solid ${isToday ? 'var(--pink-soft)' : 'var(--gray-light)'}`,
                 overflow: 'hidden',
                 minHeight: 120,
-              }}>
-                {/* Day header */}
+                cursor: 'pointer',
+              }} onClick={() => switchToDay(ds)}>
                 <div style={{
                   padding: '10px 12px 8px',
                   borderBottom: `1px solid ${isToday ? 'var(--pink-soft)' : 'var(--gray-light)'}`,
                   background: isToday ? 'var(--pink-tint)' : 'transparent',
                 }}>
-                  <div style={{
-                    fontSize: 10.5,
-                    fontFamily: 'var(--font-body)',
-                    fontWeight: 600,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.08em',
-                    color: isToday ? 'var(--pink-deep)' : 'var(--gray)',
-                    marginBottom: 2,
-                  }}>
-                    {day.short}
+                  <div style={{ fontSize: 10.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: isToday ? 'var(--pink-deep)' : 'var(--gray)', marginBottom: 2 }}>
+                    {WEEK_NAMES[i]}
                   </div>
-                  <div style={{
-                    fontFamily: 'var(--font-title)',
-                    fontSize: 18,
-                    fontWeight: 700,
-                    color: isToday ? 'var(--pink-deep)' : 'var(--ink)',
-                    lineHeight: 1,
-                  }}>
-                    {AGENDA_DATES[i].slice(0, 2)}
+                  <div style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 700, color: isToday ? 'var(--pink-deep)' : 'var(--ink)', lineHeight: 1 }}>
+                    {day.getDate()}
                   </div>
                   {events.length > 0 && (
-                    <div style={{
-                      fontSize: 10,
-                      color: isToday ? 'var(--pink-deep)' : 'var(--gray)',
-                      marginTop: 3,
-                      opacity: 0.8,
-                    }}>
+                    <div style={{ fontSize: 10, color: isToday ? 'var(--pink-deep)' : 'var(--gray)', marginTop: 3, opacity: 0.8 }}>
                       {events.length} {events.length === 1 ? 'item' : 'itens'}
                     </div>
                   )}
                 </div>
-
-                {/* Events */}
                 <div style={{ padding: '10px 10px 8px' }}>
                   {events.length === 0 ? (
-                    <div style={{
-                      fontSize: 11,
-                      color: 'var(--gray)',
-                      fontStyle: 'italic',
-                      textAlign: 'center',
-                      padding: '12px 0',
-                      opacity: 0.6,
-                    }}>
+                    <div style={{ fontSize: 11, color: 'var(--gray)', fontStyle: 'italic', textAlign: 'center', padding: '12px 0', opacity: 0.6 }}>
                       Livre
                     </div>
                   ) : (
@@ -217,28 +212,263 @@ function AgendaPage() {
             );
           })}
         </div>
+      </div>
+    );
+  }
 
-        {/* Nav e botão Google Agenda */}
-        <div className="row between" style={{ paddingTop: 'var(--s-2)' }}>
-          <div className="row gap-2">
-            <Button variant="ghost" size="sm" onClick={() => showToast('Semana anterior')}>
+  // ── MONTH VIEW ────────────────────────────────
+  function MonthView() {
+    const year  = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay  = new Date(year, month + 1, 0);
+    // Monday-based week: 0=Mon…6=Sun
+    const startDow = (firstDay.getDay() + 6) % 7;
+    const totalCells = Math.ceil((startDow + lastDay.getDate()) / 7) * 7;
+
+    const monthName = firstDay.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+
+    const cells = [];
+    for (let i = 0; i < totalCells; i++) {
+      const dayNum = i - startDow + 1;
+      if (dayNum < 1 || dayNum > lastDay.getDate()) {
+        cells.push(null);
+      } else {
+        cells.push(new Date(year, month, dayNum));
+      }
+    }
+
+    return (
+      <div className="col gap-3">
+        <div style={{ fontSize: 14, color: 'var(--ink)', fontWeight: 600, textTransform: 'capitalize' }}>
+          {monthName}
+        </div>
+        {/* Headers */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+          {['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'].map(d => (
+            <div key={d} style={{ textAlign: 'center', fontSize: 10.5, fontWeight: 700, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 0' }}>
+              {d}
+            </div>
+          ))}
+        </div>
+        {/* Days grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+          {cells.map((day, i) => {
+            if (!day) return <div key={i} style={{ minHeight: 64 }} />;
+            const ds = isoDate(day);
+            const events = eventsForDate(ds);
+            const isToday = ds === todayStr;
+            const isWeekend = i % 7 >= 5;
+            return (
+              <div
+                key={i}
+                onClick={() => switchToDay(ds)}
+                style={{
+                  minHeight: 64,
+                  borderRadius: 'var(--r-md)',
+                  border: `1px solid ${isToday ? 'var(--pink)' : 'var(--gray-light)'}`,
+                  background: isToday ? 'var(--pink-tint)' : isWeekend ? 'var(--offwhite)' : 'var(--white)',
+                  padding: '6px 8px',
+                  cursor: 'pointer',
+                  transition: 'border-color 0.15s',
+                }}
+                onMouseEnter={e => { if (!isToday) e.currentTarget.style.borderColor = 'var(--pink-soft)'; }}
+                onMouseLeave={e => { if (!isToday) e.currentTarget.style.borderColor = 'var(--gray-light)'; }}
+              >
+                <div style={{
+                  fontFamily: 'var(--font-title)',
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: isToday ? 'var(--pink-deep)' : 'var(--ink)',
+                  marginBottom: 4,
+                }}>
+                  {day.getDate()}
+                </div>
+                <div className="col gap-1">
+                  {events.slice(0, 3).map(ev => {
+                    const cfg = AGENDA_TYPE_COLORS[ev.tipo] || AGENDA_TYPE_COLORS.admin;
+                    return (
+                      <div key={ev.id} style={{
+                        height: 6, borderRadius: 3,
+                        background: cfg.dot,
+                        title: ev.titulo,
+                      }} />
+                    );
+                  })}
+                  {events.length > 3 && (
+                    <div style={{ fontSize: 9, color: 'var(--gray)', fontWeight: 600 }}>+{events.length - 3}</div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // ── DAY VIEW ──────────────────────────────────
+  function DayView() {
+    const ds = isoDate(currentDate);
+    const events = eventsForDate(ds).sort((a, b) => {
+      if (!a.hora && !b.hora) return 0;
+      if (!a.hora) return 1;
+      if (!b.hora) return -1;
+      return a.hora.localeCompare(b.hora);
+    });
+    const dayLabel = currentDate.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+    const HOURS = Array.from({ length: 16 }, (_, i) => i + 7); // 07–22
+
+    return (
+      <div className="col gap-3">
+        <div style={{ fontSize: 14, color: 'var(--ink)', fontWeight: 600, textTransform: 'capitalize' }}>
+          {dayLabel}
+        </div>
+        {events.length === 0 && (
+          <div style={{ padding: 'var(--s-5)', textAlign: 'center', color: 'var(--gray)', fontSize: 13, fontStyle: 'italic' }}>
+            Sem compromissos
+          </div>
+        )}
+        {/* All-day events (no hora) */}
+        {events.filter(e => !e.hora).length > 0 && (
+          <div className="col gap-2" style={{ marginBottom: 4 }}>
+            <div style={{ fontSize: 10.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray)' }}>Dia todo</div>
+            {events.filter(e => !e.hora).map(ev => <AgendaEventCard key={ev.id} ev={ev} />)}
+          </div>
+        )}
+        {/* Time slots */}
+        <div className="col gap-0" style={{ border: '1px solid var(--gray-light)', borderRadius: 'var(--r-lg)', overflow: 'hidden' }}>
+          {HOURS.map(h => {
+            const hourStr = String(h).padStart(2, '0') + ':00';
+            const hourEvs = events.filter(e => e.hora && parseInt(e.hora) === h);
+            return (
+              <div key={h} style={{
+                display: 'grid',
+                gridTemplateColumns: '52px 1fr',
+                borderBottom: '1px solid var(--gray-light)',
+                minHeight: 48,
+                background: hourEvs.length > 0 ? 'var(--offwhite-2)' : 'var(--white)',
+              }}>
+                <div style={{
+                  padding: '10px 8px 0',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: 'var(--gray)',
+                  borderRight: '1px solid var(--gray-light)',
+                  fontFamily: 'var(--font-title)',
+                }}>
+                  {hourStr}
+                </div>
+                <div style={{ padding: '6px 10px' }}>
+                  {hourEvs.map(ev => <AgendaEventCard key={ev.id} ev={ev} />)}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // ── label for header ──────────────────────────
+  function navLabel() {
+    if (currentView === 'mes') {
+      return currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    }
+    if (currentView === 'semana') {
+      const days = getWeekDays();
+      return `${days[0].getDate()}/${days[0].getMonth()+1} – ${days[6].getDate()}/${days[6].getMonth()+1}`;
+    }
+    return currentDate.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
+  }
+
+  const totalEvents = AGENDA_EVENTS.length;
+
+  return (
+    <div className="content">
+      <div className="col gap-5 fade-up">
+        <PageHeader
+          title="Agenda"
+          subtitle={`${totalEvents} compromissos em maio · clique num dia para ver detalhes`}
+          action={
+            <Button
+              variant="ghost"
+              onClick={() => showToast('Em breve · integração Google Calendar')}
+            >
+              <Icon name="calendar" size={14} color="var(--pink-deep)" />
+              Integrar com Google Agenda
+            </Button>
+          }
+        />
+
+        {/* View toggle + nav */}
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 8 }}>
+          {/* View selector */}
+          <div className="row gap-1" style={{
+            background: 'var(--offwhite)',
+            border: '1px solid var(--gray-light)',
+            borderRadius: 'var(--r-md)',
+            padding: 4,
+          }}>
+            {[['mes', 'Mês'], ['semana', 'Semana'], ['dia', 'Dia']].map(([v, label]) => (
+              <button
+                key={v}
+                onClick={() => setCurrentView(v)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: 'var(--r-md)',
+                  background: currentView === v ? 'var(--white)' : 'transparent',
+                  border: currentView === v ? '1px solid var(--gray-light)' : '1px solid transparent',
+                  color: currentView === v ? 'var(--pink-deep)' : 'var(--gray)',
+                  fontFamily: 'var(--font-body)',
+                  fontWeight: currentView === v ? 600 : 400,
+                  fontSize: 13,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s var(--easing)',
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* Navigation */}
+          <div className="row gap-2" style={{ alignItems: 'center' }}>
+            <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
               <Icon name="chev-left" size={14} />
               Anterior
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => showToast('Próxima semana')}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)', minWidth: 120, textAlign: 'center', textTransform: 'capitalize' }}>
+              {navLabel()}
+            </span>
+            <Button variant="ghost" size="sm" onClick={() => navigate(1)}>
               Próxima
               <Icon name="chev-right" size={14} />
             </Button>
           </div>
-          <Button
-            variant="ghost"
-            onClick={() => showToast('Em breve · integração Google Calendar')}
-            style={{ color: 'var(--pink-deep)', borderColor: 'var(--pink-soft)' }}
-          >
-            <Icon name="calendar" size={14} color="var(--pink-deep)" />
-            Sincronizar Google Agenda
-          </Button>
         </div>
+
+        {/* Legenda */}
+        <div className="row gap-3" style={{ flexWrap: 'wrap' }}>
+          {Object.entries(AGENDA_TYPE_COLORS).map(([tipo, cfg]) => (
+            <div key={tipo} className="row gap-2" style={{
+              padding: '4px 12px',
+              borderRadius: 'var(--r-pill)',
+              background: cfg.bg,
+              border: `1px solid ${cfg.border}`,
+            }}>
+              <div style={{ width: 7, height: 7, borderRadius: 999, background: cfg.dot, flexShrink: 0 }} />
+              <span style={{ fontSize: 11.5, color: cfg.text, fontWeight: 500, textTransform: 'capitalize' }}>
+                {tipo === 'filho' ? 'Filhos' : tipo === 'gravacao' ? 'Gravação' : tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* View content */}
+        {currentView === 'semana' && <WeekView />}
+        {currentView === 'mes'    && <MonthView />}
+        {currentView === 'dia'    && <DayView />}
       </div>
     </div>
   );
@@ -249,110 +479,62 @@ function AgendaPage() {
    2. FINANCEIRO PAGE
    ═══════════════════════════════════════════════ */
 
-const FINANCEIRO_DATA = {
-  entradas: [
-    { id: 1, nome: 'Ótica Igor Giordano',     valor: 1200, status: 'pago',     dia: 10, tipo: 'cliente' },
-    { id: 2, nome: 'Pratique',                valor: 1200, status: 'pago',     dia: 11, tipo: 'cliente' },
-    { id: 3, nome: 'Jornal Cidades Minerais', valor: 1000, status: 'atrasado', dia: 15, tipo: 'cliente' },
-    { id: 4, nome: 'Espaço Criar',            valor:  600, status: 'pendente', dia:  5, tipo: 'cliente' },
-    { id: 5, nome: 'Pensão (recebida)',        valor:  750, status: 'pago',     dia: 10, tipo: 'pensao'  },
-  ],
-  saidas: [
-    { id: 6, nome: 'Aluguel',           valor: 1250, status: 'pago', dia:  1, tipo: 'fixo'       },
-    { id: 7, nome: 'Futebol meninos',   valor:  220, status: 'pago', dia:  5, tipo: 'fixo'       },
-    { id: 8, nome: 'Claude AI',         valor:  119, status: 'pago', dia: 15, tipo: 'ferramenta' },
-  ],
-};
-
 const STATUS_FIN = {
   pago:     { label: 'Pago',     bg: '#E8F5ED', text: '#3A8C50', border: '#C3DEC9' },
   pendente: { label: 'Pendente', bg: '#FFF8E3', text: '#B5720A', border: '#FDDBB0' },
   atrasado: { label: 'Atrasado', bg: '#FFE9E9', text: '#C0392B', border: '#F5C0BE' },
 };
 
+const STATUS_CYCLE = ['pago', 'pendente', 'atrasado'];
+
 function fmt(val) {
   return val.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
 }
 
-function StatusBadge({ status }) {
-  const cfg = STATUS_FIN[status] || STATUS_FIN.pendente;
-  return (
-    <span style={{
-      display: 'inline-block',
-      padding: '2px 9px',
-      borderRadius: 'var(--r-pill)',
-      background: cfg.bg,
-      border: `1px solid ${cfg.border}`,
-      color: cfg.text,
-      fontSize: 11,
-      fontWeight: 600,
-      fontFamily: 'var(--font-body)',
-    }}>
-      {cfg.label}
-    </span>
-  );
-}
+function PieChart({ data, title }) {
+  const total = data.reduce((s, d) => s + d.valor, 0);
+  if (total === 0) return null;
+  let angle = -Math.PI / 2;
+  const cx = 70, cy = 70, r = 55, innerR = 30;
 
-function FinRowItem({ item, isEntrada }) {
-  return (
-    <div className="row between" style={{
-      padding: '11px 14px',
-      background: 'var(--offwhite-2)',
-      border: '1px solid var(--gray-light)',
-      borderRadius: 'var(--r-md)',
-      alignItems: 'center',
-      gap: 12,
-    }}>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', marginBottom: 2 }}>
-          {item.nome}
-        </div>
-        <div style={{ fontSize: 11, color: 'var(--gray)' }}>
-          Dia {item.dia}
-          {item.tipo === 'pensao' && (
-            <span style={{ marginLeft: 6, color: 'var(--pink-deep)', fontStyle: 'italic' }}>
-              · não paga pela outra parte
-            </span>
-          )}
-        </div>
-      </div>
-      <StatusBadge status={item.status} />
-      <div style={{
-        fontFamily: 'var(--font-title)',
-        fontWeight: 700,
-        fontSize: 15,
-        color: isEntrada ? '#3A8C50' : 'var(--ink)',
-        flexShrink: 0,
-        minWidth: 80,
-        textAlign: 'right',
-      }}>
-        {isEntrada ? '+' : '−'} R$ {fmt(item.valor)}
-      </div>
-    </div>
-  );
-}
+  const slices = data.map(d => {
+    const slice_angle = (d.valor / total) * 2 * Math.PI;
+    const x1 = cx + r * Math.cos(angle);
+    const y1 = cy + r * Math.sin(angle);
+    const x2 = cx + r * Math.cos(angle + slice_angle);
+    const y2 = cy + r * Math.sin(angle + slice_angle);
+    const ix1 = cx + innerR * Math.cos(angle);
+    const iy1 = cy + innerR * Math.sin(angle);
+    const ix2 = cx + innerR * Math.cos(angle + slice_angle);
+    const iy2 = cy + innerR * Math.sin(angle + slice_angle);
+    const large = slice_angle > Math.PI ? 1 : 0;
+    const path = `M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} L ${ix2} ${iy2} A ${innerR} ${innerR} 0 ${large} 0 ${ix1} ${iy1} Z`;
+    const result = { ...d, path, color: d.color };
+    angle += slice_angle;
+    return result;
+  });
 
-function ProgressBar({ value, max, color = 'var(--pink)' }) {
-  const pct = Math.min(100, Math.round((value / max) * 100));
   return (
-    <div>
-      <div style={{
-        height: 8,
-        background: 'var(--gray-light)',
-        borderRadius: 'var(--r-pill)',
-        overflow: 'hidden',
-      }}>
-        <div style={{
-          width: `${pct}%`,
-          height: '100%',
-          background: color,
-          borderRadius: 'var(--r-pill)',
-          transition: 'width 0.6s var(--easing)',
-        }} />
-      </div>
-      <div className="row between" style={{ marginTop: 4 }}>
-        <span style={{ fontSize: 11, color: 'var(--gray)' }}>Recebido: R$ {fmt(value)}</span>
-        <span style={{ fontSize: 11, color: 'var(--gray)' }}>{pct}% de R$ {fmt(max)}</span>
+    <div className="col gap-3">
+      <div className="eyebrow">{title}</div>
+      <div className="row gap-4" style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          {slices.map((s, i) => (
+            <path key={i} d={s.path} fill={s.color} />
+          ))}
+          <text x="70" y="74" textAnchor="middle" style={{ fontSize: 11, fontFamily: 'Poppins', fill: '#2B2B2B', fontWeight: 600 }}>
+            R$ {(total / 1000).toFixed(1)}k
+          </text>
+        </svg>
+        <div className="col gap-2">
+          {slices.map((s, i) => (
+            <div key={i} className="row gap-2" style={{ alignItems: 'center' }}>
+              <div style={{ width: 10, height: 10, borderRadius: 3, background: s.color, flexShrink: 0 }} />
+              <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{s.nome}</span>
+              <span style={{ fontSize: 12, fontWeight: 600, marginLeft: 'auto' }}>R$ {s.valor.toLocaleString('pt-BR')}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -388,155 +570,466 @@ function SummaryCard({ label, value, sub, color, highlight }) {
 }
 
 function FinanceiroPage() {
-  const { entradas, saidas } = FINANCEIRO_DATA;
+  const [receitas, setReceitas] = useState([
+    { id: 'r1', nome: 'Ótica Igor Giordano',     valor: 1200, status: 'pago', dia: 10, tipo: 'cliente' },
+    { id: 'r2', nome: 'Pratique',                valor: 1200, status: 'pago', dia: 11, tipo: 'cliente' },
+    { id: 'r3', nome: 'Jornal Cidades Minerais', valor: 1000, status: 'pago', dia: 15, tipo: 'cliente' },
+    { id: 'r4', nome: 'Espaço Criar',            valor:  600, status: 'pago', dia:  5, tipo: 'cliente' },
+    { id: 'r5', nome: 'Pensão',                  valor:  750, status: 'pago', dia:  1, tipo: 'pensao'  },
+  ]);
+  const [despesas, setDespesas] = useState([
+    { id: 'd1', nome: 'Aluguel',         valor: 1200, status: 'pago', dia:  5, categoria: 'fixo'       },
+    { id: 'd2', nome: 'Alimentação',     valor:  800, status: 'pago', dia:  0, categoria: 'alimentacao'},
+    { id: 'd3', nome: 'Escola meninos',  valor:  600, status: 'pago', dia: 10, categoria: 'filhos'     },
+    { id: 'd4', nome: 'Streaming/Apps',  valor:  150, status: 'pago', dia: 15, categoria: 'lazer'      },
+  ]);
 
-  const totalEntradas = entradas.reduce((s, e) => s + e.valor, 0);
-  const totalPago     = entradas.filter(e => e.status === 'pago').reduce((s, e) => s + e.valor, 0);
-  const totalSaidas   = saidas.reduce((s, e) => s + e.valor, 0);
-  const saldo         = totalPago - totalSaidas;
-  const pctPago       = Math.round((totalPago / totalEntradas) * 100);
+  const [showAddReceita, setShowAddReceita] = useState(false);
+  const [showAddDespesa, setShowAddDespesa] = useState(false);
+  const [newReceita, setNewReceita] = useState({ nome: '', valor: '', dia: '' });
+  const [newDespesa, setNewDespesa] = useState({ nome: '', valor: '', dia: '', categoria: 'fixo' });
+
+  // ── status cycling ─────────────────────────────
+  function cycleStatus(list, setList, id) {
+    setList(prev => prev.map(item => {
+      if (item.id !== id) return item;
+      const idx = STATUS_CYCLE.indexOf(item.status);
+      const next = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
+      return { ...item, status: next };
+    }));
+  }
+
+  function togglePensao() {
+    setReceitas(prev => prev.map(r =>
+      r.tipo === 'pensao'
+        ? { ...r, status: r.status === 'pago' ? 'pendente' : 'pago' }
+        : r
+    ));
+  }
+
+  // ── add entries ────────────────────────────────
+  function addReceita() {
+    if (!newReceita.nome || !newReceita.valor) return;
+    const id = 'r' + Date.now();
+    setReceitas(prev => [...prev, {
+      id,
+      nome: newReceita.nome,
+      valor: parseFloat(newReceita.valor),
+      dia: parseInt(newReceita.dia) || 0,
+      status: 'pendente',
+      tipo: 'cliente',
+    }]);
+    setNewReceita({ nome: '', valor: '', dia: '' });
+    setShowAddReceita(false);
+  }
+
+  function addDespesa() {
+    if (!newDespesa.nome || !newDespesa.valor) return;
+    const id = 'd' + Date.now();
+    setDespesas(prev => [...prev, {
+      id,
+      nome: newDespesa.nome,
+      valor: parseFloat(newDespesa.valor),
+      dia: parseInt(newDespesa.dia) || 0,
+      status: 'pendente',
+      categoria: newDespesa.categoria,
+    }]);
+    setNewDespesa({ nome: '', valor: '', dia: '', categoria: 'fixo' });
+    setShowAddDespesa(false);
+  }
+
+  // ── summary calculations ───────────────────────
+  const totalReceitas  = receitas.reduce((s, e) => s + e.valor, 0);
+  const totalRecebido  = receitas.filter(e => e.status === 'pago').reduce((s, e) => s + e.valor, 0);
+  const totalDespesas  = despesas.reduce((s, e) => s + e.valor, 0);
+  const saldo          = totalRecebido - totalDespesas;
+  const pendentes      = [...receitas, ...despesas].filter(e => e.status === 'pendente' || e.status === 'atrasado').length;
+
+  // ── pie chart data ─────────────────────────────
+  const receitasByTipo = Object.entries(
+    receitas.reduce((acc, r) => {
+      acc[r.tipo] = (acc[r.tipo] || 0) + r.valor;
+      return acc;
+    }, {})
+  ).map(([tipo, valor]) => ({
+    nome: tipo === 'cliente' ? 'Clientes' : tipo === 'pensao' ? 'Pensão' : tipo,
+    valor,
+    color: tipo === 'cliente' ? '#FF78B0' : '#A89AC9',
+  }));
+
+  const categoriaColors = {
+    fixo: '#5A6F9C', alimentacao: '#E8A87C', filhos: '#7FB68C',
+    lazer: '#A89AC9', saude: '#E8538D', outros: '#908F8E',
+  };
+  const despesasByCategoria = Object.entries(
+    despesas.reduce((acc, d) => {
+      acc[d.categoria] = (acc[d.categoria] || 0) + d.valor;
+      return acc;
+    }, {})
+  ).map(([cat, valor]) => ({
+    nome: cat.charAt(0).toUpperCase() + cat.slice(1),
+    valor,
+    color: categoriaColors[cat] || '#908F8E',
+  }));
+
+  // ── inline form style helpers ──────────────────
+  const inputStyle = {
+    padding: '7px 10px',
+    borderRadius: 'var(--r-md)',
+    border: '1px solid var(--gray-light)',
+    fontFamily: 'var(--font-body)',
+    fontSize: 13,
+    color: 'var(--ink)',
+    background: 'var(--white)',
+    width: '100%',
+    boxSizing: 'border-box',
+  };
+
+  function StatusBadge({ status, onClick }) {
+    const cfg = STATUS_FIN[status] || STATUS_FIN.pendente;
+    return (
+      <span
+        onClick={onClick}
+        style={{
+          display: 'inline-block',
+          padding: '2px 9px',
+          borderRadius: 'var(--r-pill)',
+          background: cfg.bg,
+          border: `1px solid ${cfg.border}`,
+          color: cfg.text,
+          fontSize: 11,
+          fontWeight: 600,
+          fontFamily: 'var(--font-body)',
+          cursor: onClick ? 'pointer' : 'default',
+          userSelect: 'none',
+          transition: 'opacity 0.15s',
+        }}
+        title={onClick ? 'Clique para mudar status' : undefined}
+      >
+        {cfg.label}
+      </span>
+    );
+  }
+
+  function ReceitaRow({ item }) {
+    const isPensao = item.tipo === 'pensao';
+    return (
+      <div className="row between" style={{
+        padding: '11px 14px',
+        background: 'var(--offwhite-2)',
+        border: '1px solid var(--gray-light)',
+        borderRadius: 'var(--r-md)',
+        alignItems: 'center',
+        gap: 12,
+      }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', marginBottom: 2 }}>{item.nome}</div>
+          <div style={{ fontSize: 11, color: 'var(--gray)' }}>Dia {item.dia || '—'}</div>
+        </div>
+        {isPensao ? (
+          <span
+            onClick={togglePensao}
+            style={{
+              padding: '2px 10px',
+              borderRadius: 'var(--r-pill)',
+              background: item.status === 'pago' ? '#E8F5ED' : '#FFF8E3',
+              border: `1px solid ${item.status === 'pago' ? '#C3DEC9' : '#FDDBB0'}`,
+              color: item.status === 'pago' ? '#3A8C50' : '#B5720A',
+              fontSize: 11,
+              fontWeight: 600,
+              cursor: 'pointer',
+              userSelect: 'none',
+            }}
+          >
+            {item.status === 'pago' ? 'Recebida ✓' : 'Não recebida'}
+          </span>
+        ) : (
+          <StatusBadge status={item.status} onClick={() => cycleStatus(receitas, setReceitas, item.id)} />
+        )}
+        <div style={{
+          fontFamily: 'var(--font-title)',
+          fontWeight: 700,
+          fontSize: 15,
+          color: '#3A8C50',
+          flexShrink: 0,
+          minWidth: 80,
+          textAlign: 'right',
+        }}>
+          + R$ {fmt(item.valor)}
+        </div>
+      </div>
+    );
+  }
+
+  function DespesaRow({ item }) {
+    return (
+      <div className="row between" style={{
+        padding: '11px 14px',
+        background: 'var(--offwhite-2)',
+        border: '1px solid var(--gray-light)',
+        borderRadius: 'var(--r-md)',
+        alignItems: 'center',
+        gap: 12,
+      }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', marginBottom: 2 }}>{item.nome}</div>
+          <div style={{ fontSize: 11, color: 'var(--gray)' }}>
+            {item.dia ? `Dia ${item.dia}` : '—'}
+            {' · '}
+            <span style={{ textTransform: 'capitalize' }}>{item.categoria}</span>
+          </div>
+        </div>
+        <StatusBadge status={item.status} onClick={() => cycleStatus(despesas, setDespesas, item.id)} />
+        <div style={{
+          fontFamily: 'var(--font-title)',
+          fontWeight: 700,
+          fontSize: 15,
+          color: '#C0392B',
+          flexShrink: 0,
+          minWidth: 80,
+          textAlign: 'right',
+        }}>
+          − R$ {fmt(item.valor)}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="content">
       <div className="col gap-5 fade-up">
         <PageHeader
           title="Financeiro"
-          subtitle="Maio 2025 · visão geral de entradas e saídas"
+          subtitle="Maio 2026 · visão geral de entradas e saídas"
         />
 
         {/* Summary cards */}
         <div className="row gap-4" style={{ flexWrap: 'wrap' }}>
           <SummaryCard
-            label="Total Entradas"
-            value={`R$ ${fmt(totalEntradas)}`}
-            sub={`${entradas.filter(e => e.status === 'pago').length} de ${entradas.length} recebidos`}
+            label="Total recebido"
+            value={`R$ ${fmt(totalRecebido)}`}
+            sub={`de R$ ${fmt(totalReceitas)} esperado`}
             color="#3A8C50"
           />
           <SummaryCard
-            label="Total Saídas"
-            value={`R$ ${fmt(totalSaidas)}`}
-            sub={`${saidas.length} pagamentos fixos`}
-            color="var(--ink)"
+            label="Total despesas"
+            value={`R$ ${fmt(totalDespesas)}`}
+            sub={`${despesas.length} lançamentos`}
+            color="#C0392B"
           />
           <SummaryCard
-            label="Saldo Estimado"
+            label="Saldo"
             value={`R$ ${fmt(saldo)}`}
-            sub="Com base no que já entrou"
+            sub="Recebido menos despesas"
             color={saldo >= 0 ? '#3A8C50' : '#C0392B'}
             highlight
           />
           <SummaryCard
-            label="Recebido"
-            value={`${pctPago}%`}
-            sub={`R$ ${fmt(totalPago)} de R$ ${fmt(totalEntradas)}`}
-            color="var(--pink-deep)"
+            label="Pendentes"
+            value={String(pendentes)}
+            sub="Itens aguardando ou atrasados"
+            color={pendentes > 0 ? '#B5720A' : '#3A8C50'}
           />
         </div>
 
-        {/* Progress */}
+        {/* Pie charts */}
         <Card>
           <CardBody>
-            <div style={{ marginBottom: 6, fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>
-              Recebimento do mês
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-6)', alignItems: 'start' }}>
+              <PieChart data={receitasByTipo} title="De onde vem" />
+              <PieChart data={despesasByCategoria} title="Para onde vai" />
             </div>
-            <ProgressBar value={totalPago} max={totalEntradas} color="var(--pink)" />
-            {entradas.some(e => e.status === 'atrasado') && (
-              <div style={{
-                marginTop: 10,
-                padding: '8px 12px',
-                background: '#FFE9E9',
-                border: '1px solid #F5C0BE',
-                borderRadius: 'var(--r-md)',
-                fontSize: 12,
-                color: '#C0392B',
-                fontWeight: 500,
-              }}>
-                Atenção: há {entradas.filter(e => e.status === 'atrasado').length} entrada(s) em atraso — total R$ {fmt(entradas.filter(e => e.status === 'atrasado').reduce((s, e) => s + e.valor, 0))}
-              </div>
-            )}
           </CardBody>
         </Card>
 
         {/* Two columns */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-5)', alignItems: 'start' }}>
-          {/* Entradas */}
+          {/* Receitas */}
           <Card>
             <CardHeader>
               <div className="row between">
                 <div>
                   <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700 }}>Entradas</h2>
-                  <p className="tiny muted" style={{ marginTop: 2 }}>R$ {fmt(totalEntradas)} esperado</p>
+                  <p className="tiny muted" style={{ marginTop: 2 }}>R$ {fmt(totalReceitas)} esperado</p>
                 </div>
-                <span style={{
-                  fontFamily: 'var(--font-title)',
-                  fontSize: 18,
-                  fontWeight: 700,
-                  color: '#3A8C50',
-                }}>
-                  R$ {fmt(totalPago)}
+                <span style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 700, color: '#3A8C50' }}>
+                  R$ {fmt(totalRecebido)}
                 </span>
               </div>
             </CardHeader>
             <CardBody>
               <div className="col gap-2">
-                {entradas.map(item => <FinRowItem key={item.id} item={item} isEntrada />)}
+                {receitas.map(item => <ReceitaRow key={item.id} item={item} />)}
               </div>
-              <div style={{
-                marginTop: 'var(--s-4)',
-                padding: '10px 12px',
-                background: 'var(--offwhite)',
-                border: '1px solid var(--gray-light)',
-                borderRadius: 'var(--r-md)',
-                fontSize: 11.5,
-                color: 'var(--gray)',
-                fontStyle: 'italic',
-              }}>
-                Pensão: recebida, nao paga pela outra parte
-              </div>
+
+              {/* Add receita form */}
+              {showAddReceita ? (
+                <div className="col gap-2" style={{ marginTop: 12, padding: '12px', background: 'var(--offwhite)', border: '1px solid var(--gray-light)', borderRadius: 'var(--r-md)' }}>
+                  <input
+                    style={inputStyle}
+                    placeholder="Nome"
+                    value={newReceita.nome}
+                    onChange={e => setNewReceita(p => ({ ...p, nome: e.target.value }))}
+                  />
+                  <div className="row gap-2">
+                    <input
+                      style={{ ...inputStyle, flex: 1 }}
+                      placeholder="Valor (R$)"
+                      type="number"
+                      value={newReceita.valor}
+                      onChange={e => setNewReceita(p => ({ ...p, valor: e.target.value }))}
+                    />
+                    <input
+                      style={{ ...inputStyle, flex: 1 }}
+                      placeholder="Dia do mês"
+                      type="number"
+                      min="1"
+                      max="31"
+                      value={newReceita.dia}
+                      onChange={e => setNewReceita(p => ({ ...p, dia: e.target.value }))}
+                    />
+                  </div>
+                  <div className="row gap-2">
+                    <Button variant="primary" onClick={addReceita}>Salvar</Button>
+                    <Button variant="ghost" onClick={() => setShowAddReceita(false)}>Cancelar</Button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setShowAddReceita(true)}
+                  style={{
+                    marginTop: 10,
+                    padding: '8px 12px',
+                    borderRadius: 'var(--r-md)',
+                    border: '1px dashed var(--pink-soft)',
+                    background: 'transparent',
+                    color: 'var(--pink-deep)',
+                    fontFamily: 'var(--font-body)',
+                    fontWeight: 600,
+                    fontSize: 12.5,
+                    cursor: 'pointer',
+                    width: '100%',
+                    textAlign: 'center',
+                  }}
+                >
+                  + Adicionar entrada
+                </button>
+              )}
             </CardBody>
           </Card>
 
-          {/* Saídas */}
+          {/* Despesas */}
           <Card>
             <CardHeader>
               <div className="row between">
                 <div>
                   <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700 }}>Saídas</h2>
-                  <p className="tiny muted" style={{ marginTop: 2 }}>{saidas.length} compromissos fixos</p>
+                  <p className="tiny muted" style={{ marginTop: 2 }}>{despesas.length} lançamentos</p>
                 </div>
-                <span style={{
-                  fontFamily: 'var(--font-title)',
-                  fontSize: 18,
-                  fontWeight: 700,
-                  color: 'var(--ink)',
-                }}>
-                  R$ {fmt(totalSaidas)}
+                <span style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 700, color: '#C0392B' }}>
+                  R$ {fmt(totalDespesas)}
                 </span>
               </div>
             </CardHeader>
             <CardBody>
               <div className="col gap-2">
-                {saidas.map(item => <FinRowItem key={item.id} item={item} isEntrada={false} />)}
+                {despesas.map(item => <DespesaRow key={item.id} item={item} />)}
               </div>
+
+              {/* Add despesa form */}
+              {showAddDespesa ? (
+                <div className="col gap-2" style={{ marginTop: 12, padding: '12px', background: 'var(--offwhite)', border: '1px solid var(--gray-light)', borderRadius: 'var(--r-md)' }}>
+                  <input
+                    style={inputStyle}
+                    placeholder="Nome"
+                    value={newDespesa.nome}
+                    onChange={e => setNewDespesa(p => ({ ...p, nome: e.target.value }))}
+                  />
+                  <div className="row gap-2">
+                    <input
+                      style={{ ...inputStyle, flex: 1 }}
+                      placeholder="Valor (R$)"
+                      type="number"
+                      value={newDespesa.valor}
+                      onChange={e => setNewDespesa(p => ({ ...p, valor: e.target.value }))}
+                    />
+                    <input
+                      style={{ ...inputStyle, flex: 1 }}
+                      placeholder="Dia do mês"
+                      type="number"
+                      min="1"
+                      max="31"
+                      value={newDespesa.dia}
+                      onChange={e => setNewDespesa(p => ({ ...p, dia: e.target.value }))}
+                    />
+                  </div>
+                  <select
+                    style={inputStyle}
+                    value={newDespesa.categoria}
+                    onChange={e => setNewDespesa(p => ({ ...p, categoria: e.target.value }))}
+                  >
+                    {['fixo', 'alimentacao', 'filhos', 'lazer', 'saude', 'outros'].map(c => (
+                      <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
+                    ))}
+                  </select>
+                  <div className="row gap-2">
+                    <Button variant="primary" onClick={addDespesa}>Salvar</Button>
+                    <Button variant="ghost" onClick={() => setShowAddDespesa(false)}>Cancelar</Button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setShowAddDespesa(true)}
+                  style={{
+                    marginTop: 10,
+                    padding: '8px 12px',
+                    borderRadius: 'var(--r-md)',
+                    border: '1px dashed var(--gray-light)',
+                    background: 'transparent',
+                    color: 'var(--gray)',
+                    fontFamily: 'var(--font-body)',
+                    fontWeight: 600,
+                    fontSize: 12.5,
+                    cursor: 'pointer',
+                    width: '100%',
+                    textAlign: 'center',
+                  }}
+                >
+                  + Adicionar saída
+                </button>
+              )}
+
+              {/* Saldo box */}
               <div style={{
-                marginTop: 'var(--s-5)',
+                marginTop: 'var(--s-4)',
                 padding: 'var(--s-4)',
                 background: saldo >= 0 ? '#E8F5ED' : '#FFE9E9',
                 border: `1px solid ${saldo >= 0 ? '#C3DEC9' : '#F5C0BE'}`,
                 borderRadius: 'var(--r-md)',
               }}>
                 <div style={{ fontSize: 11, color: 'var(--gray)', marginBottom: 4 }}>Saldo do mês (recebido − saídas)</div>
-                <div style={{
-                  fontFamily: 'var(--font-title)',
-                  fontSize: 22,
-                  fontWeight: 700,
-                  color: saldo >= 0 ? '#3A8C50' : '#C0392B',
-                }}>
+                <div style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 700, color: saldo >= 0 ? '#3A8C50' : '#C0392B' }}>
                   R$ {fmt(saldo)}
                 </div>
               </div>
             </CardBody>
           </Card>
+        </div>
+
+        {/* Status legend */}
+        <div className="row gap-3" style={{ flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 11.5, color: 'var(--gray)', fontWeight: 500 }}>Status (clique para alternar):</span>
+          {Object.entries(STATUS_FIN).map(([key, cfg]) => (
+            <span key={key} style={{
+              padding: '2px 10px',
+              borderRadius: 'var(--r-pill)',
+              background: cfg.bg,
+              border: `1px solid ${cfg.border}`,
+              color: cfg.text,
+              fontSize: 11,
+              fontWeight: 600,
+            }}>{cfg.label}</span>
+          ))}
         </div>
       </div>
     </div>
@@ -1061,14 +1554,14 @@ function SobrePage() {
    ═══════════════════════════════════════════════ */
 
 const MON_FONTES = [
-  { id: 1, nome: 'Social media (clientes)',  tipo: 'recorrente', minVal: 3600, maxVal: 4800, status: 'ativo',     icon: 'users'   },
-  { id: 2, nome: 'UGC creator',             tipo: 'campanha',   minVal:  300, maxVal: 1500, status: 'ativo',     icon: 'mic'     },
-  { id: 3, nome: 'Afiliados',               tipo: 'passivo',    minVal:   50, maxVal:  300, status: 'ativo',     icon: 'trend'   },
-  { id: 4, nome: 'Ebooks e printables',     tipo: 'digital',    minVal:  100, maxVal:  600, status: 'potencial', icon: 'doc'     },
-  { id: 5, nome: 'Planners físicos',        tipo: 'produto',    minVal:  150, maxVal:  800, status: 'potencial', icon: 'book'    },
-  { id: 6, nome: 'Oficinas e cursos',       tipo: 'sazonal',    minVal:  200, maxVal: 1200, status: 'potencial', icon: 'sparkle' },
-  { id: 7, nome: 'Consultoria e branding',  tipo: 'projeto',    minVal:  300, maxVal: 1500, status: 'ativo',     icon: 'bulb'    },
-  { id: 8, nome: 'Comunidade',              tipo: 'futuro',     minVal:  400, maxVal: 2000, status: 'futuro',    icon: 'heart'   },
+  { id: 1, nome: 'Social media (clientes)',  tipo: 'recorrente', minVal: 3600, maxVal: 4800, status: 'ativo',     icon: 'users',   mesPassado: 4000 },
+  { id: 2, nome: 'UGC creator',             tipo: 'campanha',   minVal:  300, maxVal: 1500, status: 'ativo',     icon: 'mic',     mesPassado: 450  },
+  { id: 3, nome: 'Afiliados',               tipo: 'passivo',    minVal:   50, maxVal:  300, status: 'ativo',     icon: 'trend',   mesPassado: 120  },
+  { id: 4, nome: 'Ebooks e printables',     tipo: 'digital',    minVal:  100, maxVal:  600, status: 'potencial', icon: 'doc',     mesPassado: 0    },
+  { id: 5, nome: 'Planners físicos',        tipo: 'produto',    minVal:  150, maxVal:  800, status: 'potencial', icon: 'book',    mesPassado: 0    },
+  { id: 6, nome: 'Oficinas e cursos',       tipo: 'sazonal',    minVal:  200, maxVal: 1200, status: 'potencial', icon: 'sparkle', mesPassado: 180  },
+  { id: 7, nome: 'Consultoria e branding',  tipo: 'projeto',    minVal:  300, maxVal: 1500, status: 'ativo',     icon: 'bulb',    mesPassado: 300  },
+  { id: 8, nome: 'Comunidade',              tipo: 'futuro',     minVal:  400, maxVal: 2000, status: 'futuro',    icon: 'heart',   mesPassado: 0    },
 ];
 
 const MON_RECURSOS = [
@@ -1109,10 +1602,15 @@ const MON_TIPO_CFG = {
 function MonetizacaoPage() {
   const [ideiaIdx, setIdeiaIdx] = useState(0);
   const [ideiaVis, setIdeiaVis] = useState(false);
+  const [expandedSource, setExpandedSource] = useState(null);
 
   function gerarIdeia() {
     setIdeiaVis(true);
     setIdeiaIdx(prev => (prev + 1) % MON_IDEIAS.length);
+  }
+
+  function toggleSource(id) {
+    setExpandedSource(prev => prev === id ? null : id);
   }
 
   const ativoMin = MON_FONTES.filter(f => f.status === 'ativo').reduce((s, f) => s + f.minVal, 0);
@@ -1125,7 +1623,7 @@ function MonetizacaoPage() {
         {/* Header */}
         <PageHeader
           title="Monetização"
-          subtitle="Estratégia e potencial de receita — Maio 2025"
+          subtitle="Estratégia e potencial de receita — Maio 2026"
         />
 
         {/* Summary */}
@@ -1174,59 +1672,71 @@ function MonetizacaoPage() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--s-3)' }}>
             {MON_FONTES.map(f => {
-              const stCfg = MON_STATUS_CFG[f.status];
+              const stCfg  = MON_STATUS_CFG[f.status];
               const tipoCor = MON_TIPO_CFG[f.tipo] || 'var(--gray)';
+              const isOpen  = expandedSource === f.id;
               return (
-                <div key={f.id} style={{
-                  padding: 'var(--s-4)',
-                  background: 'var(--white)',
-                  border: '1px solid var(--gray-light)',
-                  borderRadius: 'var(--r-md)',
-                  display: 'flex',
-                  gap: 12,
-                  alignItems: 'flex-start',
-                }}>
-                  <div style={{
-                    width: 38, height: 38,
+                <div
+                  key={f.id}
+                  onClick={() => toggleSource(f.id)}
+                  style={{
+                    padding: 'var(--s-4)',
+                    background: isOpen ? 'var(--offwhite-2)' : 'var(--white)',
+                    border: `1px solid ${isOpen ? 'var(--pink-soft)' : 'var(--gray-light)'}`,
                     borderRadius: 'var(--r-md)',
-                    background: 'var(--offwhite)',
-                    border: '1px solid var(--gray-light)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    flexShrink: 0,
-                  }}>
-                    <Icon name={f.icon} size={16} color={tipoCor} />
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div className="row between" style={{ marginBottom: 4, gap: 8 }}>
-                      <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{f.nome}</span>
-                      <span style={{
-                        padding: '2px 8px',
-                        borderRadius: 'var(--r-pill)',
-                        background: stCfg.bg,
-                        border: `1px solid ${stCfg.border}`,
-                        color: stCfg.text,
-                        fontSize: 10.5,
-                        fontWeight: 600,
-                        flexShrink: 0,
-                      }}>{stCfg.label}</span>
+                    cursor: 'pointer',
+                    transition: 'all 0.18s var(--easing)',
+                  }}
+                >
+                  {/* Collapsed: just icon + name */}
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                    <div style={{
+                      width: 38, height: 38,
+                      borderRadius: 'var(--r-md)',
+                      background: isOpen ? 'var(--white)' : 'var(--offwhite)',
+                      border: '1px solid var(--gray-light)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      flexShrink: 0,
+                    }}>
+                      <Icon name={f.icon} size={16} color={tipoCor} />
                     </div>
-                    <div className="row between">
-                      <span style={{
-                        fontSize: 11,
-                        color: tipoCor,
-                        fontWeight: 500,
-                        textTransform: 'capitalize',
-                      }}>{f.tipo}</span>
-                      <span style={{
-                        fontFamily: 'var(--font-title)',
-                        fontSize: 12,
-                        fontWeight: 700,
-                        color: f.status === 'futuro' ? 'var(--gray)' : 'var(--ink)',
-                      }}>
-                        R$ {f.minVal.toLocaleString('pt-BR')}–{f.maxVal.toLocaleString('pt-BR')}
-                      </span>
-                    </div>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)', flex: 1 }}>{f.nome}</span>
+                    <span style={{ fontSize: 12, color: 'var(--gray)', marginLeft: 'auto' }}>
+                      {isOpen ? '▲' : '▼'}
+                    </span>
                   </div>
+
+                  {/* Expanded details */}
+                  {isOpen && (
+                    <div className="col gap-2" style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--gray-light)' }}>
+                      <div className="row between">
+                        <span style={{ fontSize: 11, color: tipoCor, fontWeight: 500, textTransform: 'capitalize' }}>{f.tipo}</span>
+                        <span style={{
+                          padding: '2px 8px',
+                          borderRadius: 'var(--r-pill)',
+                          background: stCfg.bg,
+                          border: `1px solid ${stCfg.border}`,
+                          color: stCfg.text,
+                          fontSize: 10.5,
+                          fontWeight: 600,
+                        }}>{stCfg.label}</span>
+                      </div>
+                      <div className="row between">
+                        <span style={{ fontSize: 12, color: 'var(--gray)' }}>Potencial</span>
+                        <span style={{ fontFamily: 'var(--font-title)', fontSize: 13, fontWeight: 700, color: f.status === 'futuro' ? 'var(--gray)' : 'var(--ink)' }}>
+                          R$ {f.minVal.toLocaleString('pt-BR')}–{f.maxVal.toLocaleString('pt-BR')}
+                        </span>
+                      </div>
+                      {f.mesPassado > 0 && (
+                        <div className="row between">
+                          <span style={{ fontSize: 12, color: 'var(--gray)' }}>Mês passado</span>
+                          <span style={{ fontFamily: 'var(--font-title)', fontSize: 13, fontWeight: 700, color: '#3A8C50' }}>
+                            R$ {f.mesPassado.toLocaleString('pt-BR')}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -1333,7 +1843,7 @@ function MonetizacaoPage() {
                 <div style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700, marginBottom: 2 }}>
                   Meta de renda mensal
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--gray)' }}>Maio 2025</div>
+                <div style={{ fontSize: 12, color: 'var(--gray)' }}>Maio 2026</div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 700, color: 'var(--ink)' }}>
@@ -1371,189 +1881,6 @@ function MonetizacaoPage() {
 
 
 /* ═══════════════════════════════════════════════
-   5. IMPRESSOS PAGE
-   ═══════════════════════════════════════════════ */
-
-const IMPRESSOS_TEMPLATES = [
-  {
-    id: 'rotina-semanal',
-    nome: 'Rotina Semanal',
-    desc: 'Blocos de foco da semana',
-    icon: 'calendar',
-    perguntas: [
-      { id: 'horarios', label: 'Quais são seus horários fixos?', placeholder: 'Ex: 08:20 futebol meninos, 14h reunião...' },
-      { id: 'pico',     label: 'Qual seu horário de pico criativo?', placeholder: 'Ex: manhã, após almoço...' },
-      { id: 'filhos',   label: 'Quantos filhos você cuida?', placeholder: 'Ex: 3 (Mateus, Murilo e Miguel)' },
-    ],
-  },
-  {
-    id: 'planner-diario',
-    nome: 'Planner Diário',
-    desc: 'Prioridades, tarefas e estado emocional',
-    icon: 'list',
-    perguntas: [
-      { id: 'prio',   label: 'Quais suas 3 prioridades do dia?', placeholder: 'Ex: gravar reel, entregar posts, reunião...' },
-      { id: 'estado', label: 'Como está sua energia hoje?', placeholder: 'Ex: cansada, criativa, focada...' },
-      { id: 'meta',   label: 'Uma meta pequena e realizável hoje?', placeholder: 'Ex: enviar 1 proposta...' },
-    ],
-  },
-  {
-    id: 'checklist-conteudo',
-    nome: 'Checklist de Conteúdo',
-    desc: 'Verificação para publicações',
-    icon: 'check',
-    perguntas: [
-      { id: 'plat',    label: 'Qual plataforma?', placeholder: 'Instagram, TikTok, Blog...' },
-      { id: 'formato', label: 'Formato do conteúdo?', placeholder: 'Reel, carrossel, post estático...' },
-      { id: 'marca',   label: 'Para qual marca?', placeholder: 'Papel da Lola, Logue, pessoal...' },
-    ],
-  },
-  {
-    id: 'planejamento-alimentar',
-    nome: 'Planejamento Alimentar',
-    desc: 'Organização de refeições',
-    icon: 'heart',
-    perguntas: [
-      { id: 'dias',      label: 'Quantos dias quer planejar?', placeholder: '3, 5, 7 dias...' },
-      { id: 'pessoas',   label: 'Para quantas pessoas?', placeholder: 'Ex: 4 (eu + 3 filhos)' },
-      { id: 'restricao', label: 'Alguma restrição alimentar?', placeholder: 'Ex: sem lactose, vegetariano...' },
-    ],
-  },
-  {
-    id: 'tarefas-semana',
-    nome: 'Tarefas da Semana',
-    desc: 'Lista organizada por categoria',
-    icon: 'doc',
-    perguntas: [
-      { id: 'cats',   label: 'Quais categorias de tarefas?', placeholder: 'Ex: agência, conteúdo, pessoal, filhos...' },
-      { id: 'inicio', label: 'Dia de início da semana?', placeholder: 'Segunda-feira' },
-      { id: 'foco',   label: 'Qual área merece mais foco essa semana?', placeholder: 'Ex: clientes novos, conteúdo pessoal...' },
-    ],
-  },
-  {
-    id: 'planejamento-mensal',
-    nome: 'Planejamento Mensal',
-    desc: 'Visão geral do mês com metas',
-    icon: 'trend',
-    perguntas: [
-      { id: 'mes',   label: 'Qual mês?', placeholder: 'Ex: Junho 2025' },
-      { id: 'metas', label: 'Suas 3 metas principais do mês?', placeholder: 'Ex: fechar 1 cliente, lançar ebook...' },
-      { id: 'foco',  label: 'Uma palavra que define o mês?', placeholder: 'Ex: crescimento, equilíbrio, entrega...' },
-    ],
-  },
-  {
-    id: 'rotina-emocional',
-    nome: 'Rotina Emocional',
-    desc: 'Acompanhamento de estado emocional',
-    icon: 'brain',
-    perguntas: [
-      { id: 'estados', label: 'Quais estados emocionais você costuma ter?', placeholder: 'Ex: ansiosa, empolgada, cansada, criativa...' },
-      { id: 'ancora',  label: 'O que te ancora quando desregula?', placeholder: 'Ex: caminhar, música, escrever...' },
-      { id: 'periodo', label: 'Quantos dias quer acompanhar?', placeholder: '7, 14, 30 dias...' },
-    ],
-  },
-  {
-    id: 'plano-monetizacao',
-    nome: 'Plano de Monetização',
-    desc: 'Estratégias e metas financeiras',
-    icon: 'trend',
-    perguntas: [
-      { id: 'meta',   label: 'Meta de renda para o mês?', placeholder: 'Ex: R$ 6.000' },
-      { id: 'fontes', label: 'Quais suas fontes de renda ativas?', placeholder: 'Ex: clientes, UGC, afiliados...' },
-      { id: 'acao',   label: 'Uma ação nova pra testar esse mês?', placeholder: 'Ex: lançar ebook, mentoria...' },
-    ],
-  },
-  {
-    id: 'diario-terapia',
-    nome: 'Diário para Terapia',
-    desc: 'Registro semanal para levar à sessão',
-    icon: 'heart',
-    perguntas: [
-      { id: 'semana',    label: 'Semana de?', placeholder: 'Ex: 19 a 25 de maio' },
-      { id: 'humor',     label: 'Como foi sua semana emocionalmente? (0 a 10 e palavras)', placeholder: 'Ex: 6/10 — ansiosa na segunda, mais leve na quinta...' },
-      { id: 'pesado',    label: 'O que pesou mais essa semana?', placeholder: 'Ex: briga com fulano, sobrecarga, medo de...' },
-      { id: 'bom',       label: 'O que foi bom ou te surpreendeu positivamente?', placeholder: 'Ex: consegui descansar, recebi elogio, terminei...' },
-      { id: 'corpo',     label: 'Como seu corpo esteve? (sono, alimentação, dor, energia)', placeholder: 'Ex: dormi mal, dor de cabeça, muito cansaço...' },
-      { id: 'relacoes',  label: 'Como estiveram suas relações (filhos, trabalho, pessoas)?', placeholder: 'Ex: me senti sozinha, conflito com X, reconexão com...' },
-      { id: 'gatilhos',  label: 'Algum gatilho ou padrão que notou?', placeholder: 'Ex: quando me cobram prazo, tudo trava. Quando...' },
-      { id: 'sessao',    label: 'O que quer trabalhar na próxima sessão?', placeholder: 'Ex: quero falar sobre a sensação de não pertencer, sobre...' },
-    ],
-  },
-  {
-    id: 'agenda-semanal',
-    nome: 'Agenda Semanal',
-    desc: 'Compromissos e horários',
-    icon: 'calendar',
-    perguntas: [
-      { id: 'semana',  label: 'Semana de?', placeholder: 'Ex: 19 a 25 de maio' },
-      { id: 'fixos',   label: 'Compromissos fixos recorrentes?', placeholder: 'Ex: futebol seg/qua/sex 08:20...' },
-      { id: 'novos',   label: 'Novos compromissos da semana?', placeholder: 'Ex: reunião cliente, gravação...' },
-    ],
-  },
-];
-
-function ImpressosPage() {
-  return (
-    <div className="content">
-      <div className="col gap-5 fade-up">
-        <PageHeader
-          title="Impressos Úteis"
-          subtitle={`${IMPRESSOS_TEMPLATES.length} modelos para imprimir`}
-        />
-
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-          gap: 'var(--s-4)',
-        }}>
-          {IMPRESSOS_TEMPLATES.map(tpl => (
-            <div key={tpl.id} style={{
-              padding: 'var(--s-5)',
-              background: 'var(--white)',
-              border: '1px solid var(--gray-light)',
-              borderRadius: 'var(--r-lg)',
-              display: 'flex', flexDirection: 'column', gap: 'var(--s-3)',
-              transition: 'border-color 0.15s var(--easing)',
-            }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--pink-soft)'}
-              onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--gray-light)'}
-            >
-              <div style={{
-                width: 44, height: 44, borderRadius: 'var(--r-md)',
-                background: 'var(--pink-tint)', border: '1px solid var(--pink-soft)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <Icon name={tpl.icon} size={20} color="var(--pink-deep)" />
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: 'var(--font-title)', fontSize: 14.5, fontWeight: 700, color: 'var(--ink)', marginBottom: 4 }}>
-                  {tpl.nome}
-                </div>
-                <p style={{ fontSize: 12.5, color: 'var(--gray)', lineHeight: 1.5, margin: 0 }}>
-                  {tpl.desc}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div style={{
-          padding: 'var(--s-4)',
-          background: 'var(--pink-tint)',
-          border: '1px solid var(--pink-soft)',
-          borderRadius: 'var(--r-md)',
-        }}>
-          <p className="small" style={{ color: 'var(--pink-deep)', margin: 0 }}>
-            💡 <strong>Em breve:</strong> clique em qualquer modelo para preencher e imprimir direto do navegador com <strong>Ctrl + P</strong>.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-/* ═══════════════════════════════════════════════
    EXPORTS
    ═══════════════════════════════════════════════ */
 
@@ -1562,5 +1889,4 @@ Object.assign(window, {
   FinanceiroPage,
   SobrePage,
   MonetizacaoPage,
-  ImpressosPage,
 });

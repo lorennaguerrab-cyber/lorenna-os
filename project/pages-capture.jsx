@@ -15,10 +15,63 @@ function PageHeader({ title, subtitle, action }) {
 }
 
 /* ─────────────────────── CAPTURA ─────────────────────── */
+function gerarSugestoes(texto) {
+  // Simple keyword-based suggestion engine (no real AI needed)
+  const t = texto.toLowerCase();
+
+  // Detect topic
+  const isSistema = /sistema|organiz|método|process|rotina|produtividade/i.test(t);
+  const isNegocio = /cliente|agência|trabalho|serviço|venda|preço/i.test(t);
+  const isConteudo = /video|vídeo|reel|post|content|conteudo|gravar/i.test(t);
+
+  const sugestoes = {
+    conteudo: [],
+    tarefa: [],
+    monetizacao: [],
+    ideia: [],
+  };
+
+  // Always generate content formats
+  sugestoes.conteudo = [
+    { tipo: 'Reel (30s)', desc: `Versão rápida: "${texto.slice(0, 40)}..."`, icon: '🎬' },
+    { tipo: 'Vídeo longo (YouTube)', desc: `Tutorial detalhado sobre o tema`, icon: '▶️' },
+    { tipo: 'Carrossel', desc: `Passo a passo em slides`, icon: '🖼' },
+    { tipo: 'Story com texto', desc: `Sequência de 5-7 stories`, icon: '📱' },
+    { tipo: 'Newsletter', desc: `E-mail aprofundado sobre o assunto`, icon: '💌' },
+  ];
+
+  if (isSistema || isConteudo) {
+    sugestoes.tarefa = [
+      { desc: 'Escrever roteiro do vídeo', min: 30 },
+      { desc: 'Gravar b-roll mostrando o sistema', min: 45 },
+      { desc: 'Editar versão curta (Reel)', min: 60 },
+    ];
+    sugestoes.monetizacao = [
+      { desc: 'Mentorias 1:1 usando esse sistema', potencial: 'R$ 200-500/sessão' },
+      { desc: 'Mini-curso sobre o método', potencial: 'R$ 97-197' },
+      { desc: 'Template para download', potencial: 'R$ 27-47' },
+    ];
+  }
+
+  if (isNegocio) {
+    sugestoes.monetizacao.push(
+      { desc: 'Proposta de serviço baseada nisso', potencial: 'Varia' }
+    );
+  }
+
+  sugestoes.ideia = [
+    { desc: `Série de conteúdo sobre ${texto.slice(0, 30)}...` },
+    { desc: 'Comparar antes e depois' },
+    { desc: 'Fazer ao vivo / live' },
+  ];
+
+  return sugestoes;
+}
+
 function CapturaPage({ energy }) {
   const [text, setText] = useState('');
-  const [processing, setProcessing] = useState(false);
-  const [result, setResult] = useState(null);
+  const [processando, setProcessando] = useState(false);
+  const [resultado, setResultado] = useState(null);
   const [history, setHistory] = useState([
     {
       id: 'h1', raw: 'preciso lembrar de pedir o boleto da igor giordano, e ainda tenho que escrever a newsletter dessa semana - quem sabe sobre IA?', date: 'Há 2 dias',
@@ -33,43 +86,29 @@ function CapturaPage({ energy }) {
 
   function handleProcess() {
     if (!text.trim()) return;
-    setProcessing(true);
-    setResult(null);
-    // simulate AI processing
+    setProcessando(true);
+    setResultado(null);
     setTimeout(() => {
-      const tasks = [];
-      const ideas = [];
-      const lower = text.toLowerCase();
-      // naive heuristic for demo
-      const sentences = text.split(/[\n.,;]/).map(s => s.trim()).filter(s => s.length > 8);
-      sentences.forEach(s => {
-        if (/preciso|tenho que|fazer|criar|escrever|entregar|enviar|gravar|agendar|responder/i.test(s)) {
-          tasks.push(s.charAt(0).toUpperCase() + s.slice(1));
-        } else if (/ideia|seria legal|podia|pensei|série|reel|post|frase/i.test(s)) {
-          ideas.push(s.charAt(0).toUpperCase() + s.slice(1));
-        }
-      });
-      if (tasks.length === 0 && sentences.length > 0) tasks.push(sentences[0].charAt(0).toUpperCase() + sentences[0].slice(1));
-      const cats = [];
-      if (/branding|marca/i.test(lower)) cats.push('branding');
-      if (/cliente|pratique|óptica|espaço|jornal/i.test(lower)) cats.push('cliente');
-      if (/ia|claude|chatgpt/i.test(lower)) cats.push('inteligencia_artificial');
-      setResult({
-        tasks, ideas, categories: cats,
-        summary: sentences.length > 1 ? `${tasks.length} tarefa(s), ${ideas.length} ideia(s) — bagunça organizada.` : '',
-      });
-      setProcessing(false);
-    }, 900);
+      setResultado(gerarSugestoes(text));
+      setProcessando(false);
+      if (window.DB && window.DB.saveCaptura) {
+        window.DB.saveCaptura(text, energy);
+      }
+    }, 1200);
   }
 
-  function handleSave() {
+  function handleNova() {
+    setText('');
+    setResultado(null);
+    setProcessando(false);
+  }
+
+  function handleSalvarIdeias() {
     setHistory(prev => [{
       id: crypto.randomUUID(), raw: text, date: 'Agora',
-      tarefas: result.tasks.length, ideias: result.ideas.length,
+      tarefas: resultado.tarefa.length, ideias: resultado.ideia.length,
     }, ...prev]);
-    showToast(`${result.tasks.length} tarefa(s) e ${result.ideas.length} ideia(s) salvas!`);
-    setText('');
-    setResult(null);
+    showToast('Ideias salvas no Banco de Ideias!');
   }
 
   return (
@@ -80,85 +119,173 @@ function CapturaPage({ energy }) {
           subtitle="Joga tudo aqui. Pensamento bagunçado, ideia solta, to-do. A IA organiza."
         />
 
-        <Card variant="elevated" style={{ overflow: 'hidden' }}>
-          <div style={{ height: 3, background: e.color }}/>
-          <CardBody className="col gap-3">
-            <div className="row gap-2">
-              <span style={{ fontSize: 15 }}>{e.emoji}</span>
-              <span className="small secondary">Modo {e.label} — {e.desc}</span>
-            </div>
-            <textarea
-              className="textarea"
-              value={text}
-              onChange={e => setText(e.target.value)}
-              placeholder={`Pode começar de qualquer forma…\n\n"Preciso criar o roteiro do reel de branding, mas antes disso tenho que entregar os posts da academia essa semana. Ah, tive uma ideia incrível sobre análise de marcas no TikTok…"`}
-              style={{ minHeight: 200 }}
-              onKeyDown={ev => {
-                if ((ev.metaKey || ev.ctrlKey) && ev.key === 'Enter') handleProcess();
-              }}
-            />
-            <div className="row between">
-              <Button variant="ghost" size="sm" disabled style={{ opacity: 0.5 }}>
-                <Icon name="mic" size={13}/> Áudio (em breve)
-              </Button>
-              <div className="row gap-3">
-                <span className="tiny muted">⌘ + Enter</span>
-                <Button variant="primary" onClick={handleProcess} disabled={!text.trim() || processing}>
-                  <Icon name="send" size={13} color="white"/>
-                  {processing ? 'Processando…' : 'Processar com IA'}
-                </Button>
+        {!resultado && !processando && (
+          <Card variant="elevated" style={{ overflow: 'hidden' }}>
+            <div style={{ height: 3, background: e.color }}/>
+            <CardBody className="col gap-3">
+              <div className="row gap-2">
+                <span style={{ fontSize: 15 }}>{e.emoji}</span>
+                <span className="small secondary">Modo {e.label} — {e.desc}</span>
               </div>
-            </div>
-          </CardBody>
-        </Card>
-
-        {result && (
-          <Card variant="accent" className="fade-up">
-            <CardHeader>
+              <textarea
+                className="textarea"
+                value={text}
+                onChange={ev => setText(ev.target.value)}
+                placeholder={`Pode começar de qualquer forma…\n\n"Preciso criar o roteiro do reel de branding, mas antes disso tenho que entregar os posts da academia essa semana. Ah, tive uma ideia incrível sobre análise de marcas no TikTok…"`}
+                style={{ minHeight: 200 }}
+                onKeyDown={ev => {
+                  if ((ev.metaKey || ev.ctrlKey) && ev.key === 'Enter') handleProcess();
+                }}
+              />
               <div className="row between">
-                <div className="row gap-2">
-                  <Icon name="zap" size={16} color="var(--pink-deep)" />
-                  <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 600 }}>Resultado da IA</h2>
-                </div>
-                <Button variant="primary" size="sm" onClick={handleSave}>
-                  <Icon name="check" size={13} color="white"/> Salvar tudo
+                <Button variant="ghost" size="sm" disabled style={{ opacity: 0.5 }}>
+                  <Icon name="mic" size={13}/> Áudio (em breve)
                 </Button>
-              </div>
-              {result.summary && <p className="small secondary" style={{ marginTop: 8, fontStyle: 'italic' }}>"{result.summary}"</p>}
-            </CardHeader>
-            <CardBody style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-5)' }}>
-              <div>
-                <div className="eyebrow row gap-2" style={{ marginBottom: 'var(--s-2)' }}>
-                  <span style={{ color: 'var(--pink-deep)' }}>⚡</span> {result.tasks.length} tarefa(s)
+                <div className="row gap-3">
+                  <span className="tiny muted">⌘ + Enter</span>
+                  <Button variant="primary" onClick={handleProcess} disabled={!text.trim()}>
+                    <Icon name="send" size={13} color="white"/>
+                    Processar com IA
+                  </Button>
                 </div>
-                {result.tasks.length === 0 ? <p className="small muted">Nenhuma tarefa detectada.</p> : (
-                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }} className="col gap-2">
-                    {result.tasks.map((t, i) => (
-                      <li key={i} className="row gap-2" style={{ alignItems: 'flex-start' }}>
-                        <span style={{ color: 'var(--pink-deep)', fontSize: 12, marginTop: 2 }}>→</span>
-                        <span style={{ fontSize: 13, lineHeight: 1.4 }}>{t}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-              <div>
-                <div className="eyebrow row gap-2" style={{ marginBottom: 'var(--s-2)' }}>
-                  <span>💡</span> {result.ideas.length} ideia(s)
-                </div>
-                {result.ideas.length === 0 ? <p className="small muted">Nenhuma ideia detectada.</p> : (
-                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }} className="col gap-2">
-                    {result.ideas.map((t, i) => (
-                      <li key={i} className="row gap-2" style={{ alignItems: 'flex-start' }}>
-                        <span style={{ color: 'var(--e-social)', fontSize: 12, marginTop: 2 }}>→</span>
-                        <span style={{ fontSize: 13, lineHeight: 1.4 }}>{t}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </div>
             </CardBody>
           </Card>
+        )}
+
+        {processando && (
+          <Card variant="elevated">
+            <CardBody>
+              <div className="center col gap-2" style={{ padding: 'var(--s-6)' }}>
+                <div style={{ fontSize: 28 }}>✨</div>
+                <p className="small muted">Processando sua ideia...</p>
+              </div>
+            </CardBody>
+          </Card>
+        )}
+
+        {resultado && (
+          <div className="col gap-4 fade-up">
+            {/* Header with actions */}
+            <div className="row between" style={{ alignItems: 'center' }}>
+              <div className="row gap-2">
+                <span style={{ fontSize: 18 }}>✨</span>
+                <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 17, fontWeight: 600, margin: 0 }}>
+                  Sugestões geradas
+                </h2>
+              </div>
+              <div className="row gap-2">
+                <Button variant="ghost" size="sm" onClick={handleNova}>
+                  <Icon name="plus" size={13}/> Capturar nova ideia
+                </Button>
+                <Button variant="primary" size="sm" onClick={handleSalvarIdeias}>
+                  <Icon name="check" size={13} color="white"/> Salvar ideias
+                </Button>
+              </div>
+            </div>
+
+            {/* Formatos de conteúdo */}
+            <Card variant="elevated">
+              <CardHeader>
+                <div className="row gap-2">
+                  <span>🎬</span>
+                  <span className="eyebrow" style={{ color: 'var(--pink-deep)' }}>Formatos de conteúdo</span>
+                </div>
+              </CardHeader>
+              <CardBody>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--s-2)' }}>
+                  {resultado.conteudo.map((c, i) => (
+                    <div key={i} style={{
+                      display: 'flex', alignItems: 'center', gap: 8,
+                      padding: '10px 14px', borderRadius: 'var(--r-md)',
+                      background: 'var(--pink-tint)', border: '1px solid var(--pink-soft)',
+                      flex: '1 1 180px',
+                    }}>
+                      <span style={{ fontSize: 16 }}>{c.icon}</span>
+                      <div>
+                        <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--pink-deep)' }}>{c.tipo}</div>
+                        <div className="tiny muted" style={{ marginTop: 2 }}>{c.desc}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardBody>
+            </Card>
+
+            {/* Tarefas sugeridas */}
+            {resultado.tarefa.length > 0 && (
+              <Card variant="elevated">
+                <CardHeader>
+                  <div className="row gap-2">
+                    <span>⚡</span>
+                    <span className="eyebrow" style={{ color: 'var(--pink-deep)' }}>Tarefas sugeridas</span>
+                  </div>
+                </CardHeader>
+                <CardBody>
+                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }} className="col gap-2">
+                    {resultado.tarefa.map((t, i) => (
+                      <li key={i} style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        padding: '10px 14px', borderRadius: 'var(--r-md)',
+                        background: 'var(--bg-surface)', border: '1px solid var(--border)',
+                      }}>
+                        <div className="row gap-2">
+                          <span style={{ color: 'var(--pink-deep)', fontSize: 12 }}>→</span>
+                          <span style={{ fontSize: 13 }}>{t.desc}</span>
+                        </div>
+                        <Badge variant="pink">{t.min} min</Badge>
+                      </li>
+                    ))}
+                  </ul>
+                </CardBody>
+              </Card>
+            )}
+
+            {/* Oportunidades de monetização */}
+            {resultado.monetizacao.length > 0 && (
+              <Card variant="elevated">
+                <CardHeader>
+                  <div className="row gap-2">
+                    <span>💰</span>
+                    <span className="eyebrow" style={{ color: 'var(--pink-deep)' }}>Oportunidades de monetização</span>
+                  </div>
+                </CardHeader>
+                <CardBody>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 'var(--s-3)' }}>
+                    {resultado.monetizacao.map((m, i) => (
+                      <div key={i} style={{
+                        padding: '12px 14px', borderRadius: 'var(--r-md)',
+                        background: 'var(--bg-surface)', border: '1px solid var(--border)',
+                      }} className="col gap-1">
+                        <span style={{ fontSize: 13, fontWeight: 500 }}>{m.desc}</span>
+                        <span style={{ fontSize: 12, color: 'var(--pink-deep)', fontWeight: 600 }}>{m.potencial}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardBody>
+              </Card>
+            )}
+
+            {/* Mais ideias relacionadas */}
+            <Card variant="elevated">
+              <CardHeader>
+                <div className="row gap-2">
+                  <span>💡</span>
+                  <span className="eyebrow" style={{ color: 'var(--pink-deep)' }}>Mais ideias relacionadas</span>
+                </div>
+              </CardHeader>
+              <CardBody>
+                <ul style={{ margin: 0, padding: 0, listStyle: 'none' }} className="col gap-2">
+                  {resultado.ideia.map((id, i) => (
+                    <li key={i} className="row gap-2" style={{ alignItems: 'flex-start', padding: '6px 0' }}>
+                      <span style={{ color: 'var(--e-social)', fontSize: 12, marginTop: 3 }}>→</span>
+                      <span style={{ fontSize: 13, lineHeight: 1.4 }}>{id.desc}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardBody>
+            </Card>
+          </div>
         )}
 
         {history.length > 0 && (
