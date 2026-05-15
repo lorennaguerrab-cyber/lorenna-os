@@ -162,7 +162,7 @@ h1, h2, h3, h4, h5, h6 {
   position: fixed;
   left: 0; top: 0;
   height: 100vh;
-  width: 260px;
+  width: 248px;
   background: var(--white);
   border-right: 1px solid var(--gray-light);
   display: flex;
@@ -331,6 +331,10 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0 auto;
 }
 @media (max-width: 900px) { .content { padding: var(--s-5); } }
+
+/* ── Dashboard grid ── */
+.dash-grid { display: grid; grid-template-columns: 2fr 1fr; gap: var(--s-5); }
+@media (max-width: 960px) { .dash-grid { grid-template-columns: 1fr; } }
 
 /* ── Card ── */
 .card {

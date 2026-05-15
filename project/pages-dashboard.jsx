@@ -677,6 +677,12 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
             {next && !e.show_heavy && <NextActionCard task={next} />}
 
             <Card>
+              <CardBody>
+                <PequenasVitorias />
+              </CardBody>
+            </Card>
+
+            <Card>
               <CardHeader>
                 <div className="row between">
                   <div>
@@ -717,12 +723,6 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
             <Card>
               <CardBody>
                 <WeekView />
-              </CardBody>
-            </Card>
-
-            <Card>
-              <CardBody>
-                <PequenasVitorias />
               </CardBody>
             </Card>
           </div>
