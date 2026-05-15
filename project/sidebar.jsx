@@ -2,13 +2,45 @@
    sidebar.jsx — left navigation + energy switch
    ────────────────────────────────────────────── */
 
+const { useState, useRef } = React;
+
 function Sidebar({ route, setRoute, energy, setEnergy, collapsed, setCollapsed }) {
   const energyCfg = window.ENERGY[energy];
+  const [photo, setPhoto] = useState(() => localStorage.getItem('lorenna_profile_photo') || null);
+  const fileRef = useRef(null);
+
+  function handlePhotoChange(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const data = ev.target.result;
+      localStorage.setItem('lorenna_profile_photo', data);
+      setPhoto(data);
+      showToast('Foto atualizada!');
+    };
+    reader.readAsDataURL(file);
+  }
 
   return (
     <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-brand">
-        <div className="brand-mark"><span>L</span></div>
+        <div
+          className="brand-mark"
+          onClick={() => fileRef.current?.click()}
+          title="Clique para trocar a foto"
+          style={{ cursor: 'pointer', overflow: 'hidden', position: 'relative' }}
+        >
+          {photo ? (
+            <img src={photo} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} alt="Foto" />
+          ) : (
+            <span>L</span>
+          )}
+          <div className="brand-mark-overlay">
+            <Icon name="camera" size={14} color="white" />
+          </div>
+        </div>
+        <input type="file" ref={fileRef} accept="image/*" style={{ display: 'none' }} onChange={handlePhotoChange} />
         {!collapsed && (
           <div className="brand-text">
             <div className="name">Lorenna OS</div>

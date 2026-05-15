@@ -84,17 +84,36 @@ function CapturaPage({ energy }) {
   ]);
   const e = window.ENERGY[energy];
 
-  function handleProcess() {
+  async function handleProcess() {
     if (!text.trim()) return;
     setProcessando(true);
     setResultado(null);
+    if (window.DB && window.DB.saveCaptura) window.DB.saveCaptura(text, energy);
+
+    if (window.hasClaudeKey && window.hasClaudeKey()) {
+      const resp = await window.callClaude([{
+        role: 'user',
+        content: `Ideia capturada: "${text}"\n\nGere sugestões criativas em JSON com esta estrutura exata:\n{"conteudo":[{"tipo":"Reel 30s","desc":"...","icon":"🎬"},...],"tarefa":[{"desc":"...","min":15},...],"monetizacao":[{"desc":"...","potencial":"R$ X-Y"},...],"ideia":[{"desc":"..."},...]}\n\nCada array deve ter 3-5 itens relevantes para uma criadora de conteúdo e dona de agência. Responda APENAS o JSON válido.`,
+      }],
+      'Você é uma assistente criativa para Lorenna, criadora de conteúdo e dona da Agência Logue. Gere sugestões práticas e acionáveis.',
+      'claude-haiku-4-5-20251001');
+
+      if (resp) {
+        try {
+          const jsonStr = resp.match(/\{[\s\S]*\}/)?.[0];
+          if (jsonStr) {
+            setResultado(JSON.parse(jsonStr));
+            setProcessando(false);
+            return;
+          }
+        } catch {}
+      }
+    }
+
     setTimeout(() => {
       setResultado(gerarSugestoes(text));
       setProcessando(false);
-      if (window.DB && window.DB.saveCaptura) {
-        window.DB.saveCaptura(text, energy);
-      }
-    }, 1200);
+    }, 800);
   }
 
   function handleNova() {

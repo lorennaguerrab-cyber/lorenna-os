@@ -28,8 +28,9 @@ const NAV = [
   { href: '/financeiro',   icon: 'coin',     label: 'Financeiro'        },
   { href: '/materiais',    icon: 'archive',  label: 'Materiais'         },
   { href: '/precificacao', icon: 'tag',      label: 'Precificação'      },
+  { href: '/diario',       icon: 'heart',    label: 'Diário da Terapia' },
+  { href: '/referencias',  icon: 'bookmark', label: 'Referências'       },
   { href: '/sobre',        icon: 'flower',   label: 'Sobre'             },
-  { href: '/deploy',       icon: 'cog',      label: 'Como Pôr no Ar'   },
 ];
 
 const CATEGORY_LABELS = {

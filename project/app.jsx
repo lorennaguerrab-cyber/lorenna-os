@@ -259,6 +259,8 @@ function App() {
     '/financeiro':  () => <FinanceiroPage  />,
     '/materiais':   () => <MateriaisPage   />,
     '/precificacao':() => <PrecificacaoPage />,
+    '/diario':      () => <DiarioPage      />,
+    '/referencias': () => <ReferenciasPage />,
     '/sobre':       () => <SobrePage       />,
     '/monetizacao': () => <MonetizacaoPage />,
     '/deploy':      () => <DeployPage      />,
@@ -280,7 +282,9 @@ function App() {
     '/financeiro':   '10 Financeiro',
     '/materiais':    '11 Materiais',
     '/precificacao': '12 Precificação',
-    '/sobre':        '13 Sobre',
+    '/diario':       '13 Diário da Terapia',
+    '/referencias':  '14 Referências',
+    '/sobre':        '15 Sobre',
     '/monetizacao':  '14 Monetização',
     '/deploy':       '15 Como Pôr no Ar',
     '/mapa':         '16 Mapa Mental',
@@ -307,6 +311,7 @@ function App() {
       </main>
       <FloatingCapture onClick={() => setCapture(true)} />
       <QuickCapture open={capture} setOpen={setCapture} energy={energy} />
+      <ClaudeKeyButton />
       <Tweaks />
     </div>
   );
