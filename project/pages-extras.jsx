@@ -33,7 +33,7 @@ const AGENDA_EVENTS = [
   { id: 17, date: '2026-05-13', hora: '10:00', titulo: 'Entrega posts Ótica Igor Giordano', tipo: 'conteudo', recorrente: false },
   { id: 18, date: '2026-05-14', hora: '15:00', titulo: 'Sessão de terapia', tipo: 'admin',    recorrente: false },
   { id: 19, date: '2026-05-15', hora: '14:00', titulo: 'Reunião Jornal Cidades Minerais', tipo: 'cliente',  recorrente: false },
-  { id: 20, date: '2026-05-19', hora: '14:00', titulo: 'Reunião cliente (Espaço Criar)', tipo: 'cliente',  recorrente: false },
+  { id: 20, date: '2026-05-19', hora: '14:00', titulo: 'Gravação Ótica Igor Giordano com Sabrinha Sanchez', tipo: 'gravacao', recorrente: false },
   { id: 21, date: '2026-05-20', hora: '09:00', titulo: 'Gravação conteúdo @lorennagn — reel bastidores', tipo: 'gravacao', recorrente: false },
   { id: 22, date: '2026-05-20', hora: null,    titulo: 'Ótica — visita Sabrina Sachez (influencer)', tipo: 'cliente',  recorrente: false },
   { id: 23, date: '2026-05-21', hora: null,    titulo: 'Ótica — visita Waltencir (influencer)', tipo: 'cliente',  recorrente: false },
@@ -46,6 +46,7 @@ const AGENDA_EVENTS = [
   { id: 30, date: '2026-05-27', hora: '10:00', titulo: 'Gravação conteúdo UGC', tipo: 'gravacao', recorrente: false },
   { id: 31, date: '2026-05-28', hora: '14:00', titulo: 'Entrega relatório clientes', tipo: 'admin',    recorrente: false },
   { id: 32, date: '2026-05-29', hora: '09:00', titulo: 'Reunião planejamento junho', tipo: 'admin',    recorrente: false },
+  { id: 33, date: '2026-05-26', hora: '09:00', titulo: 'Botox capilar + Gravações Sheila Reis (UGC por permuta)', tipo: 'gravacao', recorrente: false },
 ];
 
 const AGENDA_TYPE_COLORS = {
@@ -58,43 +59,49 @@ const AGENDA_TYPE_COLORS = {
 
 function AgendaEventCard({ ev }) {
   const cfg = AGENDA_TYPE_COLORS[ev.tipo] || AGENDA_TYPE_COLORS.admin;
+  const TIPO_LABEL = {
+    conteudo: 'Conteúdo', gravacao: 'Gravação', admin: 'Admin',
+    cliente: 'Cliente', filho: 'Filhos',
+  };
   return (
     <div style={{
       background: cfg.bg,
       border: `1px solid ${cfg.border}`,
+      borderLeft: `3px solid ${cfg.dot}`,
       borderRadius: 'var(--r-md)',
-      padding: '7px 10px',
+      padding: '7px 10px 7px 8px',
       marginBottom: 6,
-      position: 'relative',
-      cursor: 'default',
     }}>
-      {ev.recorrente && (
-        <div style={{
-          position: 'absolute', top: 6, right: 8,
-          width: 6, height: 6, borderRadius: 999,
-          background: cfg.dot, opacity: 0.7,
-        }} title="Recorrente" />
-      )}
-      {ev.hora && (
-        <div style={{
-          fontSize: 14.5,
-          fontFamily: 'var(--font-title)',
-          fontWeight: 700,
-          color: cfg.text,
-          letterSpacing: '0.02em',
-          marginBottom: 3,
-        }}>
-          {ev.hora}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 4 }}>
+        <div style={{ flex: 1 }}>
+          {ev.hora && (
+            <div style={{
+              fontSize: 11, fontFamily: 'var(--font-title)', fontWeight: 700,
+              color: cfg.dot, letterSpacing: '0.04em', marginBottom: 2,
+            }}>
+              {ev.hora}
+            </div>
+          )}
+          <div style={{
+            fontSize: 13, fontFamily: 'var(--font-body)', color: cfg.text,
+            lineHeight: 1.35, fontWeight: 500,
+          }}>
+            {ev.titulo}
+          </div>
         </div>
-      )}
-      <div style={{
-        fontSize: 14,
-        fontFamily: 'var(--font-body)',
-        color: cfg.text,
-        lineHeight: 1.35,
-        fontWeight: 500,
-      }}>
-        {ev.titulo}
+        {ev.recorrente && (
+          <span title="Recorrente" style={{ fontSize: 11, color: cfg.dot, opacity: 0.75, flexShrink: 0 }}>↻</span>
+        )}
+      </div>
+      <div style={{ marginTop: 5 }}>
+        <span style={{
+          display: 'inline-block', padding: '1px 6px', borderRadius: 999,
+          background: `color-mix(in oklch, ${cfg.dot} 18%, transparent)`,
+          color: cfg.text, fontSize: 10, fontWeight: 700,
+          textTransform: 'uppercase', letterSpacing: '0.06em',
+        }}>
+          {TIPO_LABEL[ev.tipo] || ev.tipo}
+        </span>
       </div>
     </div>
   );
@@ -105,7 +112,7 @@ function AgendaPage() {
   const [currentDate, setCurrentDate] = useState(new Date(2026, 4, 19)); // May 19, 2026
   const [selectedDay, setSelectedDay] = useState(null);
 
-  const todayStr = '2026-05-15'; // today per env
+  const todayStr = new Date().toISOString().slice(0, 10);
 
   // ── helpers ──────────────────────────────────
   function isoDate(d) {
@@ -176,10 +183,11 @@ function AgendaPage() {
               <div key={i} style={{
                 borderRadius: 'var(--r-lg)',
                 background: isWeekend ? 'var(--offwhite)' : 'var(--white)',
-                border: `1px solid ${isToday ? 'var(--pink-soft)' : 'var(--gray-light)'}`,
+                border: isToday ? '2px solid var(--pink)' : `1px solid var(--gray-light)`,
                 overflow: 'hidden',
                 minHeight: 120,
                 cursor: 'pointer',
+                boxShadow: isToday ? '0 0 0 3px color-mix(in oklch, var(--pink) 15%, transparent)' : 'none',
               }} onClick={() => switchToDay(ds)}>
                 <div style={{
                   padding: '10px 12px 8px',
@@ -189,7 +197,7 @@ function AgendaPage() {
                   <div style={{ fontSize: 14.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: isToday ? 'var(--pink-deep)' : 'var(--gray)', marginBottom: 2 }}>
                     {WEEK_NAMES[i]}
                   </div>
-                  <div style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 700, color: isToday ? 'var(--pink-deep)' : 'var(--ink)', lineHeight: 1 }}>
+                  <div style={{ fontFamily: 'var(--font-title)', fontSize: isToday ? 24 : 18, fontWeight: 700, color: isToday ? 'var(--pink-deep)' : 'var(--ink)', lineHeight: 1 }}>
                     {day.getDate()}
                   </div>
                   {events.length > 0 && (

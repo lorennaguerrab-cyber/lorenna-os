@@ -66,7 +66,7 @@ function DayFocusCard({ energy }) {
             borderRadius: 999, border: '1px solid var(--border)',
           }}>
             <Icon name="calendar" size={12} color="var(--text-muted)" />
-            <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>2 lembretes fixos</span>
+            <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>5 lembretes fixos</span>
           </div>
         </div>
       </CardBody>
@@ -297,7 +297,7 @@ function EnergySelector({ energy, setEnergy }) {
   );
 }
 
-function TaskRow({ task, dense, large }) {
+function TaskRow({ task, dense, large, onDelete }) {
   const [open, setOpen] = useState(false);
   const [concluida, setConcluida] = useState(task.status === 'concluida');
   const [microDone, setMicroDone] = useState(() => Object.fromEntries(task.micro.map(m => [m.id, m.done])));
@@ -345,6 +345,34 @@ function TaskRow({ task, dense, large }) {
                   Para <strong style={{ color: 'var(--text-secondary)' }}>{task.cliente}</strong>
                 </div>
               )}
+              {(task.categoria || task.energia?.length > 0) && (
+                <div className="row gap-1" style={{ marginTop: 5, flexWrap: 'wrap' }}>
+                  {task.categoria && (
+                    <span style={{
+                      padding: '1px 7px', borderRadius: 999, fontSize: 11, fontWeight: 600,
+                      background: task.categoria === 'cliente' ? '#E8EEFF' : task.categoria === 'pessoal' ? 'var(--pink-tint)' : 'var(--bg-elevated)',
+                      color: task.categoria === 'cliente' ? '#3A50C4' : task.categoria === 'pessoal' ? 'var(--pink-deep)' : 'var(--text-muted)',
+                      border: task.categoria === 'cliente' ? '1px solid #BFC9F5' : task.categoria === 'pessoal' ? '1px solid var(--pink-soft)' : '1px solid var(--border)',
+                      textTransform: 'uppercase', letterSpacing: '0.04em',
+                    }}>
+                      {task.categoria}
+                    </span>
+                  )}
+                  {task.energia?.slice(0, 2).map(e => {
+                    const ec = window.ENERGY?.[e];
+                    return ec ? (
+                      <span key={e} style={{
+                        padding: '1px 7px', borderRadius: 999, fontSize: 11, fontWeight: 600,
+                        background: `color-mix(in oklch, ${ec.color} 12%, var(--white))`,
+                        color: 'var(--text-secondary)',
+                        border: `1px solid color-mix(in oklch, ${ec.color} 25%, transparent)`,
+                      }}>
+                        {ec.emoji} {ec.label}
+                      </span>
+                    ) : null;
+                  })}
+                </div>
+              )}
             </div>
             <div className="row gap-2" style={{ flexShrink: 0 }}>
               {total > 0 && (
@@ -353,6 +381,13 @@ function TaskRow({ task, dense, large }) {
               {total > 0 && (
                 <button className="btn ghost icon" onClick={() => setOpen(!open)}>
                   <Icon name={open ? 'chev-down' : 'chev-right'} size={14} />
+                </button>
+              )}
+              {onDelete && (
+                <button className="btn ghost icon" title="Apagar tarefa"
+                  onClick={ev => { ev.stopPropagation(); onDelete(task.id); }}
+                  style={{ opacity: 0.45, color: 'var(--text-muted)' }}>
+                  <Icon name="x" size={13}/>
                 </button>
               )}
             </div>
@@ -436,12 +471,12 @@ function WeekView() {
   const today = (new Date().getDay() + 6) % 7; // 0=Seg
   // arbitrary mock task counts per day, with light/heavy mix
   const data = [
-    { count: 4, energy: 'criativa'    },
-    { count: 6, energy: 'operacional' },
-    { count: 3, energy: 'foco'        },
-    { count: 5, energy: 'operacional' },
-    { count: 2, energy: 'gravacao'    },
-    { count: 1, energy: 'maternidade' },
+    { count: 0, energy: 'criativa'    },
+    { count: 0, energy: 'operacional' },
+    { count: 0, energy: 'foco'        },
+    { count: 0, energy: 'operacional' },
+    { count: 0, energy: 'gravacao'    },
+    { count: 0, energy: 'maternidade' },
     { count: 0, energy: 'cansada'     },
   ];
   return (
@@ -654,12 +689,12 @@ function PequenasVitorias() {
 }
 
 const ROTINA_SEMANAL = [
-  { dia: 'Seg', temas: ['📋 Burocracias', '✍️ Roteiros', '📝 Blog'] },
+  { dia: 'Seg', temas: ['📋 Burocracias', '✍️ Roteiros', '📝 Blog', '🔎 Novos contratos'] },
   { dia: 'Ter', temas: ['📸 Fotos ext.', '🎬 Vídeos ext.'] },
   { dia: 'Qua', temas: ['💌 Newsletter', '🎬 Gravação', '✂️ Edição'] },
   { dia: 'Qui', temas: ['📸 Fotos ext.', '🎬 Vídeos ext.'] },
   { dia: 'Sex', temas: ['✂️ Edição', '⏳ Pendências'] },
-  { dia: 'Sáb', temas: ['🌿 Descanso'] },
+  { dia: 'Sáb', temas: ['🎬 Vlog família', '🌿 Descanso'] },
   { dia: 'Dom', temas: ['🌿 Descanso'] },
 ];
 
@@ -685,9 +720,12 @@ function RotinaSemanalWidget() {
                 textAlign: 'center',
               }}>
                 <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6, color: isToday ? 'var(--pink-deep)' : 'var(--text-muted)' }}>{d.dia}</div>
-                <div className="col gap-1">
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
                   {d.temas.map((t, j) => (
-                    <div key={j} style={{ fontSize: 14.5, lineHeight: 1.35, color: isToday ? 'var(--ink)' : 'var(--text-secondary)' }}>{t}</div>
+                    <React.Fragment key={j}>
+                      {j > 0 && <div style={{ height: 1, background: isToday ? 'rgba(232,83,141,0.25)' : 'rgba(0,0,0,0.13)', margin: '4px 0' }}/>}
+                      <div style={{ fontSize: 14.5, lineHeight: 1.35, color: isToday ? 'var(--ink)' : 'var(--text-secondary)' }}>{t}</div>
+                    </React.Fragment>
                   ))}
                 </div>
               </div>
@@ -769,6 +807,277 @@ function MiniCalendarWidget() {
   );
 }
 
+const BR_HOLIDAYS = [
+  { date: '2026-05-10', nome: 'Dia das Mães',          emoji: '💐', campanha: true,
+    clientes: ['Ótica Igor Giordano', 'Espaço Criar', 'Pratique'],
+    sugestoes: ['Post emocional sobre maternidade', 'Oferta especial Dia das Mães', 'Reel bastidores com os filhos', 'Campanha de presente'] },
+  { date: '2026-06-11', nome: 'Copa do Mundo — Início', emoji: '⚽', campanha: true,
+    clientes: ['Ótica Igor Giordano', 'Pratique', '@lorennagn'],
+    sugestoes: ['Campanha Copa com visual verde+amarelo', 'Reel "assista em grande estilo"', 'Promoção temática durante torneio', 'Stories reação aos jogos'] },
+  { date: '2026-06-12', nome: 'Dia dos Namorados',      emoji: '💕', campanha: true,
+    clientes: ['Ótica Igor Giordano', 'Pratique'],
+    sugestoes: ['Campanha o presente perfeito', 'Post casais + produto', 'Stories românticos', 'Oferta especial dupla'] },
+  { date: '2026-06-13', nome: 'Corpus Christi',          emoji: '✝️', campanha: false, clientes: [], sugestoes: [] },
+  { date: '2026-06-24', nome: 'São João',                emoji: '🎉', campanha: true,
+    clientes: ['@lorennagn', 'Espaço Criar'],
+    sugestoes: ['Content de festa junina', 'Receitas típicas', 'Look junino', 'Atividades para crianças'] },
+  { date: '2026-08-09', nome: 'Dia dos Pais',            emoji: '👔', campanha: true,
+    clientes: ['Ótica Igor Giordano', 'Pratique'],
+    sugestoes: ['Campanha presente para o pai', 'Armação masculina destaque', 'Post emocional paternidade'] },
+  { date: '2026-09-07', nome: 'Independência do Brasil', emoji: '🇧🇷', campanha: true,
+    clientes: ['@lorennagn', 'Ótica Igor Giordano'],
+    sugestoes: ['Post patriótico com identidade visual', 'Campanha verde e amarelo'] },
+  { date: '2026-10-12', nome: 'Dia das Crianças',        emoji: '🧒', campanha: true,
+    clientes: ['Espaço Criar', '@lorennagn'],
+    sugestoes: ['Conteúdo sobre educação criativa', 'Post com os filhos', 'Campanha Espaço Criar', 'Reel infantil'] },
+  { date: '2026-11-27', nome: 'Black Friday',             emoji: '🛍️', campanha: true,
+    clientes: ['Ótica Igor Giordano', 'Pratique', 'Agência Logue'],
+    sugestoes: ['Oferta Black Friday exclusiva', 'Campanha desconto especial', 'Stories contagem regressiva', 'E-mail marketing Black'] },
+  { date: '2026-12-25', nome: 'Natal',                   emoji: '🎄', campanha: true,
+    clientes: ['Ótica Igor Giordano', 'Pratique', 'Espaço Criar', '@lorennagn'],
+    sugestoes: ['Campanha de Natal', 'Post emocional fim de ano', 'Oferta presente especial', 'Vídeo making of natal'] },
+  { date: '2026-12-31', nome: 'Réveillon',               emoji: '🎆', campanha: true,
+    clientes: ['@lorennagn', 'Ótica Igor Giordano'],
+    sugestoes: ['Post retrospectiva do ano', 'Mensagem de virada', 'Reel highlights 2026'] },
+  { date: '2027-05-09', nome: 'Dia das Mães',            emoji: '💐', campanha: true,
+    clientes: ['Ótica Igor Giordano', 'Espaço Criar', 'Pratique'],
+    sugestoes: ['Post emocional sobre maternidade', 'Oferta especial Dia das Mães', 'Reel bastidores com os filhos'] },
+];
+
+function HolidayAlertBanner() {
+  const today = new Date();
+  const in30 = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const upcoming = BR_HOLIDAYS.filter(h => {
+    if (!h.campanha) return false;
+    const [y, m, d] = h.date.split('-').map(Number);
+    const hDate = new Date(y, m - 1, d);
+    return hDate > today && hDate <= in30;
+  });
+  if (upcoming.length === 0) return null;
+  return (
+    <div className="col gap-2">
+      {upcoming.map(h => {
+        const [y, m, d] = h.date.split('-').map(Number);
+        const daysLeft = Math.ceil((new Date(y, m - 1, d) - today) / (24 * 60 * 60 * 1000));
+        return (
+          <div key={h.date} className="row gap-3" style={{
+            padding: '12px 16px',
+            background: '#FFF8EE',
+            border: '1px solid #FDDBB0',
+            borderRadius: 'var(--r-md)',
+            alignItems: 'center',
+          }}>
+            <span style={{ fontSize: 22, flexShrink: 0 }}>{h.emoji}</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 14.5, fontWeight: 600, color: '#B5720A' }}>
+                {h.nome} — em {daysLeft} dia{daysLeft !== 1 ? 's' : ''}! Hora de planejar.
+              </div>
+              <div style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 2 }}>
+                Sugestão: {h.sugestoes[0]}
+              </div>
+            </div>
+            <div style={{
+              fontSize: 15, fontWeight: 700, color: 'white',
+              background: '#E89B4C', padding: '5px 12px',
+              borderRadius: 999, flexShrink: 0,
+            }}>
+              {daysLeft}d
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function FullCalendarWidget() {
+  const todayReal = new Date();
+  const [viewDate, setViewDate] = useState(() => new Date(todayReal.getFullYear(), todayReal.getMonth(), 1));
+  const [selectedDay, setSelectedDay] = useState(null);
+
+  const year  = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+  const lastDay  = new Date(year, month + 1, 0);
+  const startDow = (new Date(year, month, 1).getDay() + 6) % 7;
+  const pad = n => String(n).padStart(2, '0');
+  const monthName = viewDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  const todayStr  = `${todayReal.getFullYear()}-${pad(todayReal.getMonth() + 1)}-${pad(todayReal.getDate())}`;
+  const events    = window.AGENDA_EVENTS || [];
+  const typeColors = window.AGENDA_TYPE_COLORS || {};
+
+  function dateStr(d) { return `${year}-${pad(month + 1)}-${pad(d)}`; }
+  function eventsForDay(d) { const ds = dateStr(d); return events.filter(e => e.date === ds); }
+  function holidayForDay(d) { const ds = dateStr(d); return BR_HOLIDAYS.find(h => h.date === ds) || null; }
+
+  const cells = [];
+  for (let i = 0; i < startDow; i++) cells.push(null);
+  for (let d = 1; d <= lastDay.getDate(); d++) cells.push(d);
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  const selDayEvents = selectedDay ? eventsForDay(selectedDay) : [];
+  const selHoliday   = selectedDay ? holidayForDay(selectedDay) : null;
+
+  return (
+    <Card>
+      <CardBody>
+        <div className="row between" style={{ marginBottom: 'var(--s-4)' }}>
+          <div>
+            <div className="eyebrow">Calendário</div>
+            <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 20, fontWeight: 700, marginTop: 2 }}>
+              {monthName.charAt(0).toUpperCase() + monthName.slice(1)}
+            </h2>
+          </div>
+          <div className="row gap-2">
+            <Button variant="ghost" size="sm" onClick={() => { setViewDate(new Date(year, month - 1, 1)); setSelectedDay(null); }}>
+              <Icon name="chev-left" size={14}/>
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => { setViewDate(new Date(todayReal.getFullYear(), todayReal.getMonth(), 1)); setSelectedDay(null); }}>
+              Hoje
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => { setViewDate(new Date(year, month + 1, 1)); setSelectedDay(null); }}>
+              <Icon name="chev-right" size={14}/>
+            </Button>
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div className="row gap-4" style={{ flexWrap: 'wrap', marginBottom: 'var(--s-4)' }}>
+          {Object.entries(typeColors).map(([tipo, cfg]) => (
+            <div key={tipo} className="row gap-2">
+              <div style={{ width: 8, height: 8, borderRadius: 999, background: cfg.dot, flexShrink: 0, marginTop: 3 }}/>
+              <span style={{ fontSize: 13.5, color: 'var(--text-muted)' }}>
+                {tipo === 'filho' ? 'Filhos' : tipo === 'gravacao' ? 'Gravação' : tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+              </span>
+            </div>
+          ))}
+          <div className="row gap-2">
+            <div style={{ width: 8, height: 8, borderRadius: 999, background: '#E89B4C', flexShrink: 0, marginTop: 3 }}/>
+            <span style={{ fontSize: 13.5, color: 'var(--text-muted)' }}>Datas comemorativas</span>
+          </div>
+        </div>
+
+        {/* Day headers */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 4 }}>
+          {['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'].map(d => (
+            <div key={d} style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-muted)', textAlign: 'center', paddingBottom: 6 }}>{d}</div>
+          ))}
+        </div>
+
+        {/* Calendar grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+          {cells.map((d, i) => {
+            if (!d) return <div key={i} style={{ minHeight: 80 }}/>;
+            const ds = dateStr(d);
+            const isToday   = ds === todayStr;
+            const dayEvs    = eventsForDay(d);
+            const holiday   = holidayForDay(d);
+            const isSelected = selectedDay === d;
+            return (
+              <div key={i} onClick={() => setSelectedDay(isSelected ? null : d)}
+                style={{
+                  minHeight: 80, padding: '7px 8px',
+                  borderRadius: 'var(--r-md)',
+                  border: `1.5px solid ${isToday ? 'var(--pink)' : isSelected ? 'var(--ink)' : holiday ? '#FDDBB0' : 'var(--border)'}`,
+                  background: isToday
+                    ? 'color-mix(in oklch, var(--pink) 10%, var(--bg-surface))'
+                    : holiday ? '#FFF8EE' : 'var(--bg-elevated)',
+                  cursor: 'pointer',
+                  transition: 'border-color .15s',
+                  overflow: 'hidden',
+                }}>
+                <div className="row gap-1" style={{ marginBottom: 4, alignItems: 'center' }}>
+                  <span style={{
+                    fontSize: 14, fontWeight: isToday ? 700 : 500,
+                    color: isToday ? 'var(--pink-deep)' : holiday ? '#B5720A' : 'var(--text-primary)',
+                    lineHeight: 1,
+                  }}>{d}</span>
+                  {holiday && <span style={{ fontSize: 11 }}>{holiday.emoji}</span>}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  {dayEvs.slice(0, 2).map(ev => {
+                    const cfg = typeColors[ev.tipo] || typeColors.admin || { bg: '#F5F5F5', text: '#555' };
+                    return (
+                      <div key={ev.id} style={{
+                        fontSize: 11, lineHeight: 1.25, padding: '2px 4px',
+                        background: cfg.bg, color: cfg.text,
+                        borderRadius: 3,
+                        overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
+                      }}>
+                        {ev.hora && <span style={{ fontWeight: 700, marginRight: 2 }}>{ev.hora.split(':')[0]}h</span>}
+                        {ev.titulo}
+                      </div>
+                    );
+                  })}
+                  {dayEvs.length > 2 && (
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)', paddingLeft: 2 }}>+{dayEvs.length - 2}</div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Selected day detail */}
+        {selectedDay && (
+          <div style={{ marginTop: 'var(--s-4)', padding: 'var(--s-4)', background: 'var(--bg-surface)', borderRadius: 'var(--r-md)', border: '1px solid var(--border)' }}>
+            <div className="row between" style={{ marginBottom: 'var(--s-3)', alignItems: 'center' }}>
+              <div className="eyebrow">
+                {selectedDay} de {monthName.split(' ')[0]}
+                {selHoliday && ` · ${selHoliday.emoji} ${selHoliday.nome}`}
+              </div>
+              <button onClick={() => setSelectedDay(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+                <Icon name="x" size={13} color="var(--text-muted)"/>
+              </button>
+            </div>
+
+            {selHoliday && selHoliday.campanha && (
+              <div style={{ marginBottom: selDayEvents.length > 0 ? 'var(--s-3)' : 0, padding: 'var(--s-3)', background: '#FFF8EE', border: '1px solid #FDDBB0', borderRadius: 'var(--r-md)' }}>
+                <div style={{ fontSize: 14.5, fontWeight: 600, color: '#B5720A', marginBottom: 8 }}>
+                  {selHoliday.emoji} Oportunidade de campanha
+                </div>
+                <div className="col gap-1">
+                  {selHoliday.sugestoes.map((s, idx) => (
+                    <div key={idx} className="row gap-2">
+                      <span style={{ color: '#E89B4C', fontSize: 14, flexShrink: 0 }}>→</span>
+                      <span style={{ fontSize: 14, color: 'var(--ink-soft)' }}>{s}</span>
+                    </div>
+                  ))}
+                </div>
+                {selHoliday.clientes.length > 0 && (
+                  <div className="row gap-2" style={{ marginTop: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+                    <span style={{ fontSize: 14, color: 'var(--text-muted)' }}>Clientes:</span>
+                    {selHoliday.clientes.map((c, idx) => (
+                      <span key={idx} style={{ fontSize: 13.5, padding: '2px 8px', background: 'rgba(232,155,76,0.2)', borderRadius: 999, color: '#B5720A', fontWeight: 500 }}>{c}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {selDayEvents.length === 0 && !selHoliday && (
+              <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>Nenhum evento neste dia.</p>
+            )}
+
+            {selDayEvents.length > 0 && (
+              <div className="col gap-2">
+                {selDayEvents.map(ev => {
+                  const cfg = typeColors[ev.tipo] || typeColors.admin || { bg: '#F5F5F5', border: '#DDD', text: '#555' };
+                  return (
+                    <div key={ev.id} style={{ padding: '8px 12px', background: cfg.bg, border: `1px solid ${cfg.border}`, borderRadius: 'var(--r-md)' }}>
+                      {ev.hora && <div style={{ fontSize: 14, fontWeight: 700, color: cfg.text, marginBottom: 2 }}>{ev.hora}</div>}
+                      <div style={{ fontSize: 14.5, color: cfg.text, lineHeight: 1.3 }}>{ev.titulo}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+      </CardBody>
+    </Card>
+  );
+}
+
 function ClientsWidget() {
   return (
     <div>
@@ -829,6 +1138,8 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
 
         <RotinaSemanalWidget />
 
+        <HolidayAlertBanner />
+
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 'var(--s-5)' }} className="dash-grid">
           {/* LEFT — Tarefas em destaque */}
           <div className="col gap-4">
@@ -885,14 +1196,40 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
           {/* RIGHT */}
           <div className="col gap-4">
             <Card>
-              <CardBody>
-                <PequenasVitorias />
+              <CardHeader>
+                <div className="row gap-2">
+                  <Icon name="bell" size={13} color="var(--text-muted)" />
+                  <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 15, fontWeight: 600 }}>Lembretes fixos</h2>
+                </div>
+              </CardHeader>
+              <CardBody className="col gap-2">
+                {window.RECURRENCES.map(r => (
+                  <div key={r.texto} className="row between" style={{
+                    padding: 'var(--s-3)',
+                    background: 'var(--bg-elevated)',
+                    borderRadius: 'var(--r-md)',
+                    border: '1px solid var(--border)',
+                  }}>
+                    <div className="row gap-2">
+                      <span style={{ fontSize: 14 }}>{r.icon}</span>
+                      <span style={{ fontSize: 14.5 }}>{r.texto}</span>
+                    </div>
+                    <span className="tiny" style={{
+                      padding: '2px 8px',
+                      borderRadius: 999,
+                      background: `color-mix(in oklch, ${r.cor} 18%, transparent)`,
+                      color: r.cor,
+                    }}>
+                      {r.hora}
+                    </span>
+                  </div>
+                ))}
               </CardBody>
             </Card>
 
             <Card>
               <CardBody>
-                <MiniCalendarWidget />
+                <PequenasVitorias />
               </CardBody>
             </Card>
 
@@ -939,39 +1276,10 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
               </CardBody>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <div className="row gap-2">
-                  <Icon name="bell" size={13} color="var(--text-muted)" />
-                  <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 15, fontWeight: 600 }}>Lembretes fixos</h2>
-                </div>
-              </CardHeader>
-              <CardBody className="col gap-2">
-                {window.RECURRENCES.map(r => (
-                  <div key={r.texto} className="row between" style={{
-                    padding: 'var(--s-3)',
-                    background: 'var(--bg-elevated)',
-                    borderRadius: 'var(--r-md)',
-                    border: '1px solid var(--border)',
-                  }}>
-                    <div className="row gap-2">
-                      <span style={{ fontSize: 14 }}>{r.icon}</span>
-                      <span style={{ fontSize: 14.5 }}>{r.texto}</span>
-                    </div>
-                    <span className="tiny" style={{
-                      padding: '2px 8px',
-                      borderRadius: 999,
-                      background: `color-mix(in oklch, ${r.cor} 18%, transparent)`,
-                      color: r.cor,
-                    }}>
-                      {r.hora}
-                    </span>
-                  </div>
-                ))}
-              </CardBody>
-            </Card>
           </div>
         </div>
+
+        <FullCalendarWidget />
       </div>
     </div>
   );

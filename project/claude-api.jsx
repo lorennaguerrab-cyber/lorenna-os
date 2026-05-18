@@ -5,7 +5,7 @@
 const CLAUDE_KEY_STORAGE = 'lorenna_claude_api_key';
 
 /* ─── Core API call ─── */
-window.callClaude = async function(messages, systemPrompt, model) {
+window.callClaude = async function(messages, systemPrompt, model, maxTokens) {
   const key = localStorage.getItem(CLAUDE_KEY_STORAGE);
   if (!key) return null;
   try {
@@ -19,7 +19,7 @@ window.callClaude = async function(messages, systemPrompt, model) {
       },
       body: JSON.stringify({
         model: model || 'claude-haiku-4-5-20251001',
-        max_tokens: 1500,
+        max_tokens: maxTokens || 1500,
         system: systemPrompt || '',
         messages,
       }),

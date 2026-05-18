@@ -44,7 +44,6 @@ function Sidebar({ route, setRoute, energy, setEnergy, collapsed, setCollapsed }
         {!collapsed && (
           <div className="brand-text">
             <div className="name">Córtex Lola</div>
-            <div className="sub">@lorennagn · Papel da Lola · Agência Logue</div>
           </div>
         )}
       </div>

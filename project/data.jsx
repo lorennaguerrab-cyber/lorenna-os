@@ -21,6 +21,7 @@ const NAV = [
   { href: '/tarefas',      icon: 'check',    label: 'Tarefas'           },
   { href: '/conteudo',     icon: 'doc',      label: 'Conteúdos'         },
   { href: '/prompts',      icon: 'book',     label: 'Prompts'           },
+  { href: '/studio',       icon: 'sparkle',  label: 'Studio IA'         },
   { href: '/clientes',     icon: 'users',    label: 'Clientes'          },
   { href: '/crm',          icon: 'sparkle',  label: 'CRM Criativo'      },
   { href: '/agenda',       icon: 'calendar', label: 'Agenda'            },
@@ -30,6 +31,7 @@ const NAV = [
   { href: '/precificacao', icon: 'tag',      label: 'Precificação'      },
   { href: '/diario',       icon: 'heart',    label: 'Diário da Terapia' },
   { href: '/saude',        icon: 'pill',     label: 'Saúde'             },
+  { href: '/habitos',      icon: 'check',    label: 'Hábitos'           },
   { href: '/blog',         icon: 'pen',      label: 'Blog'              },
   { href: '/referencias',  icon: 'bookmark', label: 'Referências'       },
   { href: '/sobre',        icon: 'flower',   label: 'Sobre'             },
@@ -102,24 +104,16 @@ const TYPE_EMOJI = {
 
 /* ── Lembretes recorrentes (família) ── */
 const RECURRENCES = [
-  { texto: 'Tarefas escolares Mateus & Murilo', icon: '📚', hora: 'Antes das 10h30', cor: 'var(--e-maternidade)' },
-  { texto: 'Brincadeira Miguel (1a10m)',         icon: '🐣', hora: 'Bloco 9h e 14h',    cor: 'var(--pink)' },
-  { texto: 'Futebol Mateus & Murilo',            icon: '⚽', hora: 'Qua e Sex às 8h20',  cor: 'var(--e-operacional)' },
+  { texto: 'Beber água',                         icon: '💧', hora: 'Ao longo do dia',     cor: '#5B9BD5' },
+  { texto: 'Comer fruta',                        icon: '🍎', hora: 'Manhã e tarde',        cor: '#7FB68C' },
+  { texto: 'Exercício físico',                   icon: '🏃', hora: 'Diário',               cor: 'var(--e-operacional)' },
+  { texto: 'Tarefas escolares Mateus & Murilo',  icon: '📚', hora: 'Antes das 10h30',      cor: 'var(--e-maternidade)' },
+  { texto: 'Brincadeira Miguel (1a10m)',          icon: '🐣', hora: 'Bloco 9h e 14h',       cor: 'var(--pink)' },
+  { texto: 'Futebol Mateus & Murilo',             icon: '⚽', hora: 'Qua e Sex às 8h20',    cor: 'var(--e-operacional)' },
 ];
 
 /* ── Tarefas demo ── */
 const DEMO_TASKS = [
-  {
-    id: 't1', titulo: 'Criar roteiro do reel sobre branding feminino',
-    desc: 'Reel de 60s sobre como construir uma marca com voz autoral',
-    status: 'pendente', prioridade: 'alta', energia: ['criativa'],
-    categoria: 'conteudo', recorrente: false,
-    micro: [
-      { id: 'm1', desc: 'Definir gancho principal', done: true, min: 5 },
-      { id: 'm2', desc: 'Escrever script de 60s',    done: false, min: 15 },
-      { id: 'm3', desc: 'Revisar e ajustar ritmo',   done: false, min: 10 },
-    ],
-  },
   {
     id: 't2', titulo: 'Entregar posts semana Pratique',
     status: 'em_progresso', prioridade: 'urgente', energia: ['operacional'],
@@ -170,18 +164,6 @@ const DEMO_TASKS = [
     ],
   },
   {
-    id: 't7', titulo: 'Gravar reel bastidores — rotina criativa',
-    status: 'pendente', prioridade: 'alta', energia: ['gravacao', 'criativa'],
-    categoria: 'conteudo', recorrente: false,
-    micro: [
-      { id: 'm19', desc: 'Separar roupa e montar cenário',   done: false, min: 15 },
-      { id: 'm20', desc: 'Pegar tripé e testar enquadramento',done: false, min: 10 },
-      { id: 'm21', desc: 'Gravar hook + desenvolvimento',    done: false, min: 20 },
-      { id: 'm22', desc: 'Editar no CapCut',                 done: false, min: 30 },
-      { id: 'm23', desc: 'Escrever legenda e hashtags',      done: false, min: 10 },
-    ],
-  },
-  {
     id: 't8', titulo: 'Roteiro e edição vídeo Jornal Cidades Minerais',
     status: 'em_progresso', prioridade: 'urgente', energia: ['foco', 'operacional'],
     categoria: 'cliente', cliente: 'Jornal Cidades Minerais', recorrente: true,
@@ -203,13 +185,25 @@ const DEMO_TASKS = [
     ],
   },
   {
-    id: 't10', titulo: 'Organizar banco de hooks e CTAs',
-    status: 'pendente', prioridade: 'baixa', energia: ['operacional', 'cansada'],
-    categoria: 'admin', recorrente: false,
+    id: 't11', titulo: 'Campanha Copa do Mundo 2026 — Ótica Igor Giordano',
+    status: 'pendente', prioridade: 'alta', energia: ['criativa', 'operacional'],
+    categoria: 'cliente', cliente: 'Ótica Igor Giordano', recorrente: false,
     micro: [
-      { id: 'm31', desc: 'Listar hooks que mais performaram', done: false, min: 20 },
-      { id: 'm32', desc: 'Categorizar por formato e nicho',   done: false, min: 15 },
-      { id: 'm33', desc: 'Adicionar ao banco no sistema',     done: false, min: 10 },
+      { id: 'm34', desc: 'Definir conceito visual da campanha ⚽', done: false, min: 30 },
+      { id: 'm35', desc: 'Criar peças visuais temáticas verde+amarelo', done: false, min: 60 },
+      { id: 'm36', desc: 'Escrever legendas e CTAs',                    done: false, min: 20 },
+      { id: 'm37', desc: 'Agendar publicações durante o torneio',       done: false, min: 15 },
+    ],
+  },
+  {
+    id: 't12', titulo: 'Campanha Aniversário Ótica Igor Giordano',
+    status: 'pendente', prioridade: 'alta', energia: ['criativa', 'operacional'],
+    categoria: 'cliente', cliente: 'Ótica Igor Giordano', recorrente: false,
+    micro: [
+      { id: 'm38', desc: 'Confirmar data do aniversário com Igor', done: false, min: 5  },
+      { id: 'm39', desc: 'Criar identidade visual da campanha',    done: false, min: 45 },
+      { id: 'm40', desc: 'Produzir reel especial de aniversário',  done: false, min: 60 },
+      { id: 'm41', desc: 'Stories comemorativas + destaques',      done: false, min: 20 },
     ],
   },
 ];
@@ -356,6 +350,15 @@ const DEMO_CONTENT = [
   { id: 'c22', titulo: 'Sessão de fotos Ray-Ban — produto em destaque', tipo: 'carrossel',
     plataformas: ['instagram'], status: 'pendente', categoria: 'marketing',
     brand: 'otica', data: 'Em 3 dias' },
+  { id: 'c23', titulo: 'Campanha Copa do Mundo 2026 — verde e amarelo na ótica', tipo: 'carrossel',
+    plataformas: ['instagram'], status: 'ideia', categoria: 'marketing',
+    brand: 'otica', data: 'Jun 2026' },
+  { id: 'c24', titulo: 'Reel Copa: "Assista em grande estilo" — armação certa pra torcida', tipo: 'reel',
+    plataformas: ['instagram', 'tiktok'], status: 'ideia', categoria: 'marketing',
+    brand: 'otica', data: 'Jun 2026' },
+  { id: 'c25', titulo: 'Campanha Aniversário Ótica Igor Giordano — celebração especial', tipo: 'carrossel',
+    plataformas: ['instagram'], status: 'rascunho', categoria: 'marketing',
+    brand: 'otica', data: '' },
 
   /* Espaço Criar */
   { id: 'c30', titulo: 'Stories da semana — rotina das crianças', tipo: 'reel',

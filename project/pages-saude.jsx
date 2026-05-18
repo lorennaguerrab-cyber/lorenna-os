@@ -2,17 +2,24 @@
    pages-saude.jsx — Saúde: consultas, remédios, exames
    ────────────────────────────────────────────── */
 
-const SAUDE_KEYS = {
-  consultas: 'lorenna_saude_consultas',
-  remedios:  'lorenna_saude_remedios',
-  exames:    'lorenna_saude_exames',
-};
+const FAMILIA = [
+  { id: 'lorenna', nome: 'Lorenna', emoji: '👩‍🦰', cor: '#FF78B0', idade: null },
+  { id: 'mateus',  nome: 'Mateus',  emoji: '👦',   cor: '#5B9BD5', idade: '10 anos' },
+  { id: 'murilo',  nome: 'Murilo',  emoji: '👦',   cor: '#7FB68C', idade: null },
+  { id: 'miguel',  nome: 'Miguel',  emoji: '👶',   cor: '#E89B4C', idade: '1 ano e 10 meses' },
+];
 
-function loadSaude(key) {
-  try { return JSON.parse(localStorage.getItem(SAUDE_KEYS[key]) || '[]'); } catch { return []; }
+function loadMembro(membro, tipo) {
+  try { return JSON.parse(localStorage.getItem(`lorenna_saude_${membro}_${tipo}`) || '[]'); } catch { return []; }
 }
-function saveSaude(key, data) {
-  localStorage.setItem(SAUDE_KEYS[key], JSON.stringify(data));
+function saveMembro(membro, tipo, data) {
+  localStorage.setItem(`lorenna_saude_${membro}_${tipo}`, JSON.stringify(data));
+}
+function loadChat(membro) {
+  try { return JSON.parse(localStorage.getItem(`lorenna_saude_${membro}_chat`) || '[]'); } catch { return []; }
+}
+function saveChat(membro, msgs) {
+  localStorage.setItem(`lorenna_saude_${membro}_chat`, JSON.stringify(msgs));
 }
 
 async function compressPhoto(file) {
@@ -403,12 +410,349 @@ function ExameModal({ item, onClose, onSave }) {
   , document.body);
 }
 
+/* ── RELATÓRIO MODAL ─────────────────────── */
+function RelatorioModal({ membro, onClose }) {
+  const consultas = loadMembro(membro.id, 'consultas');
+  const remedios  = loadMembro(membro.id, 'remedios');
+  const exames    = loadMembro(membro.id, 'exames');
+  const chat      = loadChat(membro.id);
+
+  const dataGerado = new Date().toLocaleDateString('pt-BR', {
+    day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
+  });
+
+  function formatConsultas() {
+    if (!consultas.length) return '  Nenhuma consulta registrada.\n';
+    return consultas.map(c => {
+      const lines = [`  • ${c.titulo}`];
+      if (c.especialidade) lines.push(`    Especialidade: ${c.especialidade}`);
+      if (c.medico) lines.push(`    Médico(a): ${c.medico}`);
+      if (c.data) lines.push(`    Data: ${new Date(c.data + 'T00:00').toLocaleDateString('pt-BR')}${c.hora ? ` às ${c.hora}` : ''}`);
+      if (c.local) lines.push(`    Local: ${c.local}`);
+      lines.push(`    Status: ${{ agendada: 'Agendada', realizada: 'Realizada', cancelada: 'Cancelada' }[c.status] || c.status}`);
+      if (c.notas) lines.push(`    Notas: ${c.notas}`);
+      return lines.join('\n');
+    }).join('\n\n') + '\n';
+  }
+
+  function formatRemedios() {
+    if (!remedios.length) return '  Nenhum medicamento registrado.\n';
+    return remedios.map(r => {
+      const lines = [`  • ${r.nome}${r.dose ? ` (${r.dose})` : ''}`];
+      if (r.frequencia) lines.push(`    Frequência: ${r.frequencia}`);
+      const statusLabel = { preciso_comprar: 'Preciso comprar', comprando: 'Comprando', ativo: 'Tomando', finalizado: 'Finalizado' };
+      lines.push(`    Status: ${statusLabel[r.status] || r.status}`);
+      if (r.estoque) lines.push(`    Estoque: ${r.estoque}`);
+      if (r.validade_receita) lines.push(`    Validade da receita: ${new Date(r.validade_receita + 'T00:00').toLocaleDateString('pt-BR')}`);
+      if (r.notas) lines.push(`    Obs: ${r.notas}`);
+      return lines.join('\n');
+    }).join('\n\n') + '\n';
+  }
+
+  function formatExames() {
+    if (!exames.length) return '  Nenhum exame registrado.\n';
+    return exames.map(e => {
+      const lines = [`  • ${e.nome}`];
+      if (e.solicitado_em) lines.push(`    Solicitado em: ${new Date(e.solicitado_em + 'T00:00').toLocaleDateString('pt-BR')}`);
+      if (e.realizado_em) lines.push(`    Realizado em: ${new Date(e.realizado_em + 'T00:00').toLocaleDateString('pt-BR')}`);
+      lines.push(`    Status: ${{ pendente: 'Pendente', agendado: 'Agendado', realizado: 'Realizado' }[e.status] || e.status}`);
+      if (e.notas) lines.push(`    Resultado/Obs: ${e.notas}`);
+      return lines.join('\n');
+    }).join('\n\n') + '\n';
+  }
+
+  function formatChat() {
+    if (!chat.length) return '  Nenhum histórico de sintomas registrado.\n';
+    return chat.map(m => {
+      const role = m.role === 'user' ? 'Você' : 'Assistente IA';
+      const ts = m.ts ? new Date(m.ts).toLocaleString('pt-BR') : '';
+      return `  [${ts}] ${role}:\n  ${m.content}`;
+    }).join('\n\n') + '\n';
+  }
+
+  const relatorio = [
+    `RELATÓRIO DE SAÚDE — ${membro.nome.toUpperCase()}${membro.idade ? ` (${membro.idade})` : ''}`,
+    `Gerado em: ${dataGerado}`,
+    `${'─'.repeat(60)}`,
+    '',
+    'CONSULTAS MÉDICAS',
+    '─'.repeat(40),
+    formatConsultas(),
+    'MEDICAMENTOS',
+    '─'.repeat(40),
+    formatRemedios(),
+    'EXAMES',
+    '─'.repeat(40),
+    formatExames(),
+    'HISTÓRICO DE SINTOMAS (Assistente IA)',
+    '─'.repeat(40),
+    formatChat(),
+    `${'─'.repeat(60)}`,
+    `Fim do relatório`,
+  ].join('\n');
+
+  function copiar() {
+    navigator.clipboard.writeText(relatorio).then(() => {
+      showToast('Relatório copiado!');
+    }).catch(() => {
+      showToast('Erro ao copiar. Selecione o texto manualmente.');
+    });
+  }
+
+  const content = (
+    <div onClick={onClose} style={{
+      position: 'fixed', inset: 0, zIndex: 9999,
+      background: 'rgba(43,34,34,0.5)', backdropFilter: 'blur(4px)',
+      display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+      padding: '24px', overflowY: 'auto',
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: 'min(720px, 96vw)', background: 'var(--white)',
+        borderRadius: 'var(--r-xl)', border: '1px solid var(--gray-light)', overflow: 'hidden',
+      }}>
+        <div style={{ height: 4, background: 'var(--pink)' }}/>
+        <div style={{ padding: 'var(--s-5)' }}>
+          <div className="row between" style={{ marginBottom: 'var(--s-4)', alignItems: 'center' }}>
+            <div>
+              <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 19, fontWeight: 700 }}>
+                Relatório de Saúde — {membro.emoji} {membro.nome}
+              </h2>
+              <p className="tiny muted" style={{ marginTop: 2 }}>Gerado em {dataGerado}</p>
+            </div>
+            <div className="row gap-2">
+              <Button variant="primary" size="sm" onClick={copiar}>
+                <Icon name="copy" size={13} color="white"/> Copiar relatório
+              </Button>
+              <Button variant="ghost" size="sm" className="icon" onClick={onClose}>
+                <Icon name="x" size={15}/>
+              </Button>
+            </div>
+          </div>
+          <pre style={{
+            background: 'var(--bg-elevated)', borderRadius: 'var(--r-md)',
+            border: '1px solid var(--border)', padding: 'var(--s-4)',
+            fontSize: 13, lineHeight: 1.7, fontFamily: 'monospace',
+            whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+            maxHeight: '60vh', overflowY: 'auto',
+            color: 'var(--text-primary)',
+          }}>
+            {relatorio}
+          </pre>
+        </div>
+      </div>
+    </div>
+  );
+
+  return ReactDOM.createPortal(content, document.body);
+}
+
+/* ── SAÚDE ASSISTENTE ─────────────────────── */
+function SaudeAssistente({ membro }) {
+  const [chat, setChat] = useState(() => loadChat(membro.id));
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showRelatorio, setShowRelatorio] = useState(false);
+  const bottomRef = useRef(null);
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    const msgs = loadChat(membro.id);
+    setChat(msgs);
+  }, [membro.id]);
+
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chat, loading]);
+
+  const hasClaudeKey = typeof window.callClaude === 'function' && (
+    window.__claudeKey || window.CLAUDE_KEY || localStorage.getItem('claude_api_key')
+  );
+
+  async function enviar() {
+    const text = input.trim();
+    if (!text || loading) return;
+
+    const userMsg = { role: 'user', content: text, ts: Date.now() };
+    const newChat = [...chat, userMsg];
+    setChat(newChat);
+    saveChat(membro.id, newChat);
+    setInput('');
+    setLoading(true);
+
+    try {
+      const systemPrompt = `Você é um assistente de saúde para ${membro.nome}${membro.idade ? ` (${membro.idade})` : ''}. Registre sintomas, acompanhe tratamentos, faça perguntas relevantes. Para sintomas graves, sempre recomende consultar um médico. Responda em português brasileiro, de forma clara e empática.`;
+      const apiMsgs = newChat.map(({ role, content }) => ({ role, content }));
+      const reply = await window.callClaude(apiMsgs, systemPrompt, 'claude-haiku-4-5-20251001', 1000);
+      const assistantMsg = { role: 'assistant', content: reply, ts: Date.now() };
+      const finalChat = [...newChat, assistantMsg];
+      setChat(finalChat);
+      saveChat(membro.id, finalChat);
+    } catch (err) {
+      const errMsg = { role: 'assistant', content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.', ts: Date.now() };
+      const finalChat = [...newChat, errMsg];
+      setChat(finalChat);
+      saveChat(membro.id, finalChat);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function handleKeyDown(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      enviar();
+    }
+  }
+
+  if (!hasClaudeKey) {
+    return (
+      <Card>
+        <CardBody>
+          <div className="col gap-3" style={{ padding: 'var(--s-4) 0', alignItems: 'center', textAlign: 'center' }}>
+            <span style={{ fontSize: 36 }}>🔑</span>
+            <p style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 600 }}>Assistente IA indisponível</p>
+            <p className="small muted" style={{ maxWidth: 380 }}>
+              Configure a chave da API Claude para usar o assistente IA.
+              Use <code style={{ background: 'var(--bg-elevated)', padding: '1px 6px', borderRadius: 4, fontSize: 12 }}>window.setClaudeKey('sua-chave')</code> no console para configurar.
+            </p>
+          </div>
+        </CardBody>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="col gap-0" style={{ height: 'calc(100vh - 280px)', minHeight: 400 }}>
+      {/* Chat header */}
+      <div className="row between" style={{
+        padding: '12px 16px', borderRadius: 'var(--r-lg) var(--r-lg) 0 0',
+        background: 'var(--bg-surface)', border: '1px solid var(--border)',
+        borderBottom: 'none', alignItems: 'center',
+      }}>
+        <div className="row gap-2" style={{ alignItems: 'center' }}>
+          <span style={{ fontSize: 20 }}>{membro.emoji}</span>
+          <div>
+            <p style={{ fontWeight: 600, fontSize: 14 }}>Assistente de Saúde — {membro.nome}</p>
+            <p className="tiny muted">Powered by Claude Haiku</p>
+          </div>
+        </div>
+        <Button variant="ghost" size="sm" onClick={() => setShowRelatorio(true)}>
+          <Icon name="file-text" size={13}/> Gerar Relatório PDF
+        </Button>
+      </div>
+
+      {/* Messages area */}
+      <div style={{
+        flex: 1, overflowY: 'auto', padding: 'var(--s-4)',
+        background: 'var(--bg-elevated)', border: '1px solid var(--border)',
+        borderBottom: 'none', display: 'flex', flexDirection: 'column', gap: 'var(--s-3)',
+      }}>
+        {chat.length === 0 ? (
+          <div className="col gap-3" style={{ alignItems: 'center', justifyContent: 'center', flex: 1, textAlign: 'center', padding: 'var(--s-6) var(--s-4)' }}>
+            <span style={{ fontSize: 40 }}>{membro.emoji}</span>
+            <p style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>
+              Olá! Pode me contar sobre a saúde de {membro.nome}.
+            </p>
+            <p className="small muted" style={{ maxWidth: 360 }}>
+              Descreva sintomas, dúvidas, ou peça para registrar uma consulta.
+            </p>
+          </div>
+        ) : (
+          chat.map((msg, i) => (
+            <div key={i} style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start',
+            }}>
+              <div style={{
+                maxWidth: '78%',
+                padding: '10px 14px',
+                borderRadius: msg.role === 'user'
+                  ? '16px 16px 4px 16px'
+                  : '16px 16px 16px 4px',
+                background: msg.role === 'user'
+                  ? 'var(--pink)'
+                  : 'var(--white)',
+                color: msg.role === 'user' ? 'white' : 'var(--text-primary)',
+                border: msg.role === 'user' ? 'none' : '1px solid var(--border)',
+                fontSize: 14,
+                lineHeight: 1.55,
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+              }}>
+                {msg.content}
+              </div>
+              {msg.ts && (
+                <span className="tiny muted" style={{ marginTop: 3, marginLeft: 4, marginRight: 4 }}>
+                  {new Date(msg.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                  {' · '}
+                  {new Date(msg.ts).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
+                </span>
+              )}
+            </div>
+          ))
+        )}
+
+        {loading && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <div style={{
+              padding: '10px 16px',
+              borderRadius: '16px 16px 16px 4px',
+              background: 'var(--white)',
+              border: '1px solid var(--border)',
+              fontSize: 14, color: 'var(--text-muted)',
+              fontStyle: 'italic',
+            }}>
+              IA pensando...
+            </div>
+          </div>
+        )}
+
+        <div ref={bottomRef}/>
+      </div>
+
+      {/* Input area */}
+      <div style={{
+        padding: 'var(--s-3)', background: 'var(--bg-surface)',
+        border: '1px solid var(--border)', borderRadius: '0 0 var(--r-lg) var(--r-lg)',
+        display: 'flex', gap: 'var(--s-2)', alignItems: 'flex-end',
+      }}>
+        <textarea
+          ref={textareaRef}
+          className="textarea"
+          placeholder={`Mensagem para ${membro.nome}...`}
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          rows={2}
+          style={{ flex: 1, resize: 'none', minHeight: 44, maxHeight: 120 }}
+        />
+        <Button
+          variant="primary"
+          onClick={enviar}
+          disabled={!input.trim() || loading}
+          style={{ flexShrink: 0, alignSelf: 'flex-end' }}
+        >
+          <Icon name="send" size={14} color="white"/>
+        </Button>
+      </div>
+
+      {showRelatorio && (
+        <RelatorioModal membro={membro} onClose={() => setShowRelatorio(false)}/>
+      )}
+    </div>
+  );
+}
+
 /* ── PAGE ─────────────────────── */
 function SaudePage() {
-  const [tab, setTab] = useState('urgente');
-  const [consultas, setConsultas] = useState(() => loadSaude('consultas'));
-  const [remedios, setRemedios] = useState(() => loadSaude('remedios'));
-  const [exames, setExames] = useState(() => loadSaude('exames'));
+  const [membro, setMembro] = useState(FAMILIA[0]);
+  const [subTab, setSubTab] = useState('ia');
+  const [consultas, setConsultas] = useState(() => loadMembro(FAMILIA[0].id, 'consultas'));
+  const [remedios, setRemedios] = useState(() => loadMembro(FAMILIA[0].id, 'remedios'));
+  const [exames, setExames] = useState(() => loadMembro(FAMILIA[0].id, 'exames'));
 
   const [editingConsulta, setEditingConsulta] = useState(null);
   const [editingRemedio, setEditingRemedio] = useState(null);
@@ -417,18 +761,26 @@ function SaudePage() {
   const [showNewRemedio, setShowNewRemedio] = useState(false);
   const [showNewExame, setShowNewExame] = useState(false);
 
+  function switchMembro(m) {
+    setMembro(m);
+    setConsultas(loadMembro(m.id, 'consultas'));
+    setRemedios(loadMembro(m.id, 'remedios'));
+    setExames(loadMembro(m.id, 'exames'));
+    setSubTab('ia');
+  }
+
   function saveConsulta(c) {
     const next = consultas.find(x => x.id === c.id)
       ? consultas.map(x => x.id === c.id ? c : x)
       : [c, ...consultas];
     setConsultas(next);
-    saveSaude('consultas', next);
+    saveMembro(membro.id, 'consultas', next);
     showToast('Consulta salva!');
   }
   function deleteConsulta(id) {
     const next = consultas.filter(c => c.id !== id);
     setConsultas(next);
-    saveSaude('consultas', next);
+    saveMembro(membro.id, 'consultas', next);
   }
 
   function saveRemedio(r) {
@@ -436,19 +788,19 @@ function SaudePage() {
       ? remedios.map(x => x.id === r.id ? r : x)
       : [r, ...remedios];
     setRemedios(next);
-    saveSaude('remedios', next);
+    saveMembro(membro.id, 'remedios', next);
     showToast('Remédio salvo!');
   }
   function updateRemedioStatus(id, status) {
     const next = remedios.map(r => r.id === id ? { ...r, status } : r);
     setRemedios(next);
-    saveSaude('remedios', next);
+    saveMembro(membro.id, 'remedios', next);
     showToast('Status atualizado!');
   }
   function deleteRemedio(id) {
     const next = remedios.filter(r => r.id !== id);
     setRemedios(next);
-    saveSaude('remedios', next);
+    saveMembro(membro.id, 'remedios', next);
   }
 
   function saveExame(e) {
@@ -456,13 +808,13 @@ function SaudePage() {
       ? exames.map(x => x.id === e.id ? e : x)
       : [e, ...exames];
     setExames(next);
-    saveSaude('exames', next);
+    saveMembro(membro.id, 'exames', next);
     showToast('Exame salvo!');
   }
   function deleteExame(id) {
     const next = exames.filter(e => e.id !== id);
     setExames(next);
-    saveSaude('exames', next);
+    saveMembro(membro.id, 'exames', next);
   }
 
   const precisoComprar = remedios.filter(r => r.status === 'preciso_comprar');
@@ -472,11 +824,12 @@ function SaudePage() {
     .slice(0, 3);
   const examesPendentes = exames.filter(e => e.status === 'pendente' || e.status === 'agendado');
 
-  const TABS = [
-    { id: 'urgente', label: '🔔 Urgente' },
+  const SUB_TABS = [
+    { id: 'ia',        label: '💬 Assistente IA' },
+    { id: 'resumo',    label: '🔔 Resumo' },
     { id: 'consultas', label: '🩺 Consultas' },
-    { id: 'remedios', label: '💊 Remédios' },
-    { id: 'exames', label: '🔬 Exames' },
+    { id: 'remedios',  label: '💊 Remédios' },
+    { id: 'exames',    label: '🔬 Exames' },
   ];
 
   return (
@@ -487,37 +840,68 @@ function SaudePage() {
           subtitle="Consultas, remédios e exames — tudo em um lugar"
           action={
             <div className="row gap-2">
-              {tab === 'consultas' && <Button variant="primary" onClick={() => setShowNewConsulta(true)}><Icon name="plus" size={14} color="white"/> Nova consulta</Button>}
-              {tab === 'remedios'  && <Button variant="primary" onClick={() => setShowNewRemedio(true)}><Icon name="plus" size={14} color="white"/> Novo remédio</Button>}
-              {tab === 'exames'    && <Button variant="primary" onClick={() => setShowNewExame(true)}><Icon name="plus" size={14} color="white"/> Novo exame</Button>}
-              {tab === 'urgente'   && <Button variant="primary" onClick={() => setShowNewRemedio(true)}><Icon name="plus" size={14} color="white"/> Adicionar</Button>}
+              {subTab === 'consultas' && <Button variant="primary" onClick={() => setShowNewConsulta(true)}><Icon name="plus" size={14} color="white"/> Nova consulta</Button>}
+              {subTab === 'remedios'  && <Button variant="primary" onClick={() => setShowNewRemedio(true)}><Icon name="plus" size={14} color="white"/> Novo remédio</Button>}
+              {subTab === 'exames'    && <Button variant="primary" onClick={() => setShowNewExame(true)}><Icon name="plus" size={14} color="white"/> Novo exame</Button>}
+              {subTab === 'resumo'    && <Button variant="primary" onClick={() => setShowNewRemedio(true)}><Icon name="plus" size={14} color="white"/> Adicionar</Button>}
             </div>
           }
         />
 
-        {/* Tabs */}
+        {/* Family member picker */}
+        <div className="row gap-2" style={{ flexWrap: 'wrap' }}>
+          {FAMILIA.map(m => (
+            <button
+              key={m.id}
+              onClick={() => switchMembro(m)}
+              style={{
+                padding: '8px 18px',
+                borderRadius: 999,
+                fontSize: 14,
+                fontWeight: membro.id === m.id ? 700 : 500,
+                cursor: 'pointer',
+                fontFamily: 'var(--font-body)',
+                transition: 'all .15s',
+                border: `2px solid ${m.cor}`,
+                background: membro.id === m.id ? m.cor : 'transparent',
+                color: membro.id === m.id ? 'white' : m.cor,
+                display: 'flex', alignItems: 'center', gap: 6,
+              }}
+            >
+              <span style={{ fontSize: 16 }}>{m.emoji}</span>
+              {m.nome}
+            </button>
+          ))}
+        </div>
+
+        {/* Sub-tabs */}
         <div className="row gap-1" style={{ flexWrap: 'wrap' }}>
-          {TABS.map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)}
+          {SUB_TABS.map(t => (
+            <button key={t.id} onClick={() => setSubTab(t.id)}
               style={{
                 padding: '8px 16px', borderRadius: 'var(--r-md)', fontSize: 14, fontWeight: 500,
-                background: tab === t.id ? 'var(--pink-tint)' : 'var(--bg-surface)',
-                border: `1px solid ${tab === t.id ? 'var(--pink-soft)' : 'var(--border)'}`,
-                color: tab === t.id ? 'var(--pink-deep)' : 'var(--text-secondary)',
+                background: subTab === t.id ? 'var(--pink-tint)' : 'var(--bg-surface)',
+                border: `1px solid ${subTab === t.id ? 'var(--pink-soft)' : 'var(--border)'}`,
+                color: subTab === t.id ? 'var(--pink-deep)' : 'var(--text-secondary)',
                 cursor: 'pointer', fontFamily: 'var(--font-body)', transition: 'all .15s',
               }}>{t.label}</button>
           ))}
         </div>
 
-        {/* URGENTE */}
-        {tab === 'urgente' && (
+        {/* ASSISTENTE IA */}
+        {subTab === 'ia' && (
+          <SaudeAssistente membro={membro}/>
+        )}
+
+        {/* RESUMO */}
+        {subTab === 'resumo' && (
           <div className="col gap-4">
             {precisoComprar.length === 0 && proximasConsultas.length === 0 && examesPendentes.length === 0 ? (
               <Card>
                 <CardBody>
                   <div className="center col gap-3" style={{ padding: 'var(--s-6) 0' }}>
                     <span style={{ fontSize: 36 }}>✅</span>
-                    <p className="small muted">Tudo em dia! Nenhuma pendência de saúde no momento.</p>
+                    <p className="small muted">Tudo em dia! Nenhuma pendência de saúde no momento para {membro.nome}.</p>
                   </div>
                 </CardBody>
               </Card>
@@ -550,7 +934,7 @@ function SaudePage() {
                           </div>
                         ))}
                       </div>
-                      <button onClick={() => setTab('remedios')} style={{ marginTop: 8, fontSize: 14, color: '#C44878', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+                      <button onClick={() => setSubTab('remedios')} style={{ marginTop: 8, fontSize: 14, color: '#C44878', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
                         Ver todos os remédios →
                       </button>
                     </CardBody>
@@ -583,7 +967,7 @@ function SaudePage() {
                           );
                         })}
                       </div>
-                      <button onClick={() => setTab('consultas')} style={{ marginTop: 8, fontSize: 14, color: 'var(--pink-deep)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+                      <button onClick={() => setSubTab('consultas')} style={{ marginTop: 8, fontSize: 14, color: 'var(--pink-deep)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
                         Ver todas as consultas →
                       </button>
                     </CardBody>
@@ -620,12 +1004,12 @@ function SaudePage() {
         )}
 
         {/* CONSULTAS */}
-        {tab === 'consultas' && (
+        {subTab === 'consultas' && (
           <div className="col gap-3">
             {consultas.length === 0 ? (
               <div className="center col gap-3" style={{ padding: 'var(--s-7) 0' }}>
                 <span style={{ fontSize: 36 }}>🩺</span>
-                <p className="small muted">Nenhuma consulta registrada ainda.</p>
+                <p className="small muted">Nenhuma consulta registrada ainda para {membro.nome}.</p>
                 <Button variant="primary" onClick={() => setShowNewConsulta(true)}>
                   <Icon name="plus" size={13} color="white"/> Adicionar consulta
                 </Button>
@@ -644,12 +1028,12 @@ function SaudePage() {
         )}
 
         {/* REMÉDIOS */}
-        {tab === 'remedios' && (
+        {subTab === 'remedios' && (
           <div className="col gap-3">
             {remedios.length === 0 ? (
               <div className="center col gap-3" style={{ padding: 'var(--s-7) 0' }}>
                 <span style={{ fontSize: 36 }}>💊</span>
-                <p className="small muted">Nenhum remédio cadastrado.</p>
+                <p className="small muted">Nenhum remédio cadastrado para {membro.nome}.</p>
                 <Button variant="primary" onClick={() => setShowNewRemedio(true)}>
                   <Icon name="plus" size={13} color="white"/> Adicionar remédio
                 </Button>
@@ -669,12 +1053,12 @@ function SaudePage() {
         )}
 
         {/* EXAMES */}
-        {tab === 'exames' && (
+        {subTab === 'exames' && (
           <div className="col gap-3">
             {exames.length === 0 ? (
               <div className="center col gap-3" style={{ padding: 'var(--s-7) 0' }}>
                 <span style={{ fontSize: 36 }}>🔬</span>
-                <p className="small muted">Nenhum exame registrado.</p>
+                <p className="small muted">Nenhum exame registrado para {membro.nome}.</p>
                 <Button variant="primary" onClick={() => setShowNewExame(true)}>
                   <Icon name="plus" size={13} color="white"/> Adicionar exame
                 </Button>

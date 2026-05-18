@@ -427,8 +427,18 @@ function IdeiasPage() {
 function TarefasPage() {
   const [filter, setFilter] = useState('ativas');
   const [energyFilter, setEnergyFilter] = useState('todas');
+  const [deletedIds, setDeletedIds] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('lorenna_deleted_tasks') || '[]'); } catch { return []; }
+  });
 
-  const all = window.DEMO_TASKS;
+  function deleteTask(id) {
+    const next = [...deletedIds, id];
+    setDeletedIds(next);
+    localStorage.setItem('lorenna_deleted_tasks', JSON.stringify(next));
+    showToast('Tarefa removida');
+  }
+
+  const all = window.DEMO_TASKS.filter(t => !deletedIds.includes(t.id));
   const filtered = all.filter(t => {
     const okStatus = filter === 'ativas' ? t.status !== 'concluida' : filter === 'concluidas' ? t.status === 'concluida' : true;
     const okEnergy = energyFilter === 'todas' || t.energia.includes(energyFilter);
@@ -512,7 +522,7 @@ function TarefasPage() {
                 </div>
               </div>
               <div className="col gap-3">
-                {items.map(t => <TaskRow key={t.id} task={t}/>)}
+                {items.map(t => <TaskRow key={t.id} task={t} onDelete={deleteTask}/>)}
               </div>
             </section>
           );

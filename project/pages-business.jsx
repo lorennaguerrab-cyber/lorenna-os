@@ -141,6 +141,7 @@ function ClientDetail({ client, onClose, setRoute }) {
     { id: 'conteudo',   label: 'Conteúdos'     },
     { id: 'pedido',     label: 'Pedir post'    },
     { id: 'onboarding', label: 'Onboarding'    },
+    { id: 'voz',        label: '✨ Tom de Voz'  },
   ];
 
   return (
@@ -215,6 +216,7 @@ function ClientDetail({ client, onClose, setRoute }) {
             {tab === 'conteudo' && <ClientConteudo client={client} setRoute={setRoute}/>}
             {tab === 'pedido' && <FormPedidoPost client={client} onSent={onClose}/>}
             {tab === 'onboarding' && <FormOnboarding client={client} onSent={onClose}/>}
+            {tab === 'voz'        && <ClientVozForm  client={client}/>}
           </div>
         </div>
       </div>
@@ -505,6 +507,85 @@ function FormPedidoPost({ client, onSent }) {
           <Button variant="ghost" onClick={onSent}>Cancelar</Button>
           <Button variant="primary" onClick={submit}><Icon name="send" size={13} color="white"/> Disparar brief</Button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function ClientVozForm({ client }) {
+  const storageKey = `lorenna_voz_${client.id}`;
+  const [form, setForm] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey) || 'null') || { como_fala: '', proibido: '', publico: '', referencias: '', exemplo: '' }; }
+    catch { return { como_fala: '', proibido: '', publico: '', referencias: '', exemplo: '' }; }
+  });
+  const [salvo, setSalvo] = useState(false);
+
+  function salvar() {
+    localStorage.setItem(storageKey, JSON.stringify(form));
+    if (window.DEMO_CLIENTS) {
+      const c = window.DEMO_CLIENTS.find(c => c.id === client.id);
+      if (c) {
+        const perfilTexto = [
+          form.como_fala && `Tom: ${form.como_fala}`,
+          form.proibido  && `Evitar: ${form.proibido}`,
+          form.publico   && `Público: ${form.publico}`,
+        ].filter(Boolean).join('. ');
+        c.voz_perfil = perfilTexto;
+      }
+    }
+    setSalvo(true);
+    showToast(`Tom de voz de ${client.nome} salvo!`);
+    setTimeout(() => setSalvo(false), 2500);
+  }
+
+  const f = (k, v) => setForm(p => ({ ...p, [k]: v }));
+
+  return (
+    <div className="col gap-5">
+      <div>
+        <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 19, fontWeight: 600 }}>Tom de Voz — {client.nome}</h3>
+        <p className="small muted" style={{ marginTop: 6 }}>
+          Perfil salvo aqui e usado automaticamente pelo Studio IA ao criar posts para este cliente.
+        </p>
+      </div>
+
+      <div className="col gap-4">
+        <Field label="Como a marca fala?" hint="Adjetivos + referências de tom. Ex: descontraída, técnica sem ser chata, como uma amiga especialista.">
+          <textarea className="textarea" rows={3}
+            placeholder="Ex: próxima, acessível, sem jargões técnicos. Como uma optometrista que é sua amiga."
+            value={form.como_fala} onChange={e => f('como_fala', e.target.value)}/>
+        </Field>
+
+        <Field label="O que é proibido dizer" hint="Palavras, clichês e tom a evitar absolutamente.">
+          <textarea className="textarea" rows={2}
+            placeholder="Ex: 'venha conferir!', promoções agressivas, emojis excessivos, linguagem formal demais."
+            value={form.proibido} onChange={e => f('proibido', e.target.value)}/>
+        </Field>
+
+        <Field label="Quem é o público?" hint="Contexto e situação real — não apenas faixa etária.">
+          <textarea className="textarea" rows={2}
+            placeholder="Ex: mulheres 30-55 que usam óculos há anos mas nunca foram tratadas como especialistas no próprio cuidado."
+            value={form.publico} onChange={e => f('publico', e.target.value)}/>
+        </Field>
+
+        <Field label="Referências de marcas com tom parecido">
+          <input className="input"
+            placeholder="Ex: Nubank, Airbnb Brasil, Isabela Freitas..."
+            value={form.referencias} onChange={e => f('referencias', e.target.value)}/>
+        </Field>
+
+        <Field label="Exemplo de caption aprovado pelo cliente" hint="Cole um post real que funcionou — a IA vai usar como guia.">
+          <textarea className="textarea" rows={4}
+            placeholder="Cole aqui um post que o cliente amou ou aprovou..."
+            value={form.exemplo} onChange={e => f('exemplo', e.target.value)}/>
+        </Field>
+      </div>
+
+      <div className="row between" style={{ paddingTop: 'var(--s-3)', borderTop: '1px solid var(--gray-light)' }}>
+        <span className="tiny muted">✨ Usado automaticamente no Studio IA → Post de Cliente</span>
+        <Button variant="primary" onClick={salvar}>
+          <Icon name="check" size={13} color="white"/> {salvo ? 'Salvo!' : 'Salvar tom de voz'}
+        </Button>
       </div>
     </div>
   );
