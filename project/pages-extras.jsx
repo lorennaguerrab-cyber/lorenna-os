@@ -1903,4 +1903,5 @@ Object.assign(window, {
   FinanceiroPage,
   SobrePage,
   MonetizacaoPage,
+  AGENDA_EVENTS,
 });

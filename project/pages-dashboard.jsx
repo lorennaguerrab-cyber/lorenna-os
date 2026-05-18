@@ -297,7 +297,7 @@ function EnergySelector({ energy, setEnergy }) {
   );
 }
 
-function TaskRow({ task, dense, large, onDelete }) {
+function TaskRow({ task, dense, large, onDelete, onUpdate }) {
   const [open, setOpen] = useState(false);
   const [concluida, setConcluida] = useState(task.status === 'concluida');
   const [microDone, setMicroDone] = useState(() => Object.fromEntries(task.micro.map(m => [m.id, m.done])));
@@ -305,6 +305,8 @@ function TaskRow({ task, dense, large, onDelete }) {
   const done = Object.values(microDone).filter(Boolean).length;
   const nextStep = task.micro.find(m => !microDone[m.id]);
   const totalMin = task.micro.reduce((a, m) => a + (m.min || 0), 0);
+  const [editando, setEditando] = useState(false);
+  const [tituloEdit, setTituloEdit] = useState(task.titulo);
 
   const prioColor = {
     urgente: '#C44878',
@@ -312,6 +314,15 @@ function TaskRow({ task, dense, large, onDelete }) {
     media:   'var(--pink)',
     baixa:   '#7FB68C',
   }[task.prioridade];
+
+  function salvarEdicao() {
+    if (tituloEdit.trim() && tituloEdit.trim() !== task.titulo) {
+      task.titulo = tituloEdit.trim();
+      onUpdate && onUpdate(task);
+      showToast('Tarefa atualizada');
+    }
+    setEditando(false);
+  }
 
   return (
     <div style={{
@@ -337,57 +348,49 @@ function TaskRow({ task, dense, large, onDelete }) {
         <div className="grow">
           <div className="row between" style={{ alignItems: 'flex-start' }}>
             <div className="grow">
-              <div style={{ fontSize: large ? 15.5 : 14, fontWeight: large ? 600 : 500, color: 'var(--text-primary)', lineHeight: 1.4 }}>
-                {task.titulo}
-              </div>
+              {editando ? (
+                <input className="input" autoFocus value={tituloEdit}
+                  onChange={e => setTituloEdit(e.target.value)}
+                  onBlur={salvarEdicao}
+                  onKeyDown={e => { if (e.key === 'Enter') salvarEdicao(); if (e.key === 'Escape') setEditando(false); }}
+                  style={{ fontSize: 16, fontWeight: 600 }}
+                />
+              ) : (
+                <div style={{ fontSize: 16, fontWeight: 600, lineHeight: 1.35, color: concluida ? 'var(--text-muted)' : 'var(--text-primary)', textDecoration: concluida ? 'line-through' : 'none', opacity: concluida ? 0.6 : 1 }}>
+                  {task.titulo}
+                </div>
+              )}
               {task.cliente && (
-                <div className="tiny muted" style={{ marginTop: 2 }}>
+                <div style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 2 }}>
                   Para <strong style={{ color: 'var(--text-secondary)' }}>{task.cliente}</strong>
                 </div>
               )}
-              {(task.categoria || task.energia?.length > 0) && (
-                <div className="row gap-1" style={{ marginTop: 5, flexWrap: 'wrap' }}>
-                  {task.categoria && (
-                    <span style={{
-                      padding: '1px 7px', borderRadius: 999, fontSize: 11, fontWeight: 600,
-                      background: task.categoria === 'cliente' ? '#E8EEFF' : task.categoria === 'pessoal' ? 'var(--pink-tint)' : 'var(--bg-elevated)',
-                      color: task.categoria === 'cliente' ? '#3A50C4' : task.categoria === 'pessoal' ? 'var(--pink-deep)' : 'var(--text-muted)',
-                      border: task.categoria === 'cliente' ? '1px solid #BFC9F5' : task.categoria === 'pessoal' ? '1px solid var(--pink-soft)' : '1px solid var(--border)',
-                      textTransform: 'uppercase', letterSpacing: '0.04em',
-                    }}>
-                      {task.categoria}
-                    </span>
-                  )}
-                  {task.energia?.slice(0, 2).map(e => {
-                    const ec = window.ENERGY?.[e];
-                    return ec ? (
-                      <span key={e} style={{
-                        padding: '1px 7px', borderRadius: 999, fontSize: 11, fontWeight: 600,
-                        background: `color-mix(in oklch, ${ec.color} 12%, var(--white))`,
-                        color: 'var(--text-secondary)',
-                        border: `1px solid color-mix(in oklch, ${ec.color} 25%, transparent)`,
-                      }}>
-                        {ec.emoji} {ec.label}
-                      </span>
-                    ) : null;
-                  })}
-                </div>
-              )}
             </div>
-            <div className="row gap-2" style={{ flexShrink: 0 }}>
+            <div className="row gap-1" style={{ flexShrink: 0, alignItems: 'center' }}>
               {total > 0 && (
-                <span className="tiny muted">{done}/{total}</span>
+                <span style={{
+                  fontSize: 14, fontWeight: 700, padding: '2px 10px', borderRadius: 999,
+                  background: done === total ? `color-mix(in oklch, ${prioColor} 15%, var(--bg-surface))` : 'var(--bg-elevated)',
+                  color: done === total ? prioColor : 'var(--text-muted)',
+                  border: `1px solid ${done === total ? prioColor : 'var(--border)'}`,
+                }}>{done}/{total}</span>
               )}
+              <button onClick={() => { setTituloEdit(task.titulo); setEditando(true); }}
+                style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: '1px solid var(--border)', background: 'var(--bg-elevated)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                title="Editar tarefa">
+                <Icon name="edit" size={13} color="var(--text-muted)"/>
+              </button>
               {total > 0 && (
-                <button className="btn ghost icon" onClick={() => setOpen(!open)}>
-                  <Icon name={open ? 'chev-down' : 'chev-right'} size={14} />
+                <button onClick={() => setOpen(!open)}
+                  style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: '1px solid var(--border)', background: 'var(--bg-elevated)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Icon name={open ? 'chev-down' : 'chev-right'} size={14} color="var(--text-muted)"/>
                 </button>
               )}
               {onDelete && (
-                <button className="btn ghost icon" title="Apagar tarefa"
-                  onClick={ev => { ev.stopPropagation(); onDelete(task.id); }}
-                  style={{ opacity: 0.45, color: 'var(--text-muted)' }}>
-                  <Icon name="x" size={13}/>
+                <button onClick={ev => { ev.stopPropagation(); onDelete(task.id); }}
+                  style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: '1px solid var(--border)', background: 'var(--bg-elevated)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.5 }}
+                  title="Remover">
+                  <Icon name="x" size={13} color="var(--text-muted)"/>
                 </button>
               )}
             </div>
@@ -1415,6 +1418,31 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
 
   const next = all.find(t => t.status !== 'concluida' && t.micro.some(m => !m.done));
 
+  function buildListaHoje() {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const lista = [];
+    // Tarefas abertas, ordenadas por prioridade
+    const prioOrd = { urgente: 0, alta: 1, media: 2, baixa: 3 };
+    [...all]
+      .filter(t => t.status !== 'concluida')
+      .sort((a, b) => (prioOrd[a.prioridade] ?? 2) - (prioOrd[b.prioridade] ?? 2))
+      .forEach(t => lista.push(t));
+    // Eventos de hoje da agenda
+    (window.AGENDA_EVENTS || [])
+      .filter(ev => ev.date === todayStr)
+      .forEach(ev => lista.push({
+        id: `ag_${ev.id}`,
+        titulo: ev.titulo,
+        status: 'pendente',
+        prioridade: 'media',
+        micro: [],
+        hora: ev.hora,
+        fonte: '📅 Agenda',
+      }));
+    return lista;
+  }
+  const listaHoje = buildListaHoje();
+
   return (
     <div className="content">
       <div className="col gap-5 fade-up-stagger">
@@ -1444,11 +1472,9 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
               <CardHeader>
                 <div className="row between">
                   <div>
-                    <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 700, color: 'var(--text-primary)' }}>Tarefas</h2>
+                    <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 700, color: 'var(--text-primary)' }}>Tarefas de hoje</h2>
                     <p className="tiny muted" style={{ marginTop: 2 }}>
-                      {e.show_heavy
-                        ? `${visible.length} para hoje`
-                        : `${visible.length} tarefa(s) leve(s) · modo ${e.label.toLowerCase()}`}
+                      {`${listaHoje.length} para hoje`}
                     </p>
                   </div>
                   <Button variant="ghost" size="sm" onClick={openCapture}>
@@ -1457,7 +1483,7 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
                 </div>
               </CardHeader>
               <CardBody>
-                {visible.length === 0 ? (
+                {listaHoje.length === 0 ? (
                   <div className="center muted" style={{ padding: 'var(--s-6) 0' }}>
                     <div style={{ fontSize: 30 }}>{e.emoji}</div>
                     <p className="small" style={{ marginTop: 8 }}>
@@ -1466,7 +1492,7 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
                   </div>
                 ) : (
                   <div className="col gap-2">
-                    {visible.map(t => <TaskRow key={t.id} task={t} large />)}
+                    {listaHoje.map(t => <TaskRow key={t.id} task={t} />)}
                   </div>
                 )}
                 <div className="row gap-2" style={{ marginTop: 'var(--s-3)' }}
