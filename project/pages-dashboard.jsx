@@ -503,50 +503,100 @@ function NextActionCard({ task }) {
   );
 }
 
+const WEEK_ENERGY = ['criativa', 'operacional', 'foco', 'operacional', 'gravacao', 'maternidade', 'cansada'];
+
 function WeekView() {
-  const days = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
-  const today = (new Date().getDay() + 6) % 7; // 0=Seg
-  // arbitrary mock task counts per day, with light/heavy mix
-  const data = [
-    { count: 0, energy: 'criativa'    },
-    { count: 0, energy: 'operacional' },
-    { count: 0, energy: 'foco'        },
-    { count: 0, energy: 'operacional' },
-    { count: 0, energy: 'gravacao'    },
-    { count: 0, energy: 'maternidade' },
-    { count: 0, energy: 'cansada'     },
-  ];
+  const days = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+  const today = (new Date().getDay() + 6) % 7;
+
+  const taskCounts = days.map((_, i) =>
+    (window.DEMO_TASKS || []).filter(t =>
+      t.status !== 'concluida' && (
+        t.diario ||
+        t.prioridade === 'urgente' ||
+        (t.diasDaSemana && t.diasDaSemana.includes(i))
+      )
+    ).length
+  );
+  const maxCount = Math.max(...taskCounts, 1);
+
   return (
     <div>
-      <div className="row between" style={{ marginBottom: 'var(--s-3)' }}>
+      <div className="row between" style={{ marginBottom: 'var(--s-4)' }}>
         <div>
-          <div className="eyebrow">Visão da semana</div>
-          <p className="secondary tiny" style={{ marginTop: 4 }}>Quantas tarefas por dia · energia dominante</p>
+          <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 20, fontWeight: 700 }}>Visão da semana</h2>
+          <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 4 }}>
+            Tarefas reais por dia · energia dominante · carga de trabalho
+          </p>
         </div>
       </div>
-      <div className="row gap-2">
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 8 }}>
         {days.map((d, i) => {
           const isToday = i === today;
-          const cfg = window.ENERGY[data[i].energy];
+          const col = ROTINA_PALETTE[i];
+          const cfg = window.ENERGY[WEEK_ENERGY[i]];
+          const count = taskCounts[i];
+          const barPct = maxCount > 0 ? (count / maxCount) * 100 : 0;
+
           return (
-            <div key={d} className="col gap-2" style={{ flex: 1, alignItems: 'center' }}>
+            <div key={d} style={{
+              borderRadius: 'var(--r-md)',
+              border: `2px solid ${isToday ? col : 'var(--border)'}`,
+              background: isToday ? col : 'var(--bg-elevated)',
+              padding: '14px 10px 18px',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+              position: 'relative', overflow: 'hidden',
+              transition: 'transform .15s',
+              cursor: 'default',
+            }}>
+              {/* Day label */}
               <div style={{
-                width: '100%', height: 70,
-                borderRadius: 'var(--r-md)',
-                border: '1px solid',
-                borderColor: isToday ? cfg.color : 'var(--border)',
-                background: isToday ? `color-mix(in oklch, ${cfg.color} 10%, var(--bg-surface))` : 'var(--bg-elevated)',
-                display: 'flex', flexDirection: 'column',
-                alignItems: 'center', justifyContent: 'center',
-                fontSize: 14, color: 'var(--text-muted)',
-                position: 'relative',
+                fontSize: 14, fontWeight: 700, letterSpacing: '.05em', textTransform: 'uppercase',
+                color: isToday ? '#fffcfa' : 'var(--text-muted)',
+              }}>{d}</div>
+
+              {/* Energy emoji */}
+              <div style={{ fontSize: 24, lineHeight: 1 }}>{cfg.emoji}</div>
+
+              {/* Task count */}
+              <div style={{
+                fontFamily: 'var(--font-title)', fontSize: 32, fontWeight: 800, lineHeight: 1,
+                color: isToday ? '#fffcfa' : col,
+              }}>{count}</div>
+              <div style={{
+                fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.04em',
+                color: isToday ? 'rgba(255,252,250,.7)' : 'var(--text-muted)',
+              }}>{count === 1 ? 'tarefa' : 'tarefas'}</div>
+
+              {/* Workload bar */}
+              <div style={{
+                position: 'absolute', bottom: 0, left: 0, right: 0, height: 5,
+                background: isToday ? 'rgba(32,30,31,.1)' : 'var(--border)',
               }}>
-                <div style={{ fontSize: 22, fontFamily: 'var(--font-title)', color: cfg.color, fontWeight: 600 }}>
-                  {data[i].count}
-                </div>
-                <div style={{ fontSize: 14 }}>{cfg.emoji}</div>
+                <div style={{
+                  height: '100%', width: `${barPct}%`,
+                  background: isToday ? 'rgba(32,30,31,.25)' : col,
+                  transition: 'width .4s ease',
+                }}/>
               </div>
-              <div className="tiny" style={{ fontWeight: isToday ? 600 : 400, color: isToday ? 'var(--text-primary)' : 'var(--text-muted)' }}>{d}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Energy legend */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 'var(--s-4)' }}>
+        {[...new Set(WEEK_ENERGY)].map(eId => {
+          const cfg = window.ENERGY[eId];
+          return (
+            <div key={eId} className="row gap-2" style={{
+              padding: '5px 14px', borderRadius: 999, fontSize: 14,
+              background: `color-mix(in oklch, ${cfg.color} 10%, var(--bg-surface))`,
+              border: `1px solid color-mix(in oklch, ${cfg.color} 25%, transparent)`,
+              color: 'var(--text-secondary)', fontWeight: 500,
+            }}>
+              <span>{cfg.emoji}</span> {cfg.label}
             </div>
           );
         })}
@@ -1005,15 +1055,15 @@ function FullCalendarWidget() {
         <div className="row gap-4" style={{ flexWrap: 'wrap', marginBottom: 'var(--s-4)' }}>
           {Object.entries(typeColors).map(([tipo, cfg]) => (
             <div key={tipo} className="row gap-2">
-              <div style={{ width: 8, height: 8, borderRadius: 999, background: cfg.dot, flexShrink: 0, marginTop: 3 }}/>
-              <span style={{ fontSize: 13.5, color: 'var(--text-muted)' }}>
+              <div style={{ width: 10, height: 10, borderRadius: 999, background: cfg.dot, flexShrink: 0, marginTop: 2 }}/>
+              <span style={{ fontSize: 14, color: 'var(--text-muted)' }}>
                 {tipo === 'filho' ? 'Filhos' : tipo === 'gravacao' ? 'Gravação' : tipo.charAt(0).toUpperCase() + tipo.slice(1)}
               </span>
             </div>
           ))}
           <div className="row gap-2">
-            <div style={{ width: 8, height: 8, borderRadius: 999, background: '#E89B4C', flexShrink: 0, marginTop: 3 }}/>
-            <span style={{ fontSize: 13.5, color: 'var(--text-muted)' }}>Datas comemorativas</span>
+            <div style={{ width: 8, height: 8, borderRadius: 999, background: '#ffe1bd', border: '1px solid #201e1f', flexShrink: 0, marginTop: 3 }}/>
+            <span style={{ fontSize: 14, color: 'var(--text-muted)' }}>Datas comemorativas</span>
           </div>
         </div>
 
@@ -1025,9 +1075,9 @@ function FullCalendarWidget() {
         </div>
 
         {/* Calendar grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6 }}>
           {cells.map((d, i) => {
-            if (!d) return <div key={i} style={{ minHeight: 80 }}/>;
+            if (!d) return <div key={i} style={{ minHeight: 100 }}/>;
             const ds = dateStr(d);
             const isToday   = ds === todayStr;
             const dayEvs    = eventsForDay(d);
@@ -1036,41 +1086,46 @@ function FullCalendarWidget() {
             return (
               <div key={i} onClick={() => setSelectedDay(isSelected ? null : d)}
                 style={{
-                  minHeight: 80, padding: '7px 8px',
+                  minHeight: 100, padding: '8px',
                   borderRadius: 'var(--r-md)',
-                  border: `1.5px solid ${isToday ? 'var(--pink)' : isSelected ? 'var(--ink)' : holiday ? '#ffe1bd' : 'var(--border)'}`,
+                  border: `2px solid ${isToday ? 'var(--pink)' : isSelected ? '#201e1f' : holiday ? '#ffe1bd' : 'var(--border)'}`,
                   background: isToday
-                    ? 'color-mix(in oklch, var(--pink) 10%, var(--bg-surface))'
+                    ? 'color-mix(in oklch, var(--pink) 12%, var(--bg-surface))'
+                    : isSelected ? 'color-mix(in oklch, #201e1f 5%, var(--bg-surface))'
                     : holiday ? '#fffcfa' : 'var(--bg-elevated)',
                   cursor: 'pointer',
-                  transition: 'border-color .15s',
+                  transition: 'border-color .15s, background .15s',
                   overflow: 'hidden',
                 }}>
-                <div className="row gap-1" style={{ marginBottom: 4, alignItems: 'center' }}>
+                <div style={{ marginBottom: 5, display: 'flex', alignItems: 'center', gap: 4 }}>
                   <span style={{
-                    fontSize: 14, fontWeight: isToday ? 700 : 500,
-                    color: isToday ? 'var(--pink-deep)' : holiday ? '#201e1f' : 'var(--text-primary)',
-                    lineHeight: 1,
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    width: isToday ? 26 : 'auto', height: isToday ? 26 : 'auto',
+                    borderRadius: isToday ? 999 : 0,
+                    background: isToday ? 'var(--pink)' : 'transparent',
+                    fontSize: 15, fontWeight: isToday ? 800 : 600,
+                    color: isToday ? 'white' : holiday ? '#201e1f' : 'var(--text-primary)',
+                    lineHeight: 1, flexShrink: 0,
                   }}>{d}</span>
-                  {holiday && <span style={{ fontSize: 11 }}>{holiday.emoji}</span>}
+                  {holiday && <span style={{ fontSize: 13 }}>{holiday.emoji}</span>}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  {dayEvs.slice(0, 2).map(ev => {
-                    const cfg = typeColors[ev.tipo] || typeColors.admin || { bg: '#F5F5F5', text: '#555' };
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                  {dayEvs.slice(0, 3).map(ev => {
+                    const cfg = typeColors[ev.tipo] || typeColors.admin || { bg: '#fec9df', text: '#201e1f', dot: '#fe7dae' };
                     return (
                       <div key={ev.id} style={{
-                        fontSize: 11, lineHeight: 1.25, padding: '2px 4px',
+                        fontSize: 13, lineHeight: 1.3, padding: '3px 6px',
                         background: cfg.bg, color: cfg.text,
-                        borderRadius: 3,
+                        borderRadius: 4, borderLeft: `3px solid ${cfg.dot || cfg.bg}`,
                         overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
                       }}>
-                        {ev.hora && <span style={{ fontWeight: 700, marginRight: 2 }}>{ev.hora.split(':')[0]}h</span>}
+                        {ev.hora && <span style={{ fontWeight: 700, marginRight: 3 }}>{ev.hora.split(':')[0]}h</span>}
                         {ev.titulo}
                       </div>
                     );
                   })}
-                  {dayEvs.length > 2 && (
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)', paddingLeft: 2 }}>+{dayEvs.length - 2}</div>
+                  {dayEvs.length > 3 && (
+                    <div style={{ fontSize: 13, color: 'var(--text-muted)', paddingLeft: 4, fontWeight: 600 }}>+{dayEvs.length - 3} mais</div>
                   )}
                 </div>
               </div>
@@ -1594,13 +1649,6 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
               </CardBody>
             </Card>
 
-            <Card>
-              <CardBody>
-                <WeekView />
-              </CardBody>
-            </Card>
-
-            <SugestoesWidget setRoute={setRoute} />
           </div>
 
           {/* RIGHT */}
@@ -1614,6 +1662,16 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
             </Card>
           </div>
         </div>
+
+        {/* Visão da semana — largura total */}
+        <Card>
+          <CardBody>
+            <WeekView />
+          </CardBody>
+        </Card>
+
+        {/* Sugestões de conteúdo — largura total */}
+        <SugestoesWidget setRoute={setRoute} />
 
         <FullCalendarWidget />
       </div>

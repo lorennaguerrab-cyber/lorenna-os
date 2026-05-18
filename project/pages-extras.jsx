@@ -50,11 +50,11 @@ const AGENDA_EVENTS = [
 ];
 
 const AGENDA_TYPE_COLORS = {
-  conteudo: { bg: '#FFE3EE', border: '#FFC7DD', text: '#E8538D', dot: '#FF78B0' },
-  filho:    { bg: '#E8F5ED', border: '#C3DEC9', text: '#3A8C50', dot: '#5FAD74' },
-  cliente:  { bg: '#E8EEFF', border: '#BFC9F5', text: '#3A50C4', dot: '#5B72E8' },
-  gravacao: { bg: '#F2E8FF', border: '#D5BFEF', text: '#7A3DB5', dot: '#9E62D8' },
-  admin:    { bg: '#FFF3E3', border: '#FDDBB0', text: '#B5720A', dot: '#E89B4C' },
+  conteudo: { bg: 'color-mix(in oklch, #fec9df 40%, white)', border: '#fec9df', text: '#201e1f', dot: '#fe7dae' },
+  filho:    { bg: 'color-mix(in oklch, #f1e18d 35%, white)', border: '#f1e18d', text: '#201e1f', dot: '#f1e18d' },
+  cliente:  { bg: 'color-mix(in oklch, #bce1f6 40%, white)', border: '#bce1f6', text: '#201e1f', dot: '#bce1f6' },
+  gravacao: { bg: 'color-mix(in oklch, #f0bff8 40%, white)', border: '#f0bff8', text: '#201e1f', dot: '#f0bff8' },
+  admin:    { bg: 'color-mix(in oklch, #ffe1bd 40%, white)', border: '#ffe1bd', text: '#201e1f', dot: '#ffe1bd' },
 };
 
 function AgendaEventCard({ ev }) {

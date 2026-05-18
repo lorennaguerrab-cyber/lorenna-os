@@ -3,10 +3,10 @@
    ────────────────────────────────────────────── */
 
 const FAMILIA = [
-  { id: 'lorenna', nome: 'Lorenna', emoji: '👩‍🦰', cor: '#FF78B0', idade: null },
-  { id: 'mateus',  nome: 'Mateus',  emoji: '👦',   cor: '#5B9BD5', idade: '10 anos' },
-  { id: 'murilo',  nome: 'Murilo',  emoji: '👦',   cor: '#7FB68C', idade: null },
-  { id: 'miguel',  nome: 'Miguel',  emoji: '👶',   cor: '#E89B4C', idade: '1 ano e 10 meses' },
+  { id: 'lorenna', nome: 'Lorenna', emoji: '👩‍🦰', cor: '#fe7dae', idade: null },
+  { id: 'mateus',  nome: 'Mateus',  emoji: '👦',   cor: '#bce1f6', idade: '10 anos' },
+  { id: 'murilo',  nome: 'Murilo',  emoji: '👦',   cor: '#f1e18d', idade: null },
+  { id: 'miguel',  nome: 'Miguel',  emoji: '👶',   cor: '#ffe1bd', idade: '1 ano e 10 meses' },
 ];
 
 function loadMembro(membro, tipo) {
@@ -849,29 +849,44 @@ function SaudePage() {
         />
 
         {/* Family member picker */}
-        <div className="row gap-2" style={{ flexWrap: 'wrap' }}>
-          {FAMILIA.map(m => (
-            <button
-              key={m.id}
-              onClick={() => switchMembro(m)}
-              style={{
-                padding: '8px 18px',
-                borderRadius: 999,
-                fontSize: 14,
-                fontWeight: membro.id === m.id ? 700 : 500,
-                cursor: 'pointer',
-                fontFamily: 'var(--font-body)',
-                transition: 'all .15s',
-                border: `2px solid ${m.cor}`,
-                background: membro.id === m.id ? m.cor : 'transparent',
-                color: membro.id === m.id ? 'white' : m.cor,
-                display: 'flex', alignItems: 'center', gap: 6,
-              }}
-            >
-              <span style={{ fontSize: 16 }}>{m.emoji}</span>
-              {m.nome}
-            </button>
-          ))}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+          {FAMILIA.map(m => {
+            const ativo = membro.id === m.id;
+            return (
+              <button
+                key={m.id}
+                onClick={() => switchMembro(m)}
+                style={{
+                  padding: '16px 12px',
+                  borderRadius: 'var(--r-md)',
+                  fontSize: 15,
+                  fontWeight: ativo ? 700 : 500,
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-body)',
+                  transition: 'all .15s',
+                  border: `2px solid ${ativo ? m.cor : 'var(--border)'}`,
+                  background: ativo ? m.cor : 'var(--bg-elevated)',
+                  color: '#201e1f',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                  textAlign: 'center',
+                  boxShadow: ativo ? `0 4px 12px color-mix(in oklch, ${m.cor} 40%, transparent)` : 'none',
+                }}
+              >
+                <span style={{ fontSize: 28, lineHeight: 1 }}>{m.emoji}</span>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: ativo ? 700 : 600 }}>{m.nome}</div>
+                  {m.idade && <div style={{ fontSize: 13, opacity: 0.65, marginTop: 2 }}>{m.idade}</div>}
+                </div>
+                {ativo && (
+                  <div style={{
+                    fontSize: 12, fontWeight: 700, padding: '2px 10px', borderRadius: 999,
+                    background: 'rgba(32,30,31,.12)', color: '#201e1f',
+                    textTransform: 'uppercase', letterSpacing: '.05em',
+                  }}>Selecionado</div>
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {/* Sub-tabs */}
