@@ -24,8 +24,8 @@ const STUDIO_AGENTS = [
     campos: [
       { id: 'tema',     label: 'Tema da semana',             tipo: 'text',     placeholder: 'Ex: sobre deixar de agradar todo mundo', obrigatorio: true },
       { id: 'cena',     label: 'Cena real da sua semana',    tipo: 'textarea', placeholder: 'Uma situação que aconteceu e conecta ao tema...', obrigatorio: true },
-      { id: 'noticias', label: 'Notícia relacionada',        tipo: 'textarea', placeholder: 'Cole link ou texto — ou clique em "Me dê sugestões"', temSugestoes: true },
-      { id: 'blog',     label: 'Post do blog desta semana',  tipo: 'text',     placeholder: 'Título ou URL (opcional)' },
+      { id: 'noticias', label: 'Notícias relacionadas',       tipo: 'multi',    placeholder: 'Cole link ou texto — ou clique em "Me dê sugestões"', temSugestoes: true },
+      { id: 'blog',     label: 'Posts do blog desta semana', tipo: 'multi',    placeholder: 'Título ou URL do post (opcional)' },
       { id: 'cta',      label: 'CTA final',                  tipo: 'text',     placeholder: 'Ex: Me conta: você também faz isso?', obrigatorio: true },
     ],
   },
@@ -156,6 +156,7 @@ function SugestoesList({ sugestoes, onSelect }) {
 function StudioPage() {
   const [agenteSel, setAgenteSel] = useState(null);
   const [campos, setCampos] = useState({});
+  const [multiListas, setMultiListas] = useState({});
   const [sugestoes, setSugestoes] = useState([]);
   const [loadingSugestoes, setLoadingSugestoes] = useState(false);
   const [gerando, setGerando] = useState(false);
@@ -167,12 +168,32 @@ function StudioPage() {
   function selecionarAgente(agente) {
     setAgenteSel(agente);
     setCampos({});
+    setMultiListas({});
     setSugestoes([]);
     setResultado('');
   }
 
   function setcampo(id, val) {
     setCampos(p => ({ ...p, [id]: val }));
+  }
+
+  function setMultiItem(id, idx, val) {
+    setMultiListas(p => {
+      const arr = [...(p[id] || [''])];
+      arr[idx] = val;
+      return { ...p, [id]: arr };
+    });
+  }
+
+  function addMultiItem(id) {
+    setMultiListas(p => ({ ...p, [id]: [...(p[id] || ['']), ''] }));
+  }
+
+  function removeMultiItem(id, idx) {
+    setMultiListas(p => {
+      const arr = (p[id] || ['']).filter((_, i) => i !== idx);
+      return { ...p, [id]: arr.length ? arr : [''] };
+    });
   }
 
   async function pedirSugestoes() {
@@ -198,21 +219,46 @@ Formato: uma sugestão por linha, numeradas de 1 a 5. Seja específico e útil.`
     setLoadingSugestoes(false);
   }
 
+  function adicionarSugestaoAoMulti(id, texto) {
+    setMultiListas(p => {
+      const arr = p[id] || [''];
+      const novaArr = arr[arr.length - 1]?.trim()
+        ? [...arr, texto]
+        : [...arr.slice(0, -1), texto];
+      return { ...p, [id]: novaArr };
+    });
+    setSugestoes([]);
+  }
+
   async function gerar() {
     if (!agenteSel) return;
     if (!window.hasClaudeKey()) { showToast('Configure a chave da API Claude primeiro'); return; }
 
     const obrigatorios = agenteSel.campos.filter(c => c.obrigatorio);
     for (const c of obrigatorios) {
-      if (!campos[c.id]?.trim()) { showToast(`Preencha: ${c.label}`); return; }
+      if (c.tipo === 'multi') {
+        const itens = (multiListas[c.id] || ['']).filter(s => s.trim());
+        if (!itens.length) { showToast(`Preencha: ${c.label}`); return; }
+      } else if (!campos[c.id]?.trim()) {
+        showToast(`Preencha: ${c.label}`); return;
+      }
     }
 
     setGerando(true);
     setResultado('');
 
     const detalhes = agenteSel.campos
-      .filter(c => campos[c.id]?.trim())
-      .map(c => `${c.label}: ${campos[c.id]}`)
+      .map(c => {
+        if (c.tipo === 'multi') {
+          const itens = (multiListas[c.id] || []).filter(s => s.trim());
+          if (!itens.length) return null;
+          return itens.length === 1
+            ? `${c.label}: ${itens[0]}`
+            : `${c.label}:\n${itens.map((s, i) => `${i + 1}. ${s}`).join('\n')}`;
+        }
+        return campos[c.id]?.trim() ? `${c.label}: ${campos[c.id]}` : null;
+      })
+      .filter(Boolean)
       .join('\n');
 
     const systemPrompt = buildSystemPrompt(agenteSel, campos);
@@ -331,6 +377,70 @@ Formato: uma sugestão por linha, numeradas de 1 a 5. Seja específico e útil.`
                     </div>
                   );
 
+                  if (campo.tipo === 'multi') {
+                    const itens = multiListas[campo.id] || [''];
+                    return (
+                      <div key={campo.id} className="col gap-1">
+                        {labelEl}
+                        <div className="col gap-2">
+                          {itens.map((item, idx) => (
+                            <div key={idx} className="row gap-2" style={{ alignItems: 'flex-start' }}>
+                              <textarea className="textarea" rows={2}
+                                placeholder={campo.placeholder || ''}
+                                value={item}
+                                onChange={e => setMultiItem(campo.id, idx, e.target.value)}
+                                style={{ flex: 1, minHeight: 52 }}
+                              />
+                              {itens.length > 1 && (
+                                <button onClick={() => removeMultiItem(campo.id, idx)}
+                                  style={{
+                                    flexShrink: 0, width: 28, height: 28, marginTop: 4,
+                                    borderRadius: 'var(--r-md)', border: '1px solid var(--border)',
+                                    background: 'var(--bg-elevated)', cursor: 'pointer',
+                                    fontSize: 14, color: 'var(--text-muted)',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  }}>×</button>
+                              )}
+                            </div>
+                          ))}
+                          <button onClick={() => addMultiItem(campo.id)}
+                            style={{
+                              alignSelf: 'flex-start',
+                              padding: '4px 12px', borderRadius: 'var(--r-md)',
+                              border: `1.5px solid ${agenteSel.cor}`,
+                              background: 'transparent',
+                              color: agenteSel.cor,
+                              fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                              fontFamily: 'var(--font-body)',
+                            }}>
+                            + Adicionar mais
+                          </button>
+                        </div>
+                        {campo.temSugestoes && (
+                          <div className="col gap-0" style={{ marginTop: 4 }}>
+                            <button onClick={pedirSugestoes} disabled={loadingSugestoes}
+                              style={{
+                                alignSelf: 'flex-start',
+                                padding: '5px 14px', borderRadius: 'var(--r-md)',
+                                border: `1.5px solid ${agenteSel.cor}`,
+                                background: `color-mix(in oklch, ${agenteSel.cor} 10%, var(--white))`,
+                                color: agenteSel.cor,
+                                fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                                fontFamily: 'var(--font-body)',
+                                opacity: loadingSugestoes ? 0.6 : 1,
+                              }}>
+                              {loadingSugestoes ? '⏳ Buscando...' : '✨ Me dê sugestões'}
+                            </button>
+                            <SugestoesList
+                              sugestoes={sugestoes}
+                              onSelect={s => adicionarSugestaoAoMulti(campo.id, s)}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+
                   if (campo.tipo === 'textarea') return (
                     <div key={campo.id} className="col gap-1">
                       {labelEl}
@@ -339,27 +449,6 @@ Formato: uma sugestão por linha, numeradas de 1 a 5. Seja específico e útil.`
                         value={val}
                         onChange={e => setcampo(campo.id, e.target.value)}
                       />
-                      {campo.temSugestoes && (
-                        <div className="col gap-0">
-                          <button onClick={pedirSugestoes} disabled={loadingSugestoes}
-                            style={{
-                              alignSelf: 'flex-start',
-                              padding: '5px 14px', borderRadius: 'var(--r-md)',
-                              border: `1.5px solid ${agenteSel.cor}`,
-                              background: `color-mix(in oklch, ${agenteSel.cor} 10%, var(--white))`,
-                              color: agenteSel.cor,
-                              fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                              fontFamily: 'var(--font-body)',
-                              opacity: loadingSugestoes ? 0.6 : 1,
-                            }}>
-                            {loadingSugestoes ? '⏳ Buscando...' : '✨ Me dê sugestões'}
-                          </button>
-                          <SugestoesList
-                            sugestoes={sugestoes}
-                            onSelect={s => { setcampo(campo.id, s); setSugestoes([]); }}
-                          />
-                        </div>
-                      )}
                     </div>
                   );
 

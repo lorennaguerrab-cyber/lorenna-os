@@ -104,12 +104,14 @@ const TYPE_EMOJI = {
 
 /* ── Lembretes recorrentes (família) ── */
 const RECURRENCES = [
-  { texto: 'Beber água',                         icon: '💧', hora: 'Ao longo do dia',   cor: '#bce1f6' },
-  { texto: 'Comer fruta',                        icon: '🍎', hora: 'Manhã e tarde',      cor: '#f1e18d' },
-  { texto: 'Exercício físico',                   icon: '🏃', hora: 'Diário',             cor: '#ffe1bd' },
-  { texto: 'Tarefas escolares Mateus & Murilo',  icon: '📚', hora: 'Antes das 10h30',   cor: '#f0bff8' },
-  { texto: 'Brincadeira Miguel (1a10m)',          icon: '🐣', hora: 'Bloco 9h e 14h',   cor: '#fec9df' },
-  { texto: 'Futebol Mateus & Murilo',             icon: '⚽', hora: 'Qua e Sex às 8h20', cor: '#f1e18d' },
+  { texto: 'Beber água',                                       icon: '💧', hora: 'Ao longo do dia',          cor: '#bce1f6' },
+  { texto: 'Comer fruta',                                      icon: '🍎', hora: 'Manhã e tarde',            cor: '#f1e18d' },
+  { texto: 'Exercício físico',                                 icon: '🏃', hora: 'Diário',                   cor: '#ffe1bd' },
+  { texto: 'Remédios manhã — VENVANSE · BUPROPIONA · OLMESARTANA · FLUOXETINA', icon: '💊', hora: 'Manhã (Lorenna)', cor: '#fe7dae' },
+  { texto: 'AMITRIL (Mateus)',                                 icon: '💊', hora: 'Noite',                    cor: '#bce1f6' },
+  { texto: 'Tarefas escolares Mateus & Murilo',                icon: '📚', hora: 'Antes das 10h30',          cor: '#f0bff8' },
+  { texto: 'Brincadeira Miguel (1a10m)',                       icon: '🐣', hora: 'Bloco 9h e 14h',           cor: '#fec9df' },
+  { texto: 'Futebol Mateus & Murilo',                          icon: '⚽', hora: 'Qua e Sex às 8h20',        cor: '#f1e18d' },
 ];
 
 /* ── Tarefas demo ── */
@@ -172,38 +174,6 @@ const DEMO_TASKS = [
       { id: 'm25', desc: 'Fazer entrevista (terça 14h)',      done: false, min: 60 },
       { id: 'm26', desc: 'Editar vídeo semanal',             done: false, min: 90 },
       { id: 'm27', desc: 'Enviar para aprovação do Marcos',  done: false, min: 5 },
-    ],
-  },
-  {
-    id: 't9', titulo: 'Criar carrossel sobre IA para criadoras',
-    status: 'pendente', prioridade: 'media', energia: ['criativa', 'foco'],
-    categoria: 'conteudo', recorrente: false,
-    micro: [
-      { id: 'm28', desc: 'Definir 7 ferramentas com uso real',done: false, min: 15 },
-      { id: 'm29', desc: 'Criar design no Canva (8 slides)',  done: false, min: 40 },
-      { id: 'm30', desc: 'Escrever legenda LinkedIn',         done: false, min: 10 },
-    ],
-  },
-  {
-    id: 't11', titulo: 'Campanha Copa do Mundo 2026 — Ótica Igor Giordano',
-    status: 'pendente', prioridade: 'alta', energia: ['criativa', 'operacional'],
-    categoria: 'cliente', cliente: 'Ótica Igor Giordano', recorrente: false,
-    micro: [
-      { id: 'm34', desc: 'Definir conceito visual da campanha ⚽', done: false, min: 30 },
-      { id: 'm35', desc: 'Criar peças visuais temáticas verde+amarelo', done: false, min: 60 },
-      { id: 'm36', desc: 'Escrever legendas e CTAs',                    done: false, min: 20 },
-      { id: 'm37', desc: 'Agendar publicações durante o torneio',       done: false, min: 15 },
-    ],
-  },
-  {
-    id: 't12', titulo: 'Campanha Aniversário Ótica Igor Giordano',
-    status: 'pendente', prioridade: 'alta', energia: ['criativa', 'operacional'],
-    categoria: 'cliente', cliente: 'Ótica Igor Giordano', recorrente: false,
-    micro: [
-      { id: 'm38', desc: 'Confirmar data do aniversário com Igor', done: false, min: 5  },
-      { id: 'm39', desc: 'Criar identidade visual da campanha',    done: false, min: 45 },
-      { id: 'm40', desc: 'Produzir reel especial de aniversário',  done: false, min: 60 },
-      { id: 'm41', desc: 'Stories comemorativas + destaques',      done: false, min: 20 },
     ],
   },
 ];
