@@ -363,10 +363,10 @@ const FERRAMENTAS_IA = [
     cor: '#fe7dae',
     emoji: '⭐',
     tools: [
-      { nome: 'Claude Pro', desc: 'IA principal do Córtex Lola — agentes, roteiros, newsletter, blog. Você já tem!', pro: true, destaque: true },
-      { nome: 'Canva Pro', desc: 'Design com fundo mágico, resize automático, Brand Kit, mais de 100M de assets. Você já tem!', pro: true, destaque: true },
-      { nome: 'Supabase', desc: 'Banco de dados do Córtex Lola — salva suas informações com segurança. Ativo no sistema.', pro: true },
-      { nome: 'GitHub Pages', desc: 'Hospedagem gratuita do Córtex Lola — lorennaguerrab-cyber.github.io/lorenna-os', pro: true },
+      { nome: 'Claude Pro', emoji: '🤖', desc: 'IA principal do Córtex Lola — agentes, roteiros, newsletter, blog.', pro: true, destaque: true, url: 'https://claude.ai' },
+      { nome: 'Canva Pro', emoji: '🎨', desc: 'Design com Brand Kit, fundo mágico, resize automático, 100M+ assets.', pro: true, destaque: true, url: 'https://canva.com' },
+      { nome: 'Supabase', emoji: '🗄️', desc: 'Banco de dados do Córtex Lola — salva suas informações com segurança.', pro: true, url: 'https://supabase.com' },
+      { nome: 'GitHub Pages', emoji: '🌐', desc: 'Hospedagem gratuita do Córtex Lola — seu sistema online sempre.', pro: true, url: 'https://github.com' },
     ],
   },
   {
@@ -374,10 +374,10 @@ const FERRAMENTAS_IA = [
     cor: '#fec9df',
     emoji: '✍️',
     tools: [
-      { nome: 'Claude (via Agentes)', desc: 'Use os Agentes aqui no Studio IA — Carta da Lola, Roteirista, Blog SEO, Post de Cliente', pro: true, destaque: true },
-      { nome: 'ChatGPT', desc: 'Versatilidade para textos gerais, pesquisa e brainstorming', gratuito: true },
-      { nome: 'Gemini', desc: 'Google — bom para pesquisa com contexto atual', gratuito: true },
-      { nome: 'Perplexity', desc: 'Pesquisa com fontes citadas — ótimo para contextualizar pautas', gratuito: true },
+      { nome: 'Claude.ai', emoji: '✨', desc: 'Use os Agentes do Studio IA — Carta da Lola, Roteirista, Blog SEO.', pro: true, destaque: true, url: 'https://claude.ai/new' },
+      { nome: 'ChatGPT', emoji: '💬', desc: 'Versatilidade para textos gerais, pesquisa e brainstorming.', gratuito: true, url: 'https://chat.openai.com' },
+      { nome: 'Gemini', emoji: '🔷', desc: 'Google — ótimo para pesquisa com contexto atual e recente.', gratuito: true, url: 'https://gemini.google.com' },
+      { nome: 'Perplexity', emoji: '🔍', desc: 'Pesquisa com fontes citadas — ideal para contextualizar pautas.', gratuito: true, url: 'https://perplexity.ai' },
     ],
   },
   {
@@ -385,10 +385,10 @@ const FERRAMENTAS_IA = [
     cor: '#f0bff8',
     emoji: '🎨',
     tools: [
-      { nome: 'Canva Pro (Magic Studio)', desc: 'Magic Write, Magic Eraser, Background Remover, resize automático — tudo no seu Canva Pro', pro: true, destaque: true },
-      { nome: 'Ideogram', desc: 'Geração de imagens com texto legível — ótimo para posts com copy', gratuito: true },
-      { nome: 'Adobe Firefly', desc: 'Geração de imagens e preenchimento generativo', gratuito: true },
-      { nome: 'Remove.bg', desc: 'Remove fundo de imagens em segundos', gratuito: true },
+      { nome: 'Canva Magic Studio', emoji: '✦', desc: 'Magic Write, Magic Eraser, Background Remover — no seu Canva Pro.', pro: true, destaque: true, url: 'https://canva.com' },
+      { nome: 'Ideogram', emoji: '🖼️', desc: 'Geração de imagens com texto legível — ótimo para posts com copy.', gratuito: true, url: 'https://ideogram.ai' },
+      { nome: 'Adobe Firefly', emoji: '🔥', desc: 'Geração de imagens e preenchimento generativo da Adobe.', gratuito: true, url: 'https://firefly.adobe.com' },
+      { nome: 'Remove.bg', emoji: '✂️', desc: 'Remove fundo de imagens em segundos — gratuito e preciso.', gratuito: true, url: 'https://remove.bg' },
     ],
   },
   {
@@ -396,10 +396,10 @@ const FERRAMENTAS_IA = [
     cor: '#bce1f6',
     emoji: '🎬',
     tools: [
-      { nome: 'CapCut', desc: 'Edição de vídeo com IA — legendas automáticas, voz, efeitos. Ideal para Reels', gratuito: true, destaque: true },
-      { nome: 'DaVinci Resolve', desc: 'Edição profissional de vídeo — totalmente gratuito', gratuito: true },
-      { nome: 'Clipe', desc: 'App BR para edição rápida de reels com templates', gratuito: true },
-      { nome: 'RunwayML', desc: 'Geração e edição de vídeo com IA', gratuito: false },
+      { nome: 'CapCut', emoji: '▶️', desc: 'Legendas automáticas, voz IA, efeitos — ideal para Reels.', gratuito: true, destaque: true, url: 'https://capcut.com' },
+      { nome: 'DaVinci Resolve', emoji: '🎞️', desc: 'Edição profissional de vídeo — totalmente gratuito.', gratuito: true, url: 'https://blackmagicdesign.com/products/davinciresolve' },
+      { nome: 'Clipe', emoji: '📱', desc: 'App BR para edição rápida de reels com templates prontos.', gratuito: true, url: 'https://clipeapp.com.br' },
+      { nome: 'RunwayML', emoji: '🚀', desc: 'Geração e edição de vídeo com IA — referência no mercado.', gratuito: false, url: 'https://runwayml.com' },
     ],
   },
   {
@@ -407,10 +407,10 @@ const FERRAMENTAS_IA = [
     cor: '#ffe1bd',
     emoji: '🎙️',
     tools: [
-      { nome: 'Adobe Podcast (Enhance)', desc: 'Melhora qualidade do áudio automaticamente — gratuito e incrível', gratuito: true, destaque: true },
-      { nome: 'Whisper (OpenAI)', desc: 'Transcrição de áudio/vídeo para texto — precisíssimo', gratuito: true },
-      { nome: 'Otter.ai', desc: 'Transcrição em tempo real de reuniões e entrevistas', gratuito: true },
-      { nome: 'ElevenLabs', desc: 'Geração de voz com IA — clone de voz', gratuito: false },
+      { nome: 'Adobe Podcast', emoji: '🎧', desc: 'Melhora qualidade do áudio automaticamente — gratuito e incrível.', gratuito: true, destaque: true, url: 'https://podcast.adobe.com' },
+      { nome: 'Whisper (OpenAI)', emoji: '📝', desc: 'Transcrição de áudio/vídeo para texto com altíssima precisão.', gratuito: true, url: 'https://openai.com/research/whisper' },
+      { nome: 'Otter.ai', emoji: '🦦', desc: 'Transcrição em tempo real de reuniões e entrevistas.', gratuito: true, url: 'https://otter.ai' },
+      { nome: 'ElevenLabs', emoji: '🎤', desc: 'Geração de voz com IA — clone de voz realista.', gratuito: false, url: 'https://elevenlabs.io' },
     ],
   },
   {
@@ -418,9 +418,9 @@ const FERRAMENTAS_IA = [
     cor: '#fec9df',
     emoji: '📸',
     tools: [
-      { nome: 'Lightroom (mobile)', desc: 'Edição profissional com IA — ajuste automático, máscaras de assunto', gratuito: true, destaque: true },
-      { nome: 'Snapseed', desc: 'Edição avançada no celular — gratuito e poderoso', gratuito: true },
-      { nome: 'Remini', desc: 'Melhora qualidade de fotos com IA', gratuito: true },
+      { nome: 'Lightroom Mobile', emoji: '🌅', desc: 'Edição profissional com IA — ajuste automático e máscaras.', gratuito: true, destaque: true, url: 'https://lightroom.adobe.com' },
+      { nome: 'Snapseed', emoji: '📷', desc: 'Edição avançada no celular — gratuito e poderoso.', gratuito: true, url: 'https://snapseed.online' },
+      { nome: 'Remini', emoji: '✨', desc: 'Melhora resolução e qualidade de fotos com IA.', gratuito: true, url: 'https://remini.ai' },
     ],
   },
   {
@@ -428,57 +428,98 @@ const FERRAMENTAS_IA = [
     cor: '#f1e18d',
     emoji: '🔍',
     tools: [
-      { nome: 'Google Search Console', desc: 'Ver palavras-chave reais que geram tráfego pro Papel da Lola', gratuito: true, destaque: true },
-      { nome: 'Ubersuggest', desc: 'Pesquisa de palavras-chave — plano free limitado', gratuito: true },
-      { nome: 'AnswerThePublic', desc: 'Perguntas que as pessoas fazem sobre um tema', gratuito: true },
-      { nome: 'Google Trends', desc: 'Tendências de busca em tempo real', gratuito: true },
+      { nome: 'Search Console', emoji: '📊', desc: 'Palavras-chave reais que geram tráfego pro Papel da Lola.', gratuito: true, destaque: true, url: 'https://search.google.com/search-console' },
+      { nome: 'Ubersuggest', emoji: '🔎', desc: 'Pesquisa de palavras-chave — plano free limitado.', gratuito: true, url: 'https://app.neilpatel.com/pt/ubersuggest' },
+      { nome: 'AnswerThePublic', emoji: '❓', desc: 'Perguntas que as pessoas fazem sobre um tema.', gratuito: true, url: 'https://answerthepublic.com' },
+      { nome: 'Google Trends', emoji: '📈', desc: 'Tendências de busca em tempo real no Brasil.', gratuito: true, url: 'https://trends.google.com.br' },
     ],
   },
   {
-    cat: 'Bancos de imagens grátis',
+    cat: 'Bancos de imagens',
     cor: '#f1e18d',
     emoji: '🖼️',
     tools: [
-      { nome: 'Unsplash', desc: 'Fotos de alta qualidade — gratuitas para uso comercial', gratuito: true, destaque: true },
-      { nome: 'Pexels', desc: 'Fotos e vídeos gratuitos de alta qualidade', gratuito: true },
-      { nome: 'Freepik', desc: 'Vetores, ícones e fotos — free com atribuição', gratuito: true },
-      { nome: 'Storyset', desc: 'Ilustrações customizáveis gratuitas', gratuito: true },
+      { nome: 'Unsplash', emoji: '🏞️', desc: 'Fotos de alta qualidade — gratuitas para uso comercial.', gratuito: true, destaque: true, url: 'https://unsplash.com' },
+      { nome: 'Pexels', emoji: '📸', desc: 'Fotos e vídeos gratuitos de alta qualidade.', gratuito: true, url: 'https://pexels.com' },
+      { nome: 'Freepik', emoji: '🎭', desc: 'Vetores, ícones e fotos — free com atribuição.', gratuito: true, url: 'https://freepik.com' },
+      { nome: 'Storyset', emoji: '🎨', desc: 'Ilustrações customizáveis gratuitas — perfeitas para blog.', gratuito: true, url: 'https://storyset.com' },
     ],
   },
 ];
 
 function FerramentasIATab() {
   return (
-    <div className="col gap-5">
-      <p style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.6 }}>
-        Suas ferramentas organizadas por categoria — começando pelo que você já tem contratado.
+    <div className="col gap-6">
+      <p style={{ fontSize: 15, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+        Suas ferramentas organizadas por categoria. Clique em qualquer card para abrir o site.
       </p>
+
       {FERRAMENTAS_IA.map(grupo => (
         <div key={grupo.cat}>
-          <div className="row gap-2" style={{ marginBottom: 12, alignItems: 'center' }}>
-            <span style={{ fontSize: 22 }}>{grupo.emoji}</span>
-            <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 17, fontWeight: 700 }}>{grupo.cat}</h3>
+          {/* Cabeçalho da categoria */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14,
+            paddingBottom: 10, borderBottom: `2px solid ${grupo.cor}`,
+          }}>
+            <div style={{
+              width: 38, height: 38, borderRadius: 10, flexShrink: 0,
+              background: grupo.cor,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 20,
+            }}>{grupo.emoji}</div>
+            <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
+              {grupo.cat}
+            </h3>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 'var(--s-3)' }}>
+
+          {/* Grid de ferramentas — 4 colunas */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 10 }}>
             {grupo.tools.map(t => (
-              <div key={t.nome} style={{
-                padding: 'var(--s-3) var(--s-4)',
-                borderRadius: 'var(--r-md)',
-                background: t.destaque
-                  ? `color-mix(in oklch, ${grupo.cor} 20%, var(--bg-surface))`
-                  : 'var(--bg-elevated)',
-                border: `1.5px solid ${t.destaque ? grupo.cor : 'var(--border)'}`,
-              }}>
-                <div className="row between" style={{ marginBottom: 6, alignItems: 'center', gap: 8 }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.2 }}>{t.nome}</div>
-                  <span style={{
-                    fontSize: 12, fontWeight: 700, padding: '3px 8px', borderRadius: 999, flexShrink: 0,
-                    background: t.pro ? '#fe7dae' : t.gratuito ? '#f1e18d' : '#ffe1bd',
-                    color: '#201e1f',
-                  }}>{t.pro ? '✓ Você tem' : t.gratuito ? 'Grátis' : 'Pago'}</span>
+              <a key={t.nome} href={t.url} target="_blank" rel="noopener noreferrer"
+                style={{ textDecoration: 'none', display: 'block' }}>
+                <div style={{
+                  padding: '14px 16px',
+                  borderRadius: 'var(--r-md)',
+                  background: t.destaque
+                    ? `color-mix(in oklch, ${grupo.cor} 22%, var(--bg-surface))`
+                    : 'var(--bg-elevated)',
+                  border: `1.5px solid ${t.destaque ? grupo.cor : 'var(--border)'}`,
+                  cursor: 'pointer', height: '100%',
+                  transition: 'transform .12s, box-shadow .12s',
+                  display: 'flex', flexDirection: 'column', gap: 8,
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 6px 18px color-mix(in oklch, ${grupo.cor} 30%, transparent)`; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}
+                >
+                  {/* Topo: emoji + badge */}
+                  <div className="row between" style={{ alignItems: 'center' }}>
+                    <span style={{ fontSize: 24 }}>{t.emoji}</span>
+                    <span style={{
+                      fontSize: 12, fontWeight: 700, padding: '3px 9px', borderRadius: 999,
+                      background: t.pro ? '#fe7dae' : t.gratuito ? '#f1e18d' : '#ffe1bd',
+                      color: '#201e1f', flexShrink: 0,
+                    }}>{t.pro ? '✓ Você tem' : t.gratuito ? 'Grátis' : 'Pago'}</span>
+                  </div>
+
+                  {/* Nome */}
+                  <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.2 }}>
+                    {t.nome}
+                  </div>
+
+                  {/* Descrição */}
+                  <p style={{ fontSize: 14, color: 'var(--text-muted)', margin: 0, lineHeight: 1.45, flex: 1 }}>
+                    {t.desc}
+                  </p>
+
+                  {/* CTA */}
+                  <div style={{
+                    fontSize: 13, fontWeight: 600,
+                    color: grupo.cor === '#f1e18d' || grupo.cor === '#fec9df' || grupo.cor === '#ffe1bd'
+                      ? 'var(--text-secondary)' : grupo.cor,
+                    marginTop: 2,
+                  }}>Abrir site →</div>
                 </div>
-                <p style={{ fontSize: 14, color: 'var(--text-muted)', margin: 0, lineHeight: 1.45 }}>{t.desc}</p>
-              </div>
+              </a>
             ))}
           </div>
         </div>
