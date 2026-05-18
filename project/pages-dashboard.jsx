@@ -1297,30 +1297,29 @@ function LembretesHabitosWidget() {
 
         {/* Água — tracker inline */}
         <div style={{
-          padding: 'var(--s-3)', borderRadius: 'var(--r-md)',
-          background: `color-mix(in oklch, #bce1f6 28%, var(--bg-surface))`,
+          padding: '12px var(--s-3)', borderRadius: 'var(--r-md)',
+          background: `color-mix(in oklch, #bce1f6 18%, var(--bg-surface))`,
           borderLeft: '3px solid #bce1f6',
         }}>
-          <div className="row between" style={{ marginBottom: 8 }}>
-            <div className="row gap-2">
-              <span style={{ fontSize: 16 }}>💧</span>
-              <span style={{ fontSize: 14, fontWeight: 500, color: '#201e1f' }}>Beber água</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <span style={{ fontSize: 18, flexShrink: 0, width: 28, textAlign: 'center' }}>💧</span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: '#201e1f', lineHeight: 1.3 }}>Beber água</div>
+              <div style={{ fontSize: 13, color: '#201e1f', opacity: 0.5, marginTop: 2 }}>🕐 Ao longo do dia</div>
             </div>
-            <span style={{ fontSize: 14, fontWeight: 600, color: '#201e1f' }}>
+            <span style={{ fontSize: 14, fontWeight: 700, color: '#201e1f', flexShrink: 0 }}>
               {aguaMl >= 1000 ? `${(aguaMl/1000).toFixed(1)}L` : `${aguaMl}ml`} / 3L
             </span>
           </div>
-          {/* Barra de progresso */}
           <div style={{ height: 8, borderRadius: 999, background: 'var(--bg-elevated)', overflow: 'hidden', marginBottom: 8 }}>
             <div style={{ height: '100%', width: `${aguaPct}%`, background: aguaCor, borderRadius: 999, transition: 'width .3s' }}/>
           </div>
-          {/* Botões de adição */}
           <div className="row gap-2">
             {[250, 350, 500].map(ml => (
               <button key={ml} onClick={() => addAgua(ml)} style={{
-                flex: 1, padding: '6px 0',
+                flex: 1, padding: '7px 0',
                 borderRadius: 'var(--r-md)', border: '1.5px solid #bce1f6',
-                background: 'white', color: '#201e1f',
+                background: 'var(--bg-surface)', color: '#201e1f',
                 fontSize: 14, fontWeight: 600, cursor: 'pointer',
                 fontFamily: 'var(--font-body)',
               }}>+{ml}ml</button>
@@ -1341,7 +1340,7 @@ function LembretesHabitosWidget() {
           return (
             <div key={r.texto} onClick={() => r.tipo === 'habito' ? toggleHabito(r.id) : toggleMeds(r.ids)}
               style={{
-                padding: '10px var(--s-3)',
+                padding: '12px var(--s-3)',
                 borderRadius: 'var(--r-md)',
                 background: checked
                   ? `color-mix(in oklch, ${r.cor} 35%, var(--bg-surface))`
@@ -1349,31 +1348,40 @@ function LembretesHabitosWidget() {
                 borderLeft: `3px solid ${r.cor}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 cursor: 'pointer', transition: 'background .15s',
+                gap: 8,
               }}>
-              <div className="row gap-2" style={{ flex: 1, minWidth: 0 }}>
-                <span style={{ fontSize: 16, flexShrink: 0 }}>{r.icon}</span>
-                <div style={{ minWidth: 0 }}>
+              {/* Emoji */}
+              <span style={{ fontSize: 18, flexShrink: 0, width: 28, textAlign: 'center' }}>{r.icon}</span>
+
+              {/* Text block */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  fontSize: 14, fontWeight: 600, color: '#201e1f', lineHeight: 1.3,
+                  textDecoration: checked ? 'line-through' : 'none',
+                  opacity: checked ? 0.55 : 1,
+                }}>{r.texto}</div>
+                {r.hora && (
+                  <div style={{ fontSize: 13, color: '#201e1f', opacity: 0.5, marginTop: 2 }}>
+                    🕐 {r.hora}
+                  </div>
+                )}
+                {r.desc && (
                   <div style={{
-                    fontSize: 14, fontWeight: 600, color: '#201e1f',
-                    textDecoration: checked ? 'line-through' : 'none',
-                    opacity: checked ? 0.6 : 1,
-                  }}>{r.texto}</div>
-                  {r.desc && (
-                    <div style={{
-                      fontSize: 14, color: '#201e1f', opacity: checked ? 0.5 : 0.75,
-                      marginTop: 1, lineHeight: 1.3,
-                    }}>{r.desc}</div>
-                  )}
-                </div>
+                    fontSize: 13, color: '#201e1f', opacity: checked ? 0.4 : 0.65,
+                    marginTop: 3, lineHeight: 1.35,
+                  }}>{r.desc}</div>
+                )}
               </div>
+
+              {/* Checkbox */}
               <div style={{
-                width: 24, height: 24, borderRadius: 999, flexShrink: 0, marginLeft: 8,
+                width: 26, height: 26, borderRadius: 999, flexShrink: 0,
                 border: `2px solid ${checked ? r.cor : 'var(--border-strong)'}`,
                 background: checked ? r.cor : 'transparent',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'all .15s',
               }}>
-                {checked && <Icon name="check" size={13} color="white"/>}
+                {checked && <Icon name="check" size={13} color="#201e1f"/>}
               </div>
             </div>
           );

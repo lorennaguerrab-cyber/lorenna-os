@@ -359,11 +359,22 @@ function PromptsBancoTab() {
 
 const FERRAMENTAS_IA = [
   {
-    cat: 'Texto e escrita',
+    cat: 'Suas ferramentas Pro',
     cor: '#fe7dae',
+    emoji: '⭐',
+    tools: [
+      { nome: 'Claude Pro', desc: 'IA principal do Córtex Lola — agentes, roteiros, newsletter, blog. Você já tem!', pro: true, destaque: true },
+      { nome: 'Canva Pro', desc: 'Design com fundo mágico, resize automático, Brand Kit, mais de 100M de assets. Você já tem!', pro: true, destaque: true },
+      { nome: 'Supabase', desc: 'Banco de dados do Córtex Lola — salva suas informações com segurança. Ativo no sistema.', pro: true },
+      { nome: 'GitHub Pages', desc: 'Hospedagem gratuita do Córtex Lola — lorennaguerrab-cyber.github.io/lorenna-os', pro: true },
+    ],
+  },
+  {
+    cat: 'Texto e escrita',
+    cor: '#fec9df',
     emoji: '✍️',
     tools: [
-      { nome: 'Claude', desc: 'Melhor para escrita criativa, newsletters, blog, roteiros', gratuito: true, destaque: true },
+      { nome: 'Claude (via Agentes)', desc: 'Use os Agentes aqui no Studio IA — Carta da Lola, Roteirista, Blog SEO, Post de Cliente', pro: true, destaque: true },
       { nome: 'ChatGPT', desc: 'Versatilidade para textos gerais, pesquisa e brainstorming', gratuito: true },
       { nome: 'Gemini', desc: 'Google — bom para pesquisa com contexto atual', gratuito: true },
       { nome: 'Perplexity', desc: 'Pesquisa com fontes citadas — ótimo para contextualizar pautas', gratuito: true },
@@ -374,10 +385,9 @@ const FERRAMENTAS_IA = [
     cor: '#f0bff8',
     emoji: '🎨',
     tools: [
-      { nome: 'Canva AI', desc: 'Gerar imagens, fundo mágico, resize automático — integrado ao Canva', gratuito: true, destaque: true },
-      { nome: 'Ideogram', desc: 'Geração de imagens com texto legível — ótimo para posts', gratuito: true },
-      { nome: 'Adobe Firefly', desc: 'Geração de imagens e edição — integrado ao Photoshop', gratuito: true },
-      { nome: 'DALL-E (ChatGPT)', desc: 'Geração de imagens via ChatGPT Plus', gratuito: false },
+      { nome: 'Canva Pro (Magic Studio)', desc: 'Magic Write, Magic Eraser, Background Remover, resize automático — tudo no seu Canva Pro', pro: true, destaque: true },
+      { nome: 'Ideogram', desc: 'Geração de imagens com texto legível — ótimo para posts com copy', gratuito: true },
+      { nome: 'Adobe Firefly', desc: 'Geração de imagens e preenchimento generativo', gratuito: true },
       { nome: 'Remove.bg', desc: 'Remove fundo de imagens em segundos', gratuito: true },
     ],
   },
@@ -386,10 +396,10 @@ const FERRAMENTAS_IA = [
     cor: '#bce1f6',
     emoji: '🎬',
     tools: [
-      { nome: 'CapCut', desc: 'Edição de vídeo com IA — legendas automáticas, voz, efeitos', gratuito: true, destaque: true },
+      { nome: 'CapCut', desc: 'Edição de vídeo com IA — legendas automáticas, voz, efeitos. Ideal para Reels', gratuito: true, destaque: true },
       { nome: 'DaVinci Resolve', desc: 'Edição profissional de vídeo — totalmente gratuito', gratuito: true },
-      { nome: 'RunwayML', desc: 'Geração e edição de vídeo com IA (plano limitado gratuito)', gratuito: false },
       { nome: 'Clipe', desc: 'App BR para edição rápida de reels com templates', gratuito: true },
+      { nome: 'RunwayML', desc: 'Geração e edição de vídeo com IA', gratuito: false },
     ],
   },
   {
@@ -397,10 +407,10 @@ const FERRAMENTAS_IA = [
     cor: '#ffe1bd',
     emoji: '🎙️',
     tools: [
-      { nome: 'Adobe Podcast (Enhance)', desc: 'Melhora qualidade do áudio automaticamente — gratuito', gratuito: true, destaque: true },
-      { nome: 'ElevenLabs', desc: 'Geração de voz com IA — clone de voz (plan free limitado)', gratuito: false },
+      { nome: 'Adobe Podcast (Enhance)', desc: 'Melhora qualidade do áudio automaticamente — gratuito e incrível', gratuito: true, destaque: true },
       { nome: 'Whisper (OpenAI)', desc: 'Transcrição de áudio/vídeo para texto — precisíssimo', gratuito: true },
       { nome: 'Otter.ai', desc: 'Transcrição em tempo real de reuniões e entrevistas', gratuito: true },
+      { nome: 'ElevenLabs', desc: 'Geração de voz com IA — clone de voz', gratuito: false },
     ],
   },
   {
@@ -408,10 +418,9 @@ const FERRAMENTAS_IA = [
     cor: '#fec9df',
     emoji: '📸',
     tools: [
-      { nome: 'Lightroom (mobile)', desc: 'Edição profissional com IA — ajuste automático, máscaras', gratuito: true, destaque: true },
-      { nome: 'Snapseed', desc: 'Edição avançada no celular — gratuito', gratuito: true },
+      { nome: 'Lightroom (mobile)', desc: 'Edição profissional com IA — ajuste automático, máscaras de assunto', gratuito: true, destaque: true },
+      { nome: 'Snapseed', desc: 'Edição avançada no celular — gratuito e poderoso', gratuito: true },
       { nome: 'Remini', desc: 'Melhora qualidade de fotos com IA', gratuito: true },
-      { nome: 'Lensa', desc: 'Retratos artísticos com IA — ensaios fotográficos', gratuito: false },
     ],
   },
   {
@@ -419,21 +428,10 @@ const FERRAMENTAS_IA = [
     cor: '#f1e18d',
     emoji: '🔍',
     tools: [
-      { nome: 'Google Search Console', desc: 'Ver palavras-chave reais que geram tráfego pro blog', gratuito: true, destaque: true },
+      { nome: 'Google Search Console', desc: 'Ver palavras-chave reais que geram tráfego pro Papel da Lola', gratuito: true, destaque: true },
       { nome: 'Ubersuggest', desc: 'Pesquisa de palavras-chave — plano free limitado', gratuito: true },
       { nome: 'AnswerThePublic', desc: 'Perguntas que as pessoas fazem sobre um tema', gratuito: true },
       { nome: 'Google Trends', desc: 'Tendências de busca em tempo real', gratuito: true },
-    ],
-  },
-  {
-    cat: 'Logo e identidade',
-    cor: '#f0bff8',
-    emoji: '💎',
-    tools: [
-      { nome: 'Canva AI', desc: 'Criação de logos e paletas com IA', gratuito: true, destaque: true },
-      { nome: 'Looka', desc: 'Geração de logotipos com IA — plano inicial gratuito', gratuito: false },
-      { nome: 'Brandmark.io', desc: 'Logo com IA — simples e rápido', gratuito: false },
-      { nome: 'Coolors', desc: 'Geração de paletas de cores — totalmente gratuito', gratuito: true },
     ],
   },
   {
@@ -453,13 +451,13 @@ function FerramentasIATab() {
   return (
     <div className="col gap-5">
       <p style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.6 }}>
-        Ferramentas gratuitas (ou com plano free útil) organizadas por categoria. Sempre que uma tarefa indicar ferramentas de IA, você encontrará o link aqui.
+        Suas ferramentas organizadas por categoria — começando pelo que você já tem contratado.
       </p>
       {FERRAMENTAS_IA.map(grupo => (
         <div key={grupo.cat}>
           <div className="row gap-2" style={{ marginBottom: 12, alignItems: 'center' }}>
             <span style={{ fontSize: 22 }}>{grupo.emoji}</span>
-            <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700 }}>{grupo.cat}</h3>
+            <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 17, fontWeight: 700 }}>{grupo.cat}</h3>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 'var(--s-3)' }}>
             {grupo.tools.map(t => (
@@ -467,19 +465,19 @@ function FerramentasIATab() {
                 padding: 'var(--s-3) var(--s-4)',
                 borderRadius: 'var(--r-md)',
                 background: t.destaque
-                  ? `color-mix(in oklch, ${grupo.cor} 18%, var(--bg-surface))`
+                  ? `color-mix(in oklch, ${grupo.cor} 20%, var(--bg-surface))`
                   : 'var(--bg-elevated)',
                 border: `1.5px solid ${t.destaque ? grupo.cor : 'var(--border)'}`,
               }}>
-                <div className="row between" style={{ marginBottom: 6, alignItems: 'center' }}>
-                  <div style={{ fontWeight: 700, fontSize: 14.5, color: 'var(--text-primary)' }}>{t.nome}</div>
+                <div className="row between" style={{ marginBottom: 6, alignItems: 'center', gap: 8 }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.2 }}>{t.nome}</div>
                   <span style={{
-                    fontSize: 12, fontWeight: 700, padding: '2px 8px', borderRadius: 999,
-                    background: t.gratuito ? '#f1e18d' : '#ffe1bd',
+                    fontSize: 12, fontWeight: 700, padding: '3px 8px', borderRadius: 999, flexShrink: 0,
+                    background: t.pro ? '#fe7dae' : t.gratuito ? '#f1e18d' : '#ffe1bd',
                     color: '#201e1f',
-                  }}>{t.gratuito ? 'Grátis' : 'Pago'}</span>
+                  }}>{t.pro ? '✓ Você tem' : t.gratuito ? 'Grátis' : 'Pago'}</span>
                 </div>
-                <p style={{ fontSize: 13.5, color: 'var(--text-muted)', margin: 0, lineHeight: 1.4 }}>{t.desc}</p>
+                <p style={{ fontSize: 14, color: 'var(--text-muted)', margin: 0, lineHeight: 1.45 }}>{t.desc}</p>
               </div>
             ))}
           </div>

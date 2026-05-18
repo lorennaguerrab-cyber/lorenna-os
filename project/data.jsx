@@ -109,7 +109,7 @@ const RECURRENCES = [
   { texto: 'Exercício físico',             icon: '🏃', hora: 'Diário',           cor: '#ffe1bd', tipo: 'habito', id: 'exercicio' },
   { texto: 'Tomar remédios da manhã',      icon: '💊', hora: 'Manhã (Lorenna)',  cor: '#fe7dae', tipo: 'meds',  ids: ['venvanse','bupropiona','olmesartana','fluoxetina'],
     desc: 'VENVANSE · BUPROPIONA · OLMESARTANA · FLUOXETINA' },
-  { texto: 'AMITRIL (Mateus)',             icon: '💊', hora: 'Noite',            cor: '#bce1f6', tipo: 'meds',  ids: ['amitril_mateus'] },
+  { texto: 'Amitril (Mateus)',             icon: '💊', hora: 'Noite',            cor: '#bce1f6', tipo: 'meds',  ids: ['amitril_mateus'] },
   { texto: 'Vitamina do Miguel',           icon: '🌿', hora: 'Manhã',            cor: '#f1e18d', tipo: 'habito', id: 'vitamina_miguel',
     desc: 'Dar GROWVIT todos os dias antes do almoço' },
   { texto: 'Tarefas escolares Mateus & Murilo', icon: '📚', hora: 'Manhã',      cor: '#f0bff8', tipo: 'habito', id: 'tarefas_escolares' },
