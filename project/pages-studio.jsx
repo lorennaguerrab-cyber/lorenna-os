@@ -45,6 +45,21 @@ const STUDIO_AGENTS = [
     ],
   },
   {
+    id: 'blog',
+    nome: 'Blog SEO',
+    emoji: '📝',
+    desc: 'Artigo completo + SEO + monetização + conteúdo relacionado',
+    cor: '#5B9BD5',
+    botao: 'Escrever artigo completo',
+    campos: [
+      { id: 'tema',    label: 'Tema / palavra-chave principal', tipo: 'text',     placeholder: 'Ex: como se organizar com TDAH sendo mãe', obrigatorio: true },
+      { id: 'gancho',  label: 'Ângulo pessoal (sua história)',  tipo: 'textarea', placeholder: 'Uma cena real, experiência ou perspectiva única sua que conecta ao tema...' },
+      { id: 'publico', label: 'Público-alvo',                   tipo: 'text',     placeholder: 'Ex: mães neurodivergentes, criadoras de conteúdo...' },
+      { id: 'produto', label: 'O que monetizar neste post?',    tipo: 'text',     placeholder: 'Ex: consultoria da Logue, link afiliado, produto digital, e-book...' },
+      { id: 'nivel',   label: 'Nível do leitor',                tipo: 'select',   opcoes: ['Iniciante', 'Intermediário', 'Avançado', 'Todos os níveis'] },
+    ],
+  },
+  {
     id: 'post_cliente',
     nome: 'Post de Cliente',
     emoji: '✨',
@@ -96,6 +111,50 @@ Para Reels: gancho nos primeiros 3 segundos é obrigatório (visual + verbal).
 Para YouTube: inclua [INTRO], [DESENVOLVIMENTO], [CONCLUSÃO].
 Para UGC: tom mais natural, como se fosse uma pessoa comum falando do produto.
 Seja específico nas ações de câmera e texto na tela.`;
+  }
+
+  if (agente.id === 'blog') {
+    const produto = campos['produto'] || '';
+    const nivel = campos['nivel'] || 'Todos os níveis';
+    return `${LORENNA_VOZ}
+
+Você é especialista em SEO, conteúdo para blog e monetização digital. Escreva para o blog "Papel da Lola".
+Nível do leitor: ${nivel}
+
+Produza TODAS as seções abaixo, separadas pelos títulos em destaque:
+
+═══ ARTIGO SEO ═══
+H1: [título com palavra-chave — máx 65 caracteres]
+Meta description: [155 caracteres com CTA sutil]
+
+[Artigo de 800-1000 palavras — introdução com cena pessoal + 3-4 seções H2 com palavras-chave relacionadas + conclusão com CTA]${produto ? `\nMenção orgânica e útil a: ${produto}` : ''}
+
+═══ MONETIZAÇÃO DESTE POST ═══
+Sugira 3 formas concretas: afiliados, produto próprio, consultoria, freebies para captura de e-mail, etc.
+
+═══ CONTEÚDO RELACIONADO ═══
+📸 Ensaio fotográfico: [conceito e referência visual]
+🎬 Reels/TikTok 30s: [gancho dos primeiros 3 segundos]
+📹 YouTube: [título + 3 tópicos para vídeo longo]
+💌 Carta da Lola: [ângulo emocional único para a newsletter]
+📌 Pinterest: [texto do pin + sugestão de board]
+
+═══ SEQUÊNCIA DE STORIES — 6 slides ═══
+Slide 1 — Gancho: [texto curto, impactante]
+Slide 2 — Contexto/problema: [texto]
+Slide 3 — Desenvolvimento: [texto]
+Slide 4 — Dica central: [texto]
+Slide 5 — Teaser do artigo: [texto]
+Slide 6 — CTA: [texto + ação clara]
+
+═══ DIVULGAÇÃO INSTAGRAM ═══
+Título do post (feed/carrossel): [máx 7 palavras, impacto]
+Subtítulo de apoio: [1 linha complementar]
+Legenda completa:
+[gancho primeira linha que para o scroll]
+[2-3 parágrafos de desenvolvimento]
+[CTA direto e específico]
+[8-12 hashtags relevantes]`;
   }
 
   if (agente.id === 'post_cliente') {
@@ -172,6 +231,14 @@ function StudioPage() {
     setSugestoes([]);
     setResultado('');
   }
+
+  useEffect(() => {
+    if (window.STUDIO_AUTOAGENTE) {
+      const agente = STUDIO_AGENTS.find(a => a.id === window.STUDIO_AUTOAGENTE);
+      if (agente) selecionarAgente(agente);
+      window.STUDIO_AUTOAGENTE = null;
+    }
+  }, []);
 
   function setcampo(id, val) {
     setCampos(p => ({ ...p, [id]: val }));

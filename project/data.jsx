@@ -109,7 +109,7 @@ const RECURRENCES = [
   { texto: 'Exercício físico',                                 icon: '🏃', hora: 'Diário',                   cor: '#ffe1bd' },
   { texto: 'Remédios manhã — VENVANSE · BUPROPIONA · OLMESARTANA · FLUOXETINA', icon: '💊', hora: 'Manhã (Lorenna)', cor: '#fe7dae' },
   { texto: 'AMITRIL (Mateus)',                                 icon: '💊', hora: 'Noite',                    cor: '#bce1f6' },
-  { texto: 'Tarefas escolares Mateus & Murilo',                icon: '📚', hora: 'Antes das 10h30',          cor: '#f0bff8' },
+  { texto: 'Tarefas escolares Mateus & Murilo',                icon: '📚', hora: 'Manhã',                    cor: '#f0bff8' },
   { texto: 'Brincadeira Miguel (1a10m)',                       icon: '🐣', hora: 'Bloco 9h e 14h',           cor: '#fec9df' },
   { texto: 'Futebol Mateus & Murilo',                          icon: '⚽', hora: 'Qua e Sex às 8h20',        cor: '#f1e18d' },
 ];

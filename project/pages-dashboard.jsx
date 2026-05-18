@@ -703,52 +703,52 @@ const ROTINA_PALETTE = ['#bce1f6', '#f0bff8', '#fe7dae', '#f1e18d', '#ffe1bd', '
 function RotinaSemanalWidget() {
   const today = (new Date().getDay() + 6) % 7;
   const r = ROTINA_SEMANAL[today];
+  const col = ROTINA_PALETTE[today];
+
   return (
     <Card>
       <CardBody>
-        <div className="row between" style={{ marginBottom: 'var(--s-3)' }}>
-          <div className="eyebrow">Rotina da semana</div>
-          <span className="tiny muted" style={{ maxWidth: '55%', textAlign: 'right', lineHeight: 1.4 }}>
-            Hoje: {r.temas.slice(0, 2).join(' · ')}{r.temas.length > 2 ? ` +${r.temas.length - 2}` : ''}
-          </span>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 5 }}>
+        <div className="eyebrow" style={{ marginBottom: 'var(--s-3)' }}>Rotina da semana</div>
+
+        {/* Barra decorativa dos 7 dias */}
+        <div style={{ display: 'flex', gap: 4, marginBottom: 'var(--s-4)' }}>
           {ROTINA_SEMANAL.map((d, i) => {
             const isToday = i === today;
-            const col = ROTINA_PALETTE[i];
+            const c = ROTINA_PALETTE[i];
             return (
-              <div key={d.dia} style={{
-                borderRadius: 'var(--r-md)',
-                background: isToday ? col : `color-mix(in oklch, ${col} 28%, var(--bg-elevated))`,
-                border: `2px solid ${isToday ? col : 'transparent'}`,
-                overflow: 'hidden',
-              }}>
-                {/* Day header */}
+              <div key={d.dia} style={{ flex: 1, textAlign: 'center' }}>
                 <div style={{
-                  padding: '8px 6px 6px',
-                  textAlign: 'center',
-                  borderBottom: `1px solid ${isToday ? 'rgba(32,30,31,.12)' : 'transparent'}`,
-                }}>
-                  <div style={{
-                    fontSize: 12, fontWeight: 700, letterSpacing: '0.05em',
-                    color: isToday ? '#201e1f' : 'var(--text-muted)',
-                  }}>{d.dia}</div>
-                </div>
-                {/* Temas */}
-                <div style={{ padding: '6px 5px 8px', display: 'flex', flexDirection: 'column', gap: 4 }}>
-                  {d.temas.map((t, j) => (
-                    <div key={j} style={{
-                      fontSize: 10, lineHeight: 1.35,
-                      color: isToday ? '#201e1f' : 'var(--text-secondary)',
-                      padding: '2px 3px',
-                      borderRadius: 6,
-                      background: isToday ? 'rgba(32,30,31,.07)' : 'transparent',
-                    }}>{t}</div>
-                  ))}
-                </div>
+                  height: 6, borderRadius: 99, marginBottom: 6,
+                  background: isToday ? c : `color-mix(in oklch, ${c} 35%, var(--bg-elevated))`,
+                }} />
+                <div style={{
+                  fontSize: 14, fontWeight: isToday ? 700 : 400,
+                  color: isToday ? '#201e1f' : 'var(--text-muted)',
+                }}>{d.dia}</div>
               </div>
             );
           })}
+        </div>
+
+        {/* Bloco de hoje com contraste garantido */}
+        <div style={{
+          background: col,
+          borderRadius: 'var(--r-md)',
+          padding: 'var(--s-4)',
+        }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: '#201e1f', marginBottom: 10 }}>
+            Hoje · {r.dia}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {r.temas.map((t, j) => (
+              <div key={j} style={{
+                fontSize: 14, color: '#201e1f',
+                background: 'rgba(32,30,31,.12)',
+                padding: '5px 12px', borderRadius: 999,
+                fontWeight: 500,
+              }}>{t}</div>
+            ))}
+          </div>
         </div>
       </CardBody>
     </Card>
@@ -1134,6 +1134,137 @@ function ClientsWidget() {
   );
 }
 
+const SUGESTAO_PALETTE = ['#fec9df', '#bce1f6', '#f1e18d', '#f0bff8', '#ffe1bd'];
+const AGENTE_ROTULO = { carta: 'Carta da Lola', roteiro: 'Roteirista', blog: 'Blog SEO', post_cliente: 'Post de Cliente' };
+
+function SugestoesWidget({ setRoute }) {
+  const cacheKey = 'lorenna_sugestoes_' + new Date().toISOString().slice(0, 10);
+  const [itens, setItens] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(cacheKey)); } catch { return null; }
+  });
+  const [carregando, setCarregando] = useState(false);
+
+  useEffect(() => {
+    if (!itens && window.hasClaudeKey?.()) gerar();
+  }, []);
+
+  async function gerar() {
+    if (!window.hasClaudeKey?.()) { showToast('Configure sua chave Claude para sugestões personalizadas'); return; }
+    setCarregando(true);
+    const clientes = (window.DEMO_CLIENTS || []).map(c => c.nome).join(', ');
+    const tarefas = (window.DEMO_TASKS || []).filter(t => t.status !== 'concluida').map(t => t.titulo).join('; ');
+    const diaSemana = (new Date().getDay() + 6) % 7;
+    const rotina = ROTINA_SEMANAL[diaSemana]?.temas?.join(', ') || '';
+    const dataHoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+    const prompt = `Lorenna Guerra: criadora @lorennagn, fundadora Agência Logue, mãe de Mateus(10a,TEA), Murilo e Miguel(1a10m). TDAH+TEA nível1+Altas Habilidades. Blog "Papel da Lola", newsletter "Carta da Lola" no Substack. Produz conteúdo e vídeos para clientes.
+
+Clientes: ${clientes}
+Tarefas abertas: ${tarefas}
+Rotina hoje (${dataHoje}): ${rotina}
+
+Gere 5 sugestões ESPECÍFICAS e VARIADAS de conteúdo para Lorenna. Use formatos diferentes entre si: YouTube longo, Post Instagram, Newsletter, Blog SEO, Stories, Reels, Ensaio fotográfico, conteúdo de cliente. Seja específico, conectado à realidade dela (filhos, TDAH, clientes reais, blog, Córtex Lola). Cada sugestão deve ter uma "origem" que explique naturalmente de onde veio a ideia (ex: "Com base no seu Córtex Lola e na sua rotina com TDAH...").
+
+Responda SOMENTE com JSON válido, sem markdown, sem explicação:
+[{"titulo":"...","descricao":"...","origem":"...","formato":"YouTube|Post|Newsletter|Blog|Stories|Reels|Ensaio","emoji":"...","agente":"carta|roteiro|blog|post_cliente"}]`;
+
+    const resp = await window.callClaude(
+      [{ role: 'user', content: prompt }],
+      'Estrategista de conteúdo que conhece Lorenna profundamente. Responda apenas JSON válido.',
+      'claude-haiku-4-5-20251001',
+      1000,
+    );
+    if (resp) {
+      try {
+        const clean = resp.trim().replace(/^```json?\n?/, '').replace(/\n?```$/, '');
+        const data = JSON.parse(clean);
+        if (Array.isArray(data) && data.length) {
+          setItens(data);
+          localStorage.setItem(cacheKey, JSON.stringify(data));
+        }
+      } catch { showToast('Erro ao processar sugestões'); }
+    } else { showToast('Erro ao gerar sugestões'); }
+    setCarregando(false);
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="row between" style={{ alignItems: 'center' }}>
+          <div>
+            <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700 }}>✨ Sugestões de conteúdo</h2>
+            <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 3 }}>Geradas pelo seu sistema · atualizam diariamente</p>
+          </div>
+          <Button variant="ghost" size="sm" onClick={gerar} disabled={carregando}>
+            {carregando ? '⏳' : '↺ Atualizar'}
+          </Button>
+        </div>
+      </CardHeader>
+      <CardBody className="col gap-3">
+        {carregando && (
+          <div style={{ padding: 'var(--s-5) 0', textAlign: 'center' }}>
+            <div style={{ fontSize: 28, marginBottom: 8 }}>⏳</div>
+            <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>Analisando seu sistema e gerando ideias...</p>
+          </div>
+        )}
+        {!carregando && !itens && (
+          <div style={{ padding: 'var(--s-5) 0', textAlign: 'center' }}>
+            <div style={{ fontSize: 32, marginBottom: 10 }}>💡</div>
+            <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 'var(--s-3)' }}>
+              Configure sua chave Claude para receber sugestões personalizadas baseadas no seu sistema.
+            </p>
+            <Button variant="ghost" size="sm" onClick={gerar}>Gerar sugestões</Button>
+          </div>
+        )}
+        {!carregando && itens && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-3)' }}>
+            {itens.map((s, i) => {
+              const cor = SUGESTAO_PALETTE[i % 5];
+              return (
+                <div key={i} style={{
+                  padding: 'var(--s-4)',
+                  borderRadius: 'var(--r-md)',
+                  background: `color-mix(in oklch, ${cor} 28%, var(--bg-surface))`,
+                  borderLeft: `3px solid ${cor}`,
+                  display: 'flex', flexDirection: 'column', gap: 8,
+                }}>
+                  <div className="row gap-2" style={{ alignItems: 'center' }}>
+                    <span style={{ fontSize: 20 }}>{s.emoji}</span>
+                    <span style={{
+                      fontSize: 14, fontWeight: 700, letterSpacing: '.03em',
+                      padding: '2px 10px', borderRadius: 999,
+                      background: cor, color: '#201e1f',
+                    }}>{s.formato}</span>
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 600, lineHeight: 1.3, color: '#201e1f' }}>
+                    {s.titulo}
+                  </div>
+                  <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                    {s.descricao}
+                  </p>
+                  <p style={{ fontSize: 14, color: 'var(--text-muted)', fontStyle: 'italic', lineHeight: 1.45, margin: 0 }}>
+                    {s.origem}
+                  </p>
+                  <div className="row between" style={{ alignItems: 'center', marginTop: 4 }}>
+                    <Button variant="ghost" size="sm"
+                      style={{ color: 'var(--pink-deep)', fontWeight: 600, fontSize: 14, padding: '4px 0' }}
+                      onClick={() => { window.STUDIO_AUTOAGENTE = s.agente; setRoute('/studio'); }}>
+                      Gostei dessa ideia →
+                    </Button>
+                    {AGENTE_ROTULO[s.agente] && (
+                      <span style={{ fontSize: 14, color: 'var(--text-muted)' }}>via {AGENTE_ROTULO[s.agente]}</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </CardBody>
+    </Card>
+  );
+}
+
 function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
   const e = window.ENERGY[energy];
   const all = window.DEMO_TASKS;
@@ -1157,6 +1288,8 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
         <RotinaSemanalWidget />
 
         <HolidayAlertBanner />
+
+        <SugestoesWidget setRoute={setRoute} />
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 'var(--s-5)' }} className="dash-grid">
           {/* LEFT — Tarefas em destaque */}
@@ -1234,7 +1367,7 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
                       <span style={{ fontSize: 14, color: '#201e1f', fontWeight: 500 }}>{r.texto}</span>
                     </div>
                     <span style={{
-                      fontSize: 11, color: 'var(--text-muted)',
+                      fontSize: 14, color: 'var(--text-muted)',
                       whiteSpace: 'nowrap', marginLeft: 8,
                     }}>{r.hora}</span>
                   </div>
