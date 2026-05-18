@@ -425,11 +425,15 @@ function IdeiasPage() {
 
 /* ─────────────────────── TAREFAS ─────────────────────── */
 function TarefasPage() {
-  const [filter, setFilter] = useState('ativas');
-  const [energyFilter, setEnergyFilter] = useState('todas');
+  const [filter, setFilter] = useState('todas');
+  const [clientFilter, setClientFilter] = useState('todos');
   const [deletedIds, setDeletedIds] = useState(() => {
     try { return JSON.parse(localStorage.getItem('lorenna_deleted_tasks') || '[]'); } catch { return []; }
   });
+
+  const todayIdx = (new Date().getDay() + 6) % 7; // 0=Seg…6=Dom
+  const DIAS_LABELS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+  const DIAS_COLORS = ['#fec9df', '#f0bff8', '#bce1f6', '#f1e18d', '#ffe1bd', '#fe7dae', '#fec9df'];
 
   function deleteTask(id) {
     const next = [...deletedIds, id];
@@ -439,90 +443,180 @@ function TarefasPage() {
   }
 
   const all = window.DEMO_TASKS.filter(t => !deletedIds.includes(t.id));
+
+  const countUrgente  = all.filter(t => t.prioridade === 'urgente' && t.status !== 'concluida').length;
+  const countHoje     = all.filter(t => t.status !== 'concluida' && (t.diario || (t.diasDaSemana && t.diasDaSemana.includes(todayIdx)))).length;
+  const countProgresso = all.filter(t => t.status === 'em_progresso').length;
+
   const filtered = all.filter(t => {
-    const okStatus = filter === 'ativas' ? t.status !== 'concluida' : filter === 'concluidas' ? t.status === 'concluida' : true;
-    const okEnergy = energyFilter === 'todas' || t.energia.includes(energyFilter);
-    return okStatus && okEnergy;
+    let okFilter = true;
+    if      (filter === 'hoje')      okFilter = t.diario || (t.diasDaSemana && t.diasDaSemana.includes(todayIdx));
+    else if (filter === 'urgente')   okFilter = t.prioridade === 'urgente' && t.status !== 'concluida';
+    else if (filter === 'semana')    okFilter = (t.recorrente || (t.diasDaSemana && t.diasDaSemana.length > 0)) && t.status !== 'concluida';
+    else if (filter === 'progresso') okFilter = t.status === 'em_progresso';
+    else if (filter === 'concluidas') okFilter = t.status === 'concluida';
+    else                             okFilter = t.status !== 'concluida';
+
+    let okCliente = true;
+    if      (clientFilter === 'pessoal') okCliente = !t.cliente;
+    else if (clientFilter !== 'todos')   okCliente = t.cliente === clientFilter;
+
+    return okFilter && okCliente;
   });
 
-  const groups = [
-    { key: 'urgente', label: 'Urgente',         color: '#C44878', sub: 'Faz hoje sem desculpa', dot: true  },
-    { key: 'alta',    label: 'Alta prioridade', color: '#E89B4C', sub: 'Importante esta semana', dot: false },
-    { key: 'media',   label: 'Média',           color: 'var(--pink)', sub: 'Quando der',          dot: false },
-    { key: 'baixa',   label: 'Baixa',           color: '#7FB68C', sub: 'Sem pressa',              dot: false },
+  const STATUS_FILTERS = [
+    { key: 'todas',      label: 'Todas ativas'    },
+    { key: 'hoje',       label: '📅 Hoje'          },
+    { key: 'urgente',    label: '🔴 Urgente'       },
+    { key: 'semana',     label: 'Esta semana'     },
+    { key: 'progresso',  label: '⚡ Em andamento'  },
+    { key: 'concluidas', label: '✓ Concluídas'    },
   ];
 
-  const stats = {
-    ativas:      all.filter(t => t.status !== 'concluida').length,
-    concluidas:  all.filter(t => t.status === 'concluida').length,
-    progresso:   all.filter(t => t.status === 'em_progresso').length,
-  };
+  const CLIENTES = [
+    { key: 'todos',                   label: 'Todos'        },
+    { key: 'Pratique',                label: 'Pratique'     },
+    { key: 'Jornal Cidades Minerais', label: 'Jornal CM'    },
+    { key: 'Ótica Igor Giordano',     label: 'Ótica Igor'   },
+    { key: 'Espaço Criar',            label: 'Espaço Criar' },
+    { key: 'pessoal',                 label: 'Pessoal'      },
+  ];
+
+  const GROUPS = [
+    { key: 'urgente', label: 'Urgente',          color: '#fe7dae', sub: 'Faz hoje, sem desculpa'  },
+    { key: 'alta',    label: 'Alta prioridade',  color: '#ffe1bd', sub: 'Importante esta semana'  },
+    { key: 'media',   label: 'Média',            color: '#bce1f6', sub: 'Quando der espaço'       },
+    { key: 'baixa',   label: 'Baixa',            color: '#f1e18d', sub: 'Sem pressa'              },
+  ];
+
+  const STAT_CHIPS = [
+    { label: 'Urgentes',     count: countUrgente,   color: '#fe7dae', filterKey: 'urgente'  },
+    { label: 'Hoje',         count: countHoje,      color: '#bce1f6', filterKey: 'hoje'     },
+    { label: 'Em andamento', count: countProgresso, color: '#f1e18d', filterKey: 'progresso'},
+  ];
 
   return (
     <div className="content">
-      <div className="col gap-6 fade-up">
+      <div className="col gap-5 fade-up">
         <PageHeader
           title="Tarefas"
-          subtitle={`${stats.ativas} ativas · ${stats.progresso} em progresso · ${stats.concluidas} concluídas`}
+          subtitle="Gerencie suas entregas com clareza"
           action={<Button variant="primary"><Icon name="plus" size={14} color="white"/> Nova tarefa</Button>}
         />
 
-        {/* Filters — soft row */}
-        <div className="row between" style={{ flexWrap: 'wrap', gap: 'var(--s-3)' }}>
-          <div className="row gap-2" style={{ flexWrap: 'wrap' }}>
-            {[
-              ['ativas',     'Ativas'],
-              ['concluidas', 'Concluídas'],
-              ['todas',      'Todas'],
-            ].map(([s, l]) => (
-              <button key={s} onClick={() => setFilter(s)}
-                style={{
-                  fontSize: 14.5, padding: '8px 16px', borderRadius: 15,
-                  border: '1px solid',
-                  background: filter === s ? 'var(--pink-tint)' : 'var(--white)',
-                  borderColor: filter === s ? 'var(--pink-soft)' : 'var(--gray-light)',
-                  color: filter === s ? 'var(--pink-deep)' : 'var(--ink-soft)',
-                  cursor: 'pointer', fontWeight: filter === s ? 600 : 500,
-                  fontFamily: 'var(--font-body)',
-                }}>{l}</button>
-            ))}
-          </div>
-          <select className="select" style={{ width: 'auto', padding: '8px 14px', fontSize: 14.5 }}
-            value={energyFilter} onChange={e => setEnergyFilter(e.target.value)}>
-            <option value="todas">Todas energias</option>
-            {window.ENERGY_LIST.map(e => <option key={e.id} value={e.id}>{e.emoji} {e.label}</option>)}
-          </select>
+        {/* Stats strip — clickable */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--s-3)' }}>
+          {STAT_CHIPS.map(s => (
+            <button key={s.label} onClick={() => setFilter(s.filterKey)} style={{
+              background: filter === s.filterKey ? '#201e1f' : s.color,
+              borderRadius: 'var(--r-lg)', padding: '14px 18px',
+              display: 'flex', alignItems: 'center', gap: 12,
+              border: 'none', cursor: 'pointer', textAlign: 'left',
+              transition: 'all .15s',
+              outline: filter === s.filterKey ? `3px solid ${s.color}` : 'none',
+            }}>
+              <div>
+                <div style={{ fontSize: 28, fontFamily: 'var(--font-title)', fontWeight: 800, color: filter === s.filterKey ? s.color : '#201e1f', lineHeight: 1 }}>{s.count}</div>
+                <div style={{ fontSize: 14, color: filter === s.filterKey ? '#fffcfa' : '#201e1f', marginTop: 3, fontWeight: 600 }}>{s.label}</div>
+              </div>
+            </button>
+          ))}
         </div>
 
-        {/* Empty */}
+        {/* Filter chips */}
+        <div className="col gap-2">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {STATUS_FILTERS.map(({ key, label }) => (
+              <button key={key} onClick={() => setFilter(key)} style={{
+                fontSize: 14, padding: '8px 18px', borderRadius: 999,
+                border: '1.5px solid',
+                background: filter === key ? '#201e1f' : 'var(--white)',
+                borderColor: filter === key ? '#201e1f' : 'var(--gray-light)',
+                color: filter === key ? '#fffcfa' : '#201e1f',
+                cursor: 'pointer', fontWeight: filter === key ? 700 : 500,
+                fontFamily: 'var(--font-body)', transition: 'all .15s',
+              }}>{label}</button>
+            ))}
+          </div>
+
+          {/* Client chips */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {CLIENTES.map(({ key, label }) => (
+              <button key={key} onClick={() => setClientFilter(key)} style={{
+                fontSize: 13, padding: '5px 13px', borderRadius: 999,
+                border: '1.5px solid',
+                background: clientFilter === key ? '#fe7dae' : 'var(--bg-surface)',
+                borderColor: clientFilter === key ? '#fe7dae' : 'var(--gray-light)',
+                color: '#201e1f',
+                cursor: 'pointer', fontWeight: clientFilter === key ? 700 : 400,
+                fontFamily: 'var(--font-body)', transition: 'all .15s',
+              }}>{label}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Empty state */}
         {filtered.length === 0 && (
-          <div className="center" style={{ padding: 'var(--s-7) 0', color: 'var(--gray)' }}>
-            <div style={{ fontSize: 38, marginBottom: 8 }}>🌸</div>
-            <p className="small">Nenhuma tarefa por aqui agora. Respira.</p>
+          <div className="center col gap-2" style={{ padding: 'var(--s-7) 0' }}>
+            <div style={{ fontSize: 38 }}>🌸</div>
+            <p className="small muted">Nenhuma tarefa com esses filtros. Respira.</p>
           </div>
         )}
 
-        {/* Priority groups — vertical, generous spacing */}
-        {groups.map(g => {
+        {/* Priority groups */}
+        {GROUPS.map(g => {
           const items = filtered.filter(t => t.prioridade === g.key);
           if (items.length === 0) return null;
           return (
             <section key={g.key} className="col gap-3">
-              <div className="row between" style={{ borderBottom: '1px solid var(--gray-light)', paddingBottom: 'var(--s-3)' }}>
-                <div className="row gap-3">
-                  <span style={{
-                    width: 10, height: 10, borderRadius: 999, background: g.color, marginTop: 6,
-                  }} className={g.dot ? 'pulse-dot' : ''}/>
-                  <div>
-                    <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 17, fontWeight: 600, color: g.color, letterSpacing: '-0.02em' }}>
-                      {g.label}
-                    </h3>
-                    <p className="tiny muted" style={{ marginTop: 2 }}>{g.sub} · {items.length}</p>
-                  </div>
+              {/* Group header */}
+              <div style={{
+                background: `color-mix(in oklch, ${g.color} 40%, white)`,
+                borderRadius: 'var(--r-md)',
+                padding: '10px 16px',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                borderLeft: `4px solid ${g.color}`,
+              }}>
+                <div className="row gap-2" style={{ alignItems: 'center' }}>
+                  <span style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700, color: '#201e1f' }}>{g.label}</span>
+                  <span style={{ fontSize: 13, color: '#201e1f', opacity: 0.6 }}>· {g.sub}</span>
                 </div>
+                <span style={{
+                  fontSize: 13, fontWeight: 700, color: '#201e1f',
+                  background: `color-mix(in oklch, ${g.color} 65%, white)`,
+                  padding: '3px 10px', borderRadius: 999,
+                }}>{items.length} tarefa{items.length !== 1 ? 's' : ''}</span>
               </div>
-              <div className="col gap-3">
-                {items.map(t => <TaskRow key={t.id} task={t} onDelete={deleteTask}/>)}
+
+              {/* Task cards with metadata */}
+              <div className="col gap-4" style={{ paddingLeft: 4 }}>
+                {items.map(t => (
+                  <div key={t.id} className="col gap-1">
+                    {/* Metadata bar */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, paddingLeft: 4, alignItems: 'center' }}>
+                      {t.diario && (
+                        <span style={{ fontSize: 12, padding: '2px 8px', borderRadius: 999, background: '#fec9df', color: '#201e1f', fontWeight: 600 }}>📅 Diário</span>
+                      )}
+                      {(t.diasDaSemana || []).map(d => (
+                        <span key={d} style={{
+                          fontSize: 12, padding: '2px 8px', borderRadius: 999,
+                          background: d === todayIdx ? '#201e1f' : DIAS_COLORS[d],
+                          color: d === todayIdx ? '#fffcfa' : '#201e1f',
+                          fontWeight: d === todayIdx ? 700 : 500,
+                        }}>{d === todayIdx ? '● ' : ''}{DIAS_LABELS[d]}</span>
+                      ))}
+                      {(t.energia || []).map(e => {
+                        const ec = window.ENERGY[e];
+                        return ec ? (
+                          <span key={e} style={{ fontSize: 12, padding: '2px 8px', borderRadius: 999, background: 'var(--bg-surface)', color: '#201e1f', border: '1px solid var(--border)' }}>
+                            {ec.emoji} {ec.label}
+                          </span>
+                        ) : null;
+                      })}
+                    </div>
+                    <TaskRow task={t} onDelete={deleteTask} />
+                  </div>
+                ))}
               </div>
             </section>
           );
