@@ -1137,141 +1137,136 @@ function ClientsWidget() {
 const SUGESTAO_PALETTE = ['#fec9df', '#bce1f6', '#f1e18d', '#f0bff8', '#ffe1bd'];
 const AGENTE_ROTULO = { carta: 'Carta da Lola', roteiro: 'Roteirista', blog: 'Blog SEO', post_cliente: 'Post de Cliente' };
 
+function gerarSugestoesLocais(offset) {
+  const clientes = window.DEMO_CLIENTS || [];
+  const ideias = window.DEMO_IDEAS || [];
+  const hoje = new Date();
+  const seed = hoje.getDate() + hoje.getMonth() * 31 + offset * 7;
+  const pick = (arr, extra) => arr[(seed + extra) % arr.length];
+
+  const sugestoes = [];
+
+  // 1. Ideia do banco → Blog SEO
+  const ideiasProBlog = ideias.filter(i => ['pronta', 'desenvolvendo'].includes(i.status));
+  if (ideiasProBlog.length) {
+    const ideia = pick(ideiasProBlog, 0);
+    sugestoes.push({
+      titulo: ideia.titulo.length > 65 ? ideia.titulo.slice(0, 62) + '…' : ideia.titulo,
+      descricao: ideia.desc,
+      origem: `Do seu Banco de Ideias — marcada como "${ideia.status === 'pronta' ? 'pronta para produzir' : 'em desenvolvimento'}"`,
+      formato: 'Blog', emoji: '📝', agente: 'blog',
+    });
+  }
+
+  // 2. Newsletter semanal
+  const newsletterTemas = [
+    { titulo: 'Carta desta semana: criar com TDAH e não desistir', descricao: 'Uma cena real da semana vira reflexão sobre processo criativo e neurodivergência', origem: 'Com base na sua rotina como criadora com TDAH — tema central do Papel da Lola' },
+    { titulo: 'Carta desta semana: maternidade e trabalho no mesmo dia', descricao: 'A tensão real entre ser mãe de três e tocar uma agência', origem: 'Com base na sua vida com Mateus, Murilo e Miguel e a Agência Logue' },
+    { titulo: 'Carta desta semana: o que aprendi esta semana com um cliente', descricao: 'Bastidores de uma descoberta do trabalho que vale para todo mundo', origem: 'Com base nas suas tarefas abertas com clientes esta semana' },
+    { titulo: 'Carta desta semana: sobre sistemas que funcionam de verdade', descricao: 'Do Córtex Lola a qualquer sistema — por que estrutura liberta', origem: 'Com base no seu Córtex Lola e na sua relação com produtividade neurodivergente' },
+  ];
+  sugestoes.push({ ...pick(newsletterTemas, 1), formato: 'Newsletter', emoji: '💌', agente: 'carta' });
+
+  // 3. Reels/TikTok pessoal
+  const reelsTemas = [
+    { titulo: 'Minha rotina real com TDAH + 3 filhos', descricao: 'Sem glamour — do caos ao sistema que funciona, mostrando o Córtex Lola', origem: 'Com base no Córtex Lola e na sua rotina — conteúdo único que só você tem neste nicho' },
+    { titulo: 'Como organizo minha semana criativa com IA', descricao: 'Mostrando as ferramentas reais do Córtex Lola no dia a dia', origem: 'Com base no seu sistema Córtex Lola — tendência crescente de produtividade + IA' },
+    { titulo: 'Ser mãe de filho com TEA: o que ninguém fala', descricao: 'A realidade com o Mateus — diagnóstico, adaptação, amor sem romantização', origem: 'Com base na sua história com o Mateus — tema com potencial de grande alcance e acolhimento' },
+    { titulo: 'O que mudou no meu trabalho depois que parei de postar todo dia', descricao: 'Resultado real de focar em consistência com qualidade vs. volume', origem: 'Com base na sua experiência como criadora e gestora de conteúdo para clientes' },
+  ];
+  sugestoes.push({ ...pick(reelsTemas, 2), formato: 'Reels', emoji: '🎬', agente: 'roteiro' });
+
+  // 4. Post de cliente ou ensaio fotográfico
+  if (clientes.length) {
+    const cliente = pick(clientes, 3);
+    sugestoes.push({
+      titulo: `Post novo para ${cliente.nome}`,
+      descricao: `Caption criativa com a voz do cliente — engajar a audiência e destacar o diferencial`,
+      origem: `${cliente.nome} é um dos seus clientes ativos na Agência Logue`,
+      formato: 'Post', emoji: '✨', agente: 'post_cliente',
+    });
+  } else {
+    sugestoes.push({
+      titulo: 'Ensaio: bastidores do trabalho criativo',
+      descricao: 'Fotos do espaço de trabalho, tela do computador, anotações — o processo em imagens',
+      origem: 'Conteúdo de bastidores tem alto engajamento e humaniza a marca pessoal',
+      formato: 'Ensaio', emoji: '📸', agente: 'roteiro',
+    });
+  }
+
+  // 5. YouTube longo
+  const ytTemas = [
+    { titulo: 'Tour pelo Córtex Lola — meu segundo cérebro digital', descricao: 'Vídeo longo mostrando o sistema completo, como foi criado e como uso no dia a dia', origem: 'Com base no Córtex Lola — conteúdo 100% exclusivo que só você pode criar, pioneiro no nicho' },
+    { titulo: 'Como monto estratégia de conteúdo para clientes locais', descricao: 'Bastidores reais da Agência Logue — processo de criação para marcas pequenas', origem: 'Com base no seu trabalho com ' + (clientes.slice(0, 2).map(c => c.nome).join(' e ') || 'clientes') + ' na Agência Logue' },
+    { titulo: 'Produtividade para mães neurodivergentes: o que funciona', descricao: 'Sistemas, ferramentas e a realidade sem romantização — para quem vive de verdade', origem: 'Com base na sua experiência com TDAH + TEA e 3 filhos — nicho crescente e carente de referências' },
+    { titulo: 'Nos bastidores de uma agência criativa pequena', descricao: 'Como é gerir clientes, criar conteúdo e ser mãe ao mesmo tempo', origem: 'Com base no dia a dia da Agência Logue e da sua rotina como empreendedora criativa' },
+  ];
+  sugestoes.push({ ...pick(ytTemas, 4), formato: 'YouTube', emoji: '📹', agente: 'roteiro' });
+
+  return sugestoes;
+}
+
 function SugestoesWidget({ setRoute }) {
-  const cacheKey = 'lorenna_sugestoes_' + new Date().toISOString().slice(0, 10);
-  const [itens, setItens] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(cacheKey)); } catch { return null; }
-  });
-  const [carregando, setCarregando] = useState(false);
-  const [showKeyModal, setShowKeyModal] = useState(false);
+  const [offset, setOffset] = useState(0);
+  const [itens, setItens] = useState(() => gerarSugestoesLocais(0));
 
-  useEffect(() => {
-    if (!itens && window.hasClaudeKey?.()) gerar();
-  }, []);
-
-  async function gerar() {
-    if (!window.hasClaudeKey?.()) { setShowKeyModal(true); return; }
-    setCarregando(true);
-    const clientes = (window.DEMO_CLIENTS || []).map(c => c.nome).join(', ');
-    const tarefas = (window.DEMO_TASKS || []).filter(t => t.status !== 'concluida').map(t => t.titulo).join('; ');
-    const diaSemana = (new Date().getDay() + 6) % 7;
-    const rotina = ROTINA_SEMANAL[diaSemana]?.temas?.join(', ') || '';
-    const dataHoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
-
-    const prompt = `Lorenna Guerra: criadora @lorennagn, fundadora Agência Logue, mãe de Mateus(10a,TEA), Murilo e Miguel(1a10m). TDAH+TEA nível1+Altas Habilidades. Blog "Papel da Lola", newsletter "Carta da Lola" no Substack. Produz conteúdo e vídeos para clientes.
-
-Clientes: ${clientes}
-Tarefas abertas: ${tarefas}
-Rotina hoje (${dataHoje}): ${rotina}
-
-Gere 5 sugestões ESPECÍFICAS e VARIADAS de conteúdo para Lorenna. Use formatos diferentes entre si: YouTube longo, Post Instagram, Newsletter, Blog SEO, Stories, Reels, Ensaio fotográfico, conteúdo de cliente. Seja específico, conectado à realidade dela (filhos, TDAH, clientes reais, blog, Córtex Lola). Cada sugestão deve ter uma "origem" que explique naturalmente de onde veio a ideia (ex: "Com base no seu Córtex Lola e na sua rotina com TDAH...").
-
-Responda SOMENTE com JSON válido, sem markdown, sem explicação:
-[{"titulo":"...","descricao":"...","origem":"...","formato":"YouTube|Post|Newsletter|Blog|Stories|Reels|Ensaio","emoji":"...","agente":"carta|roteiro|blog|post_cliente"}]`;
-
-    const resp = await window.callClaude(
-      [{ role: 'user', content: prompt }],
-      'Estrategista de conteúdo que conhece Lorenna profundamente. Responda apenas JSON válido.',
-      'claude-haiku-4-5-20251001',
-      1000,
-    );
-    if (resp) {
-      try {
-        const clean = resp.trim().replace(/^```json?\n?/, '').replace(/\n?```$/, '');
-        const data = JSON.parse(clean);
-        if (Array.isArray(data) && data.length) {
-          setItens(data);
-          localStorage.setItem(cacheKey, JSON.stringify(data));
-        }
-      } catch { showToast('Erro ao processar sugestões'); }
-    } else { showToast('Erro ao gerar sugestões'); }
-    setCarregando(false);
+  function atualizar() {
+    const novoOffset = offset + 1;
+    setOffset(novoOffset);
+    setItens(gerarSugestoesLocais(novoOffset));
   }
 
   return (
-    <>
-      {showKeyModal && <ClaudeKeyModal onClose={() => { setShowKeyModal(false); if (window.hasClaudeKey()) gerar(); }} />}
-      <Card>
-        <CardHeader>
-          <div className="row between" style={{ alignItems: 'center' }}>
-            <div>
-              <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700 }}>✨ Sugestões de conteúdo</h2>
-              <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 3 }}>Geradas pelo seu sistema · atualizam diariamente</p>
-            </div>
-            <Button variant="ghost" size="sm" onClick={gerar} disabled={carregando}>
-              {carregando ? '⏳' : '↺ Atualizar'}
-            </Button>
+    <Card>
+      <CardHeader>
+        <div className="row between" style={{ alignItems: 'center' }}>
+          <div>
+            <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700 }}>✨ Sugestões de conteúdo</h2>
+            <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 3 }}>Baseadas no seu sistema · sem custo adicional</p>
           </div>
-        </CardHeader>
-        <CardBody className="col gap-3">
-          {carregando && (
-            <div style={{ padding: 'var(--s-5) 0', textAlign: 'center' }}>
-              <div style={{ fontSize: 28, marginBottom: 8 }}>⏳</div>
-              <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>Analisando seu sistema e gerando ideias...</p>
-            </div>
-          )}
-          {!carregando && !itens && (
-            <div style={{ padding: 'var(--s-5) var(--s-4)', background: 'var(--pink-tint)', borderRadius: 'var(--r-md)', textAlign: 'center' }}>
-              <div style={{ fontSize: 32, marginBottom: 12 }}>🤖</div>
-              <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 'var(--s-4)', lineHeight: 1.6 }}>
-                Para gerar sugestões personalizadas com base no seu sistema,<br/>
-                você precisa conectar sua chave da API Claude (Anthropic).
-              </p>
-              <Button variant="primary" onClick={() => setShowKeyModal(true)}>
-                ✨ Configurar chave Claude
-              </Button>
-              <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 10 }}>
-                Gratuito para testar · Chave fica só no seu navegador
-              </p>
-            </div>
-          )}
-          {!carregando && itens && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-3)' }}>
-              {itens.map((s, i) => {
-                const cor = SUGESTAO_PALETTE[i % 5];
-                return (
-                  <div key={i} style={{
-                    padding: 'var(--s-4)',
-                    borderRadius: 'var(--r-md)',
-                    background: `color-mix(in oklch, ${cor} 28%, var(--bg-surface))`,
-                    borderLeft: `3px solid ${cor}`,
-                    display: 'flex', flexDirection: 'column', gap: 8,
-                  }}>
-                    <div className="row gap-2" style={{ alignItems: 'center' }}>
-                      <span style={{ fontSize: 20 }}>{s.emoji}</span>
-                      <span style={{
-                        fontSize: 14, fontWeight: 700, letterSpacing: '.03em',
-                        padding: '2px 10px', borderRadius: 999,
-                        background: cor, color: '#201e1f',
-                      }}>{s.formato}</span>
-                    </div>
-                    <div style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 600, lineHeight: 1.3, color: '#201e1f' }}>
-                      {s.titulo}
-                    </div>
-                    <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                      {s.descricao}
-                    </p>
-                    <p style={{ fontSize: 14, color: 'var(--text-muted)', fontStyle: 'italic', lineHeight: 1.45, margin: 0 }}>
-                      {s.origem}
-                    </p>
-                    <div className="row between" style={{ alignItems: 'center', marginTop: 4 }}>
-                      <Button variant="ghost" size="sm"
-                        style={{ color: 'var(--pink-deep)', fontWeight: 600, fontSize: 14, padding: '4px 0' }}
-                        onClick={() => { window.STUDIO_AUTOAGENTE = s.agente; setRoute('/studio'); }}>
-                        Gostei dessa ideia →
-                      </Button>
-                      {AGENTE_ROTULO[s.agente] && (
-                        <span style={{ fontSize: 14, color: 'var(--text-muted)' }}>via {AGENTE_ROTULO[s.agente]}</span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </CardBody>
-      </Card>
-    </>
+          <Button variant="ghost" size="sm" onClick={atualizar}>↺ Novas ideias</Button>
+        </div>
+      </CardHeader>
+      <CardBody>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-3)' }}>
+          {itens.map((s, i) => {
+            const cor = SUGESTAO_PALETTE[i % 5];
+            return (
+              <div key={i} style={{
+                padding: 'var(--s-4)',
+                borderRadius: 'var(--r-md)',
+                background: `color-mix(in oklch, ${cor} 28%, var(--bg-surface))`,
+                borderLeft: `3px solid ${cor}`,
+                display: 'flex', flexDirection: 'column', gap: 8,
+              }}>
+                <div className="row gap-2" style={{ alignItems: 'center' }}>
+                  <span style={{ fontSize: 20 }}>{s.emoji}</span>
+                  <span style={{
+                    fontSize: 14, fontWeight: 700,
+                    padding: '2px 10px', borderRadius: 999,
+                    background: cor, color: '#201e1f',
+                  }}>{s.formato}</span>
+                </div>
+                <div style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 600, lineHeight: 1.3, color: 'var(--text-primary)' }}>
+                  {s.titulo}
+                </div>
+                <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                  {s.descricao}
+                </p>
+                <p style={{ fontSize: 14, color: 'var(--text-muted)', fontStyle: 'italic', lineHeight: 1.45, margin: 0 }}>
+                  {s.origem}
+                </p>
+                <Button variant="ghost" size="sm"
+                  style={{ color: 'var(--pink-deep)', fontWeight: 600, fontSize: 14, padding: '4px 0', alignSelf: 'flex-start', marginTop: 4 }}
+                  onClick={() => { window.STUDIO_AUTOAGENTE = s.agente; setRoute('/studio'); }}>
+                  Gostei dessa ideia →
+                </Button>
+              </div>
+            );
+          })}
+        </div>
+      </CardBody>
+    </Card>
   );
 }
 
