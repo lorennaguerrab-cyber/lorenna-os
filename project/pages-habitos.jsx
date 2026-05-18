@@ -11,12 +11,16 @@ const MEDICAMENTOS_CONFIG = [
 ];
 
 const HABITOS_PADRAO = [
-  { id: 'exercicio', nome: 'Exercício físico',   emoji: '🏃' },
-  { id: 'leitura',   nome: 'Leitura',             emoji: '📚' },
-  { id: 'meditacao', nome: 'Meditação / respiro', emoji: '🧘' },
+  { id: 'exercicio',         nome: 'Exercício físico',       emoji: '🏃' },
+  { id: 'fruta',             nome: 'Comer fruta',             emoji: '🍎' },
+  { id: 'leitura',           nome: 'Leitura',                 emoji: '📖' },
+  { id: 'meditacao',         nome: 'Meditação / respiro',     emoji: '🧘' },
+  { id: 'tarefas_escolares', nome: 'Tarefas escolares M&M',  emoji: '✏️' },
+  { id: 'brincadeira_miguel',nome: 'Brincadeira Miguel',      emoji: '🐣' },
+  { id: 'futebol',           nome: 'Futebol M&M',             emoji: '⚽' },
 ];
 
-const META_AGUA_ML = 2000;
+const META_AGUA_ML = 3000;
 const AGUA_OPCOES = [250, 350, 500];
 
 function dateKey(date) {
@@ -554,3 +558,7 @@ function HabitosPage() {
 }
 
 window.HabitosPage = HabitosPage;
+window.loadHabitosHoje = loadDia;
+window.saveHabitosHoje = saveDia;
+window.META_AGUA_ML = META_AGUA_ML;
+window.AGUA_OPCOES = AGUA_OPCOES;

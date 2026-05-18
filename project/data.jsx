@@ -104,14 +104,14 @@ const TYPE_EMOJI = {
 
 /* ── Lembretes recorrentes (família) ── */
 const RECURRENCES = [
-  { texto: 'Beber água',                                       icon: '💧', hora: 'Ao longo do dia',          cor: '#bce1f6' },
-  { texto: 'Comer fruta',                                      icon: '🍎', hora: 'Manhã e tarde',            cor: '#f1e18d' },
-  { texto: 'Exercício físico',                                 icon: '🏃', hora: 'Diário',                   cor: '#ffe1bd' },
-  { texto: 'Remédios manhã — VENVANSE · BUPROPIONA · OLMESARTANA · FLUOXETINA', icon: '💊', hora: 'Manhã (Lorenna)', cor: '#fe7dae' },
-  { texto: 'AMITRIL (Mateus)',                                 icon: '💊', hora: 'Noite',                    cor: '#bce1f6' },
-  { texto: 'Tarefas escolares Mateus & Murilo',                icon: '📚', hora: 'Manhã',                    cor: '#f0bff8' },
-  { texto: 'Brincadeira Miguel (1a10m)',                       icon: '🐣', hora: 'Bloco 9h e 14h',           cor: '#fec9df' },
-  { texto: 'Futebol Mateus & Murilo',                          icon: '⚽', hora: 'Qua e Sex às 8h20',        cor: '#f1e18d' },
+  { texto: 'Beber água',                                                          icon: '💧', hora: 'Ao longo do dia',   cor: '#bce1f6', tipo: 'agua' },
+  { texto: 'Comer fruta',                                                         icon: '🍎', hora: 'Manhã e tarde',     cor: '#f1e18d', tipo: 'habito', id: 'fruta' },
+  { texto: 'Exercício físico',                                                    icon: '🏃', hora: 'Diário',            cor: '#ffe1bd', tipo: 'habito', id: 'exercicio' },
+  { texto: 'Remédios manhã — VENVANSE · BUPROPIONA · OLMESARTANA · FLUOXETINA',  icon: '💊', hora: 'Manhã (Lorenna)',   cor: '#fe7dae', tipo: 'meds', ids: ['venvanse','bupropiona','olmesartana','fluoxetina'] },
+  { texto: 'AMITRIL (Mateus)',                                                    icon: '💊', hora: 'Noite',             cor: '#bce1f6', tipo: 'meds', ids: ['amitril_mateus'] },
+  { texto: 'Tarefas escolares Mateus & Murilo',                                   icon: '📚', hora: 'Manhã',             cor: '#f0bff8', tipo: 'habito', id: 'tarefas_escolares' },
+  { texto: 'Brincadeira Miguel (1a10m)',                                          icon: '🐣', hora: 'Bloco 9h e 14h',   cor: '#fec9df', tipo: 'habito', id: 'brincadeira_miguel' },
+  { texto: 'Futebol Mateus & Murilo',                                             icon: '⚽', hora: 'Qua e Sex às 8h20', cor: '#f1e18d', tipo: 'habito', id: 'futebol' },
 ];
 
 /* ── Tarefas demo ── */

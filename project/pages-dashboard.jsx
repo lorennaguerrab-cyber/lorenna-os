@@ -1134,6 +1134,142 @@ function ClientsWidget() {
   );
 }
 
+/* ─── Lembretes + Hábitos conectados ─── */
+function LembretesHabitosWidget() {
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const [dia, setDia] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(`lorenna_habitos_${todayStr}`) || 'null') || { medicamentos: {}, agua_ml: 0, habitos: {} }; }
+    catch { return { medicamentos: {}, agua_ml: 0, habitos: {} }; }
+  });
+
+  function save(next) {
+    setDia(next);
+    localStorage.setItem(`lorenna_habitos_${todayStr}`, JSON.stringify(next));
+  }
+
+  function toggleHabito(id) {
+    save({ ...dia, habitos: { ...dia.habitos, [id]: !dia.habitos[id] } });
+  }
+
+  function toggleMeds(ids) {
+    const allOn = ids.every(id => dia.medicamentos[id]);
+    const nextMeds = { ...dia.medicamentos };
+    ids.forEach(id => { nextMeds[id] = !allOn; });
+    save({ ...dia, medicamentos: nextMeds });
+    showToast(allOn ? 'Desmarcado' : '✅ Marcado!');
+  }
+
+  function addAgua(ml) {
+    const next = { ...dia, agua_ml: (dia.agua_ml || 0) + ml };
+    save(next);
+    const pct = Math.round((next.agua_ml / 3000) * 100);
+    showToast(`💧 +${ml}ml · ${pct}% da meta`);
+  }
+
+  function checkedState(r) {
+    if (r.tipo === 'habito') return !!dia.habitos[r.id];
+    if (r.tipo === 'meds')   return r.ids.every(id => dia.medicamentos[id]);
+    return false;
+  }
+
+  const aguaMl = dia.agua_ml || 0;
+  const aguaPct = Math.min(100, (aguaMl / 3000) * 100);
+  const aguaCor = aguaPct >= 100 ? '#7FB68C' : aguaPct >= 60 ? '#5B9BD5' : '#bce1f6';
+
+  const done = window.RECURRENCES.filter(r => r.tipo !== 'agua' && checkedState(r)).length;
+  const total = window.RECURRENCES.filter(r => r.tipo !== 'agua').length;
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="row between" style={{ alignItems: 'center' }}>
+          <div className="row gap-2">
+            <Icon name="bell" size={13} color="var(--text-muted)" />
+            <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 15, fontWeight: 600 }}>Lembretes do dia</h2>
+          </div>
+          <span style={{
+            fontSize: 14, fontWeight: 600, padding: '2px 10px', borderRadius: 999,
+            background: done === total ? '#7FB68C' : 'var(--bg-elevated)',
+            color: done === total ? 'white' : 'var(--text-muted)',
+          }}>{done}/{total}</span>
+        </div>
+      </CardHeader>
+      <CardBody className="col gap-2">
+
+        {/* Água — tracker inline */}
+        <div style={{
+          padding: 'var(--s-3)', borderRadius: 'var(--r-md)',
+          background: `color-mix(in oklch, #bce1f6 28%, var(--bg-surface))`,
+          borderLeft: '3px solid #bce1f6',
+        }}>
+          <div className="row between" style={{ marginBottom: 8 }}>
+            <div className="row gap-2">
+              <span style={{ fontSize: 16 }}>💧</span>
+              <span style={{ fontSize: 14, fontWeight: 500, color: '#201e1f' }}>Beber água</span>
+            </div>
+            <span style={{ fontSize: 14, fontWeight: 600, color: aguaPct >= 100 ? '#7FB68C' : '#5B9BD5' }}>
+              {aguaMl >= 1000 ? `${(aguaMl/1000).toFixed(1)}L` : `${aguaMl}ml`} / 3L
+            </span>
+          </div>
+          {/* Barra de progresso */}
+          <div style={{ height: 8, borderRadius: 999, background: 'var(--bg-elevated)', overflow: 'hidden', marginBottom: 8 }}>
+            <div style={{ height: '100%', width: `${aguaPct}%`, background: aguaCor, borderRadius: 999, transition: 'width .3s' }}/>
+          </div>
+          {/* Botões de adição */}
+          <div className="row gap-2">
+            {[250, 350, 500].map(ml => (
+              <button key={ml} onClick={() => addAgua(ml)} style={{
+                flex: 1, padding: '6px 0',
+                borderRadius: 'var(--r-md)', border: '1.5px solid #bce1f6',
+                background: 'white', color: '#201e1f',
+                fontSize: 14, fontWeight: 600, cursor: 'pointer',
+                fontFamily: 'var(--font-body)',
+              }}>+{ml}ml</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Demais lembretes com check */}
+        {window.RECURRENCES.filter(r => r.tipo !== 'agua').map(r => {
+          const checked = checkedState(r);
+          return (
+            <div key={r.texto} onClick={() => r.tipo === 'habito' ? toggleHabito(r.id) : toggleMeds(r.ids)}
+              style={{
+                padding: '10px var(--s-3)',
+                borderRadius: 'var(--r-md)',
+                background: checked
+                  ? `color-mix(in oklch, ${r.cor} 35%, var(--bg-surface))`
+                  : `color-mix(in oklch, ${r.cor} 18%, var(--bg-surface))`,
+                borderLeft: `3px solid ${r.cor}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                cursor: 'pointer', transition: 'background .15s',
+              }}>
+              <div className="row gap-2" style={{ flex: 1, minWidth: 0 }}>
+                <span style={{ fontSize: 16, flexShrink: 0 }}>{r.icon}</span>
+                <span style={{
+                  fontSize: 14, fontWeight: 500, color: '#201e1f',
+                  textDecoration: checked ? 'line-through' : 'none',
+                  opacity: checked ? 0.6 : 1,
+                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                }}>{r.texto}</span>
+              </div>
+              <div style={{
+                width: 24, height: 24, borderRadius: 999, flexShrink: 0, marginLeft: 8,
+                border: `2px solid ${checked ? r.cor : 'var(--border-strong)'}`,
+                background: checked ? r.cor : 'transparent',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'all .15s',
+              }}>
+                {checked && <Icon name="check" size={13} color="white"/>}
+              </div>
+            </div>
+          );
+        })}
+      </CardBody>
+    </Card>
+  );
+}
+
 const SUGESTAO_PALETTE = ['#fec9df', '#bce1f6', '#f1e18d', '#f0bff8', '#ffe1bd'];
 const AGENTE_ROTULO = { carta: 'Carta da Lola', roteiro: 'Roteirista', blog: 'Blog SEO', post_cliente: 'Post de Cliente' };
 
@@ -1351,34 +1487,7 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
 
           {/* RIGHT */}
           <div className="col gap-4">
-            <Card>
-              <CardHeader>
-                <div className="row gap-2">
-                  <Icon name="bell" size={13} color="var(--text-muted)" />
-                  <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 15, fontWeight: 600 }}>Lembretes fixos</h2>
-                </div>
-              </CardHeader>
-              <CardBody className="col gap-2">
-                {window.RECURRENCES.map((r, idx) => (
-                  <div key={r.texto} style={{
-                    padding: '10px var(--s-3)',
-                    borderRadius: 'var(--r-md)',
-                    background: `color-mix(in oklch, ${r.cor} 30%, var(--bg-surface))`,
-                    borderLeft: `3px solid ${r.cor}`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  }}>
-                    <div className="row gap-2">
-                      <span style={{ fontSize: 15 }}>{r.icon}</span>
-                      <span style={{ fontSize: 14, color: '#201e1f', fontWeight: 500 }}>{r.texto}</span>
-                    </div>
-                    <span style={{
-                      fontSize: 14, color: 'var(--text-muted)',
-                      whiteSpace: 'nowrap', marginLeft: 8,
-                    }}>{r.hora}</span>
-                  </div>
-                ))}
-              </CardBody>
-            </Card>
+            <LembretesHabitosWidget />
 
             <Card>
               <CardBody>
