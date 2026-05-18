@@ -104,12 +104,12 @@ const TYPE_EMOJI = {
 
 /* ── Lembretes recorrentes (família) ── */
 const RECURRENCES = [
-  { texto: 'Beber água',                         icon: '💧', hora: 'Ao longo do dia',     cor: '#5B9BD5' },
-  { texto: 'Comer fruta',                        icon: '🍎', hora: 'Manhã e tarde',        cor: '#7FB68C' },
-  { texto: 'Exercício físico',                   icon: '🏃', hora: 'Diário',               cor: 'var(--e-operacional)' },
-  { texto: 'Tarefas escolares Mateus & Murilo',  icon: '📚', hora: 'Antes das 10h30',      cor: 'var(--e-maternidade)' },
-  { texto: 'Brincadeira Miguel (1a10m)',          icon: '🐣', hora: 'Bloco 9h e 14h',       cor: 'var(--pink)' },
-  { texto: 'Futebol Mateus & Murilo',             icon: '⚽', hora: 'Qua e Sex às 8h20',    cor: 'var(--e-operacional)' },
+  { texto: 'Beber água',                         icon: '💧', hora: 'Ao longo do dia',   cor: '#bce1f6' },
+  { texto: 'Comer fruta',                        icon: '🍎', hora: 'Manhã e tarde',      cor: '#f1e18d' },
+  { texto: 'Exercício físico',                   icon: '🏃', hora: 'Diário',             cor: '#ffe1bd' },
+  { texto: 'Tarefas escolares Mateus & Murilo',  icon: '📚', hora: 'Antes das 10h30',   cor: '#f0bff8' },
+  { texto: 'Brincadeira Miguel (1a10m)',          icon: '🐣', hora: 'Bloco 9h e 14h',   cor: '#fec9df' },
+  { texto: 'Futebol Mateus & Murilo',             icon: '⚽', hora: 'Qua e Sex às 8h20', cor: '#f1e18d' },
 ];
 
 /* ── Tarefas demo ── */

@@ -698,34 +698,52 @@ const ROTINA_SEMANAL = [
   { dia: 'Dom', temas: ['🌿 Descanso'] },
 ];
 
+const ROTINA_PALETTE = ['#bce1f6', '#f0bff8', '#fe7dae', '#f1e18d', '#ffe1bd', '#fec9df', '#fffcfa'];
+
 function RotinaSemanalWidget() {
-  const today = (new Date().getDay() + 6) % 7; // 0=Seg
+  const today = (new Date().getDay() + 6) % 7;
   const r = ROTINA_SEMANAL[today];
   return (
     <Card>
       <CardBody>
         <div className="row between" style={{ marginBottom: 'var(--s-3)' }}>
           <div className="eyebrow">Rotina da semana</div>
-          <span className="tiny muted">Hoje: {r.temas.join(' · ')}</span>
+          <span className="tiny muted" style={{ maxWidth: '55%', textAlign: 'right', lineHeight: 1.4 }}>
+            Hoje: {r.temas.slice(0, 2).join(' · ')}{r.temas.length > 2 ? ` +${r.temas.length - 2}` : ''}
+          </span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 5 }}>
           {ROTINA_SEMANAL.map((d, i) => {
             const isToday = i === today;
+            const col = ROTINA_PALETTE[i];
             return (
               <div key={d.dia} style={{
-                padding: '10px 6px',
                 borderRadius: 'var(--r-md)',
-                background: isToday ? 'var(--pink-tint)' : 'var(--bg-elevated)',
-                border: `1.5px solid ${isToday ? 'var(--pink)' : 'var(--border)'}`,
-                textAlign: 'center',
+                background: isToday ? col : `color-mix(in oklch, ${col} 28%, var(--bg-elevated))`,
+                border: `2px solid ${isToday ? col : 'transparent'}`,
+                overflow: 'hidden',
               }}>
-                <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6, color: isToday ? 'var(--pink-deep)' : 'var(--text-muted)' }}>{d.dia}</div>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {/* Day header */}
+                <div style={{
+                  padding: '8px 6px 6px',
+                  textAlign: 'center',
+                  borderBottom: `1px solid ${isToday ? 'rgba(32,30,31,.12)' : 'transparent'}`,
+                }}>
+                  <div style={{
+                    fontSize: 12, fontWeight: 700, letterSpacing: '0.05em',
+                    color: isToday ? '#201e1f' : 'var(--text-muted)',
+                  }}>{d.dia}</div>
+                </div>
+                {/* Temas */}
+                <div style={{ padding: '6px 5px 8px', display: 'flex', flexDirection: 'column', gap: 4 }}>
                   {d.temas.map((t, j) => (
-                    <React.Fragment key={j}>
-                      {j > 0 && <div style={{ height: 1, background: isToday ? 'rgba(232,83,141,0.25)' : 'rgba(0,0,0,0.13)', margin: '4px 0' }}/>}
-                      <div style={{ fontSize: 14.5, lineHeight: 1.35, color: isToday ? 'var(--ink)' : 'var(--text-secondary)' }}>{t}</div>
-                    </React.Fragment>
+                    <div key={j} style={{
+                      fontSize: 10, lineHeight: 1.35,
+                      color: isToday ? '#201e1f' : 'var(--text-secondary)',
+                      padding: '2px 3px',
+                      borderRadius: 6,
+                      background: isToday ? 'rgba(32,30,31,.07)' : 'transparent',
+                    }}>{t}</div>
                   ))}
                 </div>
               </div>
@@ -1203,25 +1221,22 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
                 </div>
               </CardHeader>
               <CardBody className="col gap-2">
-                {window.RECURRENCES.map(r => (
-                  <div key={r.texto} className="row between" style={{
-                    padding: 'var(--s-3)',
-                    background: 'var(--bg-elevated)',
+                {window.RECURRENCES.map((r, idx) => (
+                  <div key={r.texto} style={{
+                    padding: '10px var(--s-3)',
                     borderRadius: 'var(--r-md)',
-                    border: '1px solid var(--border)',
+                    background: `color-mix(in oklch, ${r.cor} 30%, var(--bg-surface))`,
+                    borderLeft: `3px solid ${r.cor}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   }}>
                     <div className="row gap-2">
-                      <span style={{ fontSize: 14 }}>{r.icon}</span>
-                      <span style={{ fontSize: 14.5 }}>{r.texto}</span>
+                      <span style={{ fontSize: 15 }}>{r.icon}</span>
+                      <span style={{ fontSize: 14, color: '#201e1f', fontWeight: 500 }}>{r.texto}</span>
                     </div>
-                    <span className="tiny" style={{
-                      padding: '2px 8px',
-                      borderRadius: 999,
-                      background: `color-mix(in oklch, ${r.cor} 18%, transparent)`,
-                      color: r.cor,
-                    }}>
-                      {r.hora}
-                    </span>
+                    <span style={{
+                      fontSize: 11, color: 'var(--text-muted)',
+                      whiteSpace: 'nowrap', marginLeft: 8,
+                    }}>{r.hora}</span>
                   </div>
                 ))}
               </CardBody>
@@ -1238,44 +1253,6 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
                 <RoutinesWidget />
               </CardBody>
             </Card>
-
-            <Card>
-              <CardBody>
-                <ClientsWidget />
-              </CardBody>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="row between">
-                  <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 15, fontWeight: 600 }}>Ideias recentes</h2>
-                  <a className="tiny" style={{ color: 'var(--pink-deep)', cursor: 'pointer' }}
-                    onClick={() => setRoute('/ideias')}>Ver todas →</a>
-                </div>
-              </CardHeader>
-              <CardBody className="col gap-2">
-                {window.DEMO_IDEAS.slice(0, 3).map(i => (
-                  <div key={i.id} className="row gap-2"
-                    onClick={() => setRoute('/ideias')}
-                    style={{
-                      padding: 'var(--s-3)', borderRadius: 'var(--r-md)',
-                      background: 'var(--bg-elevated)',
-                      border: '1px solid var(--border)',
-                      cursor: 'pointer',
-                      alignItems: 'flex-start',
-                    }}>
-                    <Icon name="bulb" size={13} color="var(--pink)" style={{ marginTop: 2, flexShrink: 0 }}/>
-                    <span style={{ fontSize: 14, lineHeight: 1.45, color: 'var(--text-secondary)' }}>
-                      {i.titulo}
-                    </span>
-                  </div>
-                ))}
-                <Button variant="ghost" size="sm" className="row gap-2" style={{ width: '100%', justifyContent: 'center', marginTop: 4 }} onClick={openCapture}>
-                  <Icon name="plus" size={12}/> Capturar ideia
-                </Button>
-              </CardBody>
-            </Card>
-
           </div>
         </div>
 
