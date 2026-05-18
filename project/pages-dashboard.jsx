@@ -1143,13 +1143,14 @@ function SugestoesWidget({ setRoute }) {
     try { return JSON.parse(localStorage.getItem(cacheKey)); } catch { return null; }
   });
   const [carregando, setCarregando] = useState(false);
+  const [showKeyModal, setShowKeyModal] = useState(false);
 
   useEffect(() => {
     if (!itens && window.hasClaudeKey?.()) gerar();
   }, []);
 
   async function gerar() {
-    if (!window.hasClaudeKey?.()) { showToast('Configure sua chave Claude para sugestões personalizadas'); return; }
+    if (!window.hasClaudeKey?.()) { setShowKeyModal(true); return; }
     setCarregando(true);
     const clientes = (window.DEMO_CLIENTS || []).map(c => c.nome).join(', ');
     const tarefas = (window.DEMO_TASKS || []).filter(t => t.status !== 'concluida').map(t => t.titulo).join('; ');
@@ -1188,80 +1189,89 @@ Responda SOMENTE com JSON válido, sem markdown, sem explicação:
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="row between" style={{ alignItems: 'center' }}>
-          <div>
-            <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700 }}>✨ Sugestões de conteúdo</h2>
-            <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 3 }}>Geradas pelo seu sistema · atualizam diariamente</p>
+    <>
+      {showKeyModal && <ClaudeKeyModal onClose={() => { setShowKeyModal(false); if (window.hasClaudeKey()) gerar(); }} />}
+      <Card>
+        <CardHeader>
+          <div className="row between" style={{ alignItems: 'center' }}>
+            <div>
+              <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700 }}>✨ Sugestões de conteúdo</h2>
+              <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 3 }}>Geradas pelo seu sistema · atualizam diariamente</p>
+            </div>
+            <Button variant="ghost" size="sm" onClick={gerar} disabled={carregando}>
+              {carregando ? '⏳' : '↺ Atualizar'}
+            </Button>
           </div>
-          <Button variant="ghost" size="sm" onClick={gerar} disabled={carregando}>
-            {carregando ? '⏳' : '↺ Atualizar'}
-          </Button>
-        </div>
-      </CardHeader>
-      <CardBody className="col gap-3">
-        {carregando && (
-          <div style={{ padding: 'var(--s-5) 0', textAlign: 'center' }}>
-            <div style={{ fontSize: 28, marginBottom: 8 }}>⏳</div>
-            <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>Analisando seu sistema e gerando ideias...</p>
-          </div>
-        )}
-        {!carregando && !itens && (
-          <div style={{ padding: 'var(--s-5) 0', textAlign: 'center' }}>
-            <div style={{ fontSize: 32, marginBottom: 10 }}>💡</div>
-            <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 'var(--s-3)' }}>
-              Configure sua chave Claude para receber sugestões personalizadas baseadas no seu sistema.
-            </p>
-            <Button variant="ghost" size="sm" onClick={gerar}>Gerar sugestões</Button>
-          </div>
-        )}
-        {!carregando && itens && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-3)' }}>
-            {itens.map((s, i) => {
-              const cor = SUGESTAO_PALETTE[i % 5];
-              return (
-                <div key={i} style={{
-                  padding: 'var(--s-4)',
-                  borderRadius: 'var(--r-md)',
-                  background: `color-mix(in oklch, ${cor} 28%, var(--bg-surface))`,
-                  borderLeft: `3px solid ${cor}`,
-                  display: 'flex', flexDirection: 'column', gap: 8,
-                }}>
-                  <div className="row gap-2" style={{ alignItems: 'center' }}>
-                    <span style={{ fontSize: 20 }}>{s.emoji}</span>
-                    <span style={{
-                      fontSize: 14, fontWeight: 700, letterSpacing: '.03em',
-                      padding: '2px 10px', borderRadius: 999,
-                      background: cor, color: '#201e1f',
-                    }}>{s.formato}</span>
+        </CardHeader>
+        <CardBody className="col gap-3">
+          {carregando && (
+            <div style={{ padding: 'var(--s-5) 0', textAlign: 'center' }}>
+              <div style={{ fontSize: 28, marginBottom: 8 }}>⏳</div>
+              <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>Analisando seu sistema e gerando ideias...</p>
+            </div>
+          )}
+          {!carregando && !itens && (
+            <div style={{ padding: 'var(--s-5) var(--s-4)', background: 'var(--pink-tint)', borderRadius: 'var(--r-md)', textAlign: 'center' }}>
+              <div style={{ fontSize: 32, marginBottom: 12 }}>🤖</div>
+              <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 'var(--s-4)', lineHeight: 1.6 }}>
+                Para gerar sugestões personalizadas com base no seu sistema,<br/>
+                você precisa conectar sua chave da API Claude (Anthropic).
+              </p>
+              <Button variant="primary" onClick={() => setShowKeyModal(true)}>
+                ✨ Configurar chave Claude
+              </Button>
+              <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 10 }}>
+                Gratuito para testar · Chave fica só no seu navegador
+              </p>
+            </div>
+          )}
+          {!carregando && itens && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-3)' }}>
+              {itens.map((s, i) => {
+                const cor = SUGESTAO_PALETTE[i % 5];
+                return (
+                  <div key={i} style={{
+                    padding: 'var(--s-4)',
+                    borderRadius: 'var(--r-md)',
+                    background: `color-mix(in oklch, ${cor} 28%, var(--bg-surface))`,
+                    borderLeft: `3px solid ${cor}`,
+                    display: 'flex', flexDirection: 'column', gap: 8,
+                  }}>
+                    <div className="row gap-2" style={{ alignItems: 'center' }}>
+                      <span style={{ fontSize: 20 }}>{s.emoji}</span>
+                      <span style={{
+                        fontSize: 14, fontWeight: 700, letterSpacing: '.03em',
+                        padding: '2px 10px', borderRadius: 999,
+                        background: cor, color: '#201e1f',
+                      }}>{s.formato}</span>
+                    </div>
+                    <div style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 600, lineHeight: 1.3, color: '#201e1f' }}>
+                      {s.titulo}
+                    </div>
+                    <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                      {s.descricao}
+                    </p>
+                    <p style={{ fontSize: 14, color: 'var(--text-muted)', fontStyle: 'italic', lineHeight: 1.45, margin: 0 }}>
+                      {s.origem}
+                    </p>
+                    <div className="row between" style={{ alignItems: 'center', marginTop: 4 }}>
+                      <Button variant="ghost" size="sm"
+                        style={{ color: 'var(--pink-deep)', fontWeight: 600, fontSize: 14, padding: '4px 0' }}
+                        onClick={() => { window.STUDIO_AUTOAGENTE = s.agente; setRoute('/studio'); }}>
+                        Gostei dessa ideia →
+                      </Button>
+                      {AGENTE_ROTULO[s.agente] && (
+                        <span style={{ fontSize: 14, color: 'var(--text-muted)' }}>via {AGENTE_ROTULO[s.agente]}</span>
+                      )}
+                    </div>
                   </div>
-                  <div style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 600, lineHeight: 1.3, color: '#201e1f' }}>
-                    {s.titulo}
-                  </div>
-                  <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                    {s.descricao}
-                  </p>
-                  <p style={{ fontSize: 14, color: 'var(--text-muted)', fontStyle: 'italic', lineHeight: 1.45, margin: 0 }}>
-                    {s.origem}
-                  </p>
-                  <div className="row between" style={{ alignItems: 'center', marginTop: 4 }}>
-                    <Button variant="ghost" size="sm"
-                      style={{ color: 'var(--pink-deep)', fontWeight: 600, fontSize: 14, padding: '4px 0' }}
-                      onClick={() => { window.STUDIO_AUTOAGENTE = s.agente; setRoute('/studio'); }}>
-                      Gostei dessa ideia →
-                    </Button>
-                    {AGENTE_ROTULO[s.agente] && (
-                      <span style={{ fontSize: 14, color: 'var(--text-muted)' }}>via {AGENTE_ROTULO[s.agente]}</span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </CardBody>
-    </Card>
+                );
+              })}
+            </div>
+          )}
+        </CardBody>
+      </Card>
+    </>
   );
 }
 
