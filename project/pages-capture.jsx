@@ -131,7 +131,7 @@ function CapturaPage({ energy }) {
   }
 
   return (
-    <div className="content" style={{ maxWidth: 880 }}>
+    <div className="content">
       <div className="col gap-5 fade-up">
         <PageHeader
           title="Baú de Ideias"
@@ -449,7 +449,7 @@ function TarefasPage() {
   };
 
   return (
-    <div className="content" style={{ maxWidth: 880 }}>
+    <div className="content">
       <div className="col gap-6 fade-up">
         <PageHeader
           title="Tarefas"

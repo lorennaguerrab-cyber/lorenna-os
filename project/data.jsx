@@ -29,6 +29,7 @@ const NAV = [
   { href: '/materiais',    icon: 'archive',  label: 'Materiais'         },
   { href: '/precificacao', icon: 'tag',      label: 'Precificação'      },
   { href: '/diario',       icon: 'heart',    label: 'Diário da Terapia' },
+  { href: '/blog',         icon: 'pen',      label: 'Blog'              },
   { href: '/referencias',  icon: 'bookmark', label: 'Referências'       },
   { href: '/sobre',        icon: 'flower',   label: 'Sobre'             },
 ];

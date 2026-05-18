@@ -338,14 +338,15 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Content layout ── */
 .content {
-  padding: var(--s-5) var(--s-3);
-  max-width: 100%;
+  padding: var(--s-5) var(--s-5);
+  max-width: 1600px;
+  margin: 0 auto;
   width: 100%;
 }
 .content-wide { max-width: 100%; }
-.content-narrow { max-width: 960px; margin: 0 auto; }
-@media (max-width: 1200px) { .content { padding: var(--s-4) var(--s-3); } }
-@media (max-width: 900px)  { .content { padding: var(--s-3) var(--s-2); } }
+.content-narrow { max-width: 760px; margin: 0 auto; }
+@media (max-width: 1200px) { .content { padding: var(--s-4) var(--s-4); } }
+@media (max-width: 900px)  { .content { padding: var(--s-3) var(--s-3); } }
 @media (max-width: 600px)  { .content { padding: var(--s-3) var(--s-2); } }
 
 /* ── Mobile sidebar ── */

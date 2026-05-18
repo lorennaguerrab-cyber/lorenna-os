@@ -74,9 +74,6 @@ function MateriaisPage() {
             <p className="page-subtitle">Seu acervo pessoal</p>
           </div>
           <div className="row gap-2">
-            <Button variant="ghost" onClick={() => showToast('Em breve: integração com Google Drive')}>
-              <Icon name="link" size={14}/> Conectar Google Drive
-            </Button>
             {tab !== 'broll' && (
               <div className="row" style={{ background: 'var(--bg-elevated)', borderRadius: 'var(--r-md)', padding: 3, gap: 2 }}>
                 <button onClick={() => setView('grid')} className="btn icon"

@@ -364,16 +364,6 @@ function TaskRow({ task, dense }) {
             </div>
           )}
 
-          {/* next-step CTA when collapsed */}
-          {!open && nextStep && (
-            <div className="row gap-2" style={{ marginTop: 10, padding: '6px 10px', background: 'var(--pink-softer)', borderRadius: 'var(--r-sm)', border: '1px solid var(--border-soft)' }}>
-              <Icon name="arrow" size={11} color="var(--pink-deep)" />
-              <span style={{ fontSize: 12, color: 'var(--pink-deep)', fontWeight: 500 }}>Próxima:</span>
-              <span style={{ fontSize: 12, color: 'var(--text-primary)' }}>{nextStep.desc}</span>
-              {nextStep.min && <span className="tiny muted" style={{ marginLeft: 'auto' }}>~{nextStep.min}min</span>}
-            </div>
-          )}
-
           {/* microsteps */}
           {open && (
             <div style={{ marginTop: 12 }} className="col gap-2">
@@ -578,15 +568,29 @@ function RoutinesWidget() {
 }
 
 function PequenasVitorias() {
-  const vitorias = [
-    { icon: '🎯', text: 'Post Pratique entregue no prazo', tipo: 'entrega' },
-    { icon: '✍️', text: 'Newsletter escrita e agendada', tipo: 'conteudo' },
-    { icon: '🎬', text: 'Reel bastidores gravado e editado', tipo: 'conteudo' },
-    { icon: '💰', text: 'Ótica Igor Giordano — pagamento recebido', tipo: 'financeiro' },
-    { icon: '🌱', text: 'Blog: post sobre organização publicado', tipo: 'publicado' },
-    { icon: '💌', text: '3 DMs respondidas — networking ativo', tipo: 'social' },
+  const completedTasks = window.DEMO_TASKS.filter(t => t.status === 'concluida');
+  const [custom, setCustom] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('lorenna_vitorias') || '[]'); } catch { return []; }
+  });
+  const [adding, setAdding] = useState(false);
+  const [newText, setNewText] = useState('');
+  const [showing, setShowing] = useState(4);
+
+  const all = [
+    ...custom,
+    ...completedTasks.map(t => ({ icon: '✅', text: t.titulo, id: t.id })),
   ];
-  const [showing, setShowing] = useState(3);
+
+  function addVitoria() {
+    if (!newText.trim()) return;
+    const v = { icon: '🎯', text: newText.trim(), id: Date.now() };
+    const next = [v, ...custom];
+    setCustom(next);
+    localStorage.setItem('lorenna_vitorias', JSON.stringify(next));
+    setNewText('');
+    setAdding(false);
+    showToast('Vitória registrada! 🎉');
+  }
 
   return (
     <div>
@@ -595,28 +599,54 @@ function PequenasVitorias() {
           <div className="eyebrow" style={{ color: '#7FB68C' }}>Pequenas vitórias</div>
           <p className="tiny muted" style={{ marginTop: 4 }}>Tudo que você fez importa. Mesmo o que parece pequeno.</p>
         </div>
-        <Button variant="ghost" size="sm" onClick={() => showToast('Adicionar vitória — em breve!')}>
+        <Button variant="ghost" size="sm" onClick={() => setAdding(a => !a)}>
           <Icon name="plus" size={12}/>
         </Button>
       </div>
-      <div className="col gap-2">
-        {vitorias.slice(0, showing).map((v, i) => (
-          <div key={i} className="row gap-3" style={{
-            padding: '10px 14px',
-            background: 'color-mix(in oklch, #7FB68C 8%, var(--bg-surface))',
-            border: '1px solid color-mix(in oklch, #7FB68C 20%, transparent)',
-            borderRadius: 'var(--r-md)',
-          }}>
-            <span style={{ fontSize: 15, flexShrink: 0 }}>{v.icon}</span>
-            <span style={{ fontSize: 12.5, color: 'var(--ink-soft)', lineHeight: 1.4 }}>{v.text}</span>
+
+      {adding && (
+        <div className="row gap-2" style={{ marginBottom: 'var(--s-3)' }}>
+          <input
+            className="input" autoFocus
+            style={{ flex: 1, fontSize: 13 }}
+            placeholder="Qual foi sua vitória de hoje?"
+            value={newText}
+            onChange={e => setNewText(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') addVitoria(); if (e.key === 'Escape') { setAdding(false); setNewText(''); } }}
+          />
+          <Button variant="primary" size="sm" onClick={addVitoria} disabled={!newText.trim()}>
+            <Icon name="check" size={12} color="white"/>
+          </Button>
+        </div>
+      )}
+
+      {all.length === 0 ? (
+        <div className="center muted" style={{ padding: 'var(--s-5) 0', flexDirection: 'column', gap: 6 }}>
+          <span style={{ fontSize: 24 }}>🌱</span>
+          <p className="tiny">Nenhuma tarefa concluída ainda. Vai lá!</p>
+        </div>
+      ) : (
+        <>
+          <div className="col gap-2">
+            {all.slice(0, showing).map((v, i) => (
+              <div key={v.id || i} className="row gap-3" style={{
+                padding: '10px 14px',
+                background: 'color-mix(in oklch, #7FB68C 8%, var(--bg-surface))',
+                border: '1px solid color-mix(in oklch, #7FB68C 20%, transparent)',
+                borderRadius: 'var(--r-md)',
+              }}>
+                <span style={{ fontSize: 15, flexShrink: 0 }}>{v.icon}</span>
+                <span style={{ fontSize: 12.5, color: 'var(--ink-soft)', lineHeight: 1.4 }}>{v.text}</span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      {showing < vitorias.length && (
-        <button onClick={() => setShowing(vitorias.length)}
-          style={{ marginTop: 'var(--s-3)', fontSize: 12, color: '#7FB68C', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
-          Ver todas ({vitorias.length}) →
-        </button>
+          {showing < all.length && (
+            <button onClick={() => setShowing(all.length)}
+              style={{ marginTop: 'var(--s-3)', fontSize: 12, color: '#7FB68C', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+              Ver todas ({all.length}) →
+            </button>
+          )}
+        </>
       )}
     </div>
   );

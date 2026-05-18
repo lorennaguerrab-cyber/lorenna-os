@@ -586,7 +586,7 @@ function ClientesPage({ setRoute }) {
   const pendentes = window.DEMO_CLIENTS.reduce((s, c) => s + c.pendentes, 0);
 
   return (
-    <div className="content" style={{ maxWidth: 1100 }}>
+    <div className="content">
       <div className="col gap-6 fade-up">
         <PageHeader title="Clientes" subtitle="Agência Logue · receita ativa, entregas e onboarding em um lugar"/>
 
@@ -718,7 +718,7 @@ function CRMPage() {
   }, {});
 
   return (
-    <div className="content" style={{ maxWidth: 1100 }}>
+    <div className="content">
       <div className="col gap-6 fade-up">
         <PageHeader
           title="CRM"

@@ -35,10 +35,85 @@ function ChannelTag({ channel }) {
   );
 }
 
+function ConteudoModal({ item, onClose }) {
+  const cfg = window.STATUS_CONTEUDO[item.status];
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed', inset: 0, zIndex: 300,
+      background: 'rgba(43,34,34,0.5)', backdropFilter: 'blur(4px)',
+      display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+      padding: 'var(--s-6) var(--s-4)', overflowY: 'auto',
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: 'min(720px, 95vw)', background: 'var(--white)',
+        borderRadius: 'var(--r-xl)', border: '1px solid var(--gray-light)',
+        overflow: 'hidden',
+      }}>
+        <div style={{ height: 4, background: cfg.color }}/>
+        <div style={{ padding: 'var(--s-5)' }}>
+          <div className="row between" style={{ marginBottom: 'var(--s-4)' }}>
+            <div className="row gap-2">
+              <span style={{ fontSize: 22 }}>{window.TYPE_EMOJI[item.tipo]}</span>
+              <div>
+                <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 20, fontWeight: 700 }}>{item.titulo}</h2>
+                <div className="row gap-2" style={{ marginTop: 6, flexWrap: 'wrap' }}>
+                  <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 12, fontWeight: 600, background: `color-mix(in oklch, ${cfg.color} 16%, transparent)`, color: cfg.color }}>{cfg.label}</span>
+                  {item.brand && <ChannelTag channel={item.brand}/>}
+                  {item.data && <span className="tiny muted">{item.data}</span>}
+                </div>
+              </div>
+            </div>
+            <Button variant="ghost" size="sm" className="icon" onClick={onClose}>
+              <Icon name="x" size={15}/>
+            </Button>
+          </div>
+
+          <div className="col gap-4">
+            <div className="col gap-2">
+              <label style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Plataformas</label>
+              <div className="row gap-2" style={{ flexWrap: 'wrap' }}>
+                {item.plataformas.map(p => (
+                  <span key={p} style={{ padding: '4px 12px', borderRadius: 999, fontSize: 13, fontWeight: 500, background: `color-mix(in oklch, ${window.PLATFORM_COLORS[p]} 16%, transparent)`, color: window.PLATFORM_COLORS[p] }}>
+                    {window.PLATFORM_LABELS[p]}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="col gap-2">
+              <label style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Roteiro / Conteúdo</label>
+              <textarea
+                style={{
+                  width: '100%', minHeight: 220, padding: '14px 16px',
+                  fontSize: 15, lineHeight: 1.7, color: 'var(--ink)',
+                  background: 'var(--offwhite)', border: '1.5px solid var(--pink-soft)',
+                  borderRadius: 15, resize: 'vertical', outline: 'none', boxSizing: 'border-box',
+                  fontFamily: 'var(--font-body)',
+                }}
+                placeholder="Escreva o roteiro, legenda, script ou anotações desse conteúdo…"
+                onFocus={e => e.target.style.borderColor = 'var(--pink)'}
+                onBlur={e => e.target.style.borderColor = 'var(--pink-soft)'}
+              />
+            </div>
+
+            <div className="row gap-2">
+              <Button variant="primary" onClick={() => { showToast('Conteúdo salvo!'); onClose(); }}>
+                <Icon name="check" size={13} color="white"/> Salvar
+              </Button>
+              <Button variant="ghost" onClick={onClose}>Fechar</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ConteudoPage() {
   const [view, setView] = useState('kanban');
   const [search, setSearch] = useState('');
   const [channel, setChannel] = useState('todos');
+  const [selected, setSelected] = useState(null);
   const data = window.DEMO_CONTENT;
   const filtered = data.filter(c => {
     const okS = !search || c.titulo.toLowerCase().includes(search.toLowerCase());
@@ -47,7 +122,7 @@ function ConteudoPage() {
   });
 
   return (
-    <div className="content" style={{ maxWidth: 1200 }}>
+    <div className="content">
       <div className="col gap-5 fade-up">
         <PageHeader
           title="Central de Conteúdo"
@@ -121,7 +196,7 @@ function ConteudoPage() {
                   </div>
                   <div className="col gap-2" style={{ minHeight: 100 }}>
                     {items.map(item => (
-                      <Card key={item.id} hoverable>
+                      <Card key={item.id} hoverable onClick={() => setSelected(item)} style={{ cursor: 'pointer' }}>
                         <CardBody tight className="col gap-2">
                           <div className="row gap-2" style={{ alignItems: 'flex-start' }}>
                             <span style={{ fontSize: 14, flexShrink: 0, marginTop: 1 }}>{window.TYPE_EMOJI[item.tipo]}</span>
@@ -155,7 +230,7 @@ function ConteudoPage() {
             {filtered.map(item => {
               const cfg = window.STATUS_CONTEUDO[item.status];
               return (
-                <Card key={item.id} hoverable>
+                <Card key={item.id} hoverable onClick={() => setSelected(item)} style={{ cursor: 'pointer' }}>
                   <CardBody tight>
                     <div className="row gap-3">
                       <span style={{ fontSize: 18, flexShrink: 0 }}>{window.TYPE_EMOJI[item.tipo]}</span>
@@ -181,6 +256,8 @@ function ConteudoPage() {
             })}
           </div>
         )}
+
+        {selected && <ConteudoModal item={selected} onClose={() => setSelected(null)}/>}
       </div>
     </div>
   );
@@ -503,7 +580,7 @@ function PromptsPage() {
   }
 
   return (
-    <div className="content" style={{ maxWidth: 880 }}>
+    <div className="content">
       <div className="col gap-5 fade-up">
         <PageHeader
           title="Banco de Prompts"
