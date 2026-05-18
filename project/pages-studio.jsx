@@ -497,6 +497,7 @@ function StudioPage() {
   const [gerando, setGerando] = useState(false);
   const [resultado, setResultado] = useState('');
   const [copiado, setCopiado] = useState(false);
+  const [modoClaudeAi, setModoClaudeAi] = useState(false);
 
   const { clientes_lista, clientes_roteiro } = buildClienteLists();
 
@@ -542,12 +543,17 @@ function StudioPage() {
   async function pedirSugestoes() {
     const tema = campos['tema'] || '';
     if (!tema.trim()) { showToast('Preencha o tema primeiro'); return; }
-    if (!window.hasClaudeKey()) { showToast('Configure a chave da API Claude primeiro'); return; }
-    setLoadingSugestoes(true);
-    setSugestoes([]);
     const prompt = `Sugira 5 ângulos de notícias ou artigos recentes que se conectam ao tema: "${tema}".
 Para cada sugestão, escreva em uma linha: um título chamativo + traço + uma frase curta explicando a conexão.
 Formato: uma sugestão por linha, numeradas de 1 a 5. Seja específico e útil.`;
+    if (!window.hasClaudeKey()) {
+      try { await navigator.clipboard.writeText(prompt); } catch {}
+      window.open('https://claude.ai/new', '_blank');
+      showToast('Prompt copiado! Cole no Claude.ai que abriu 👆');
+      return;
+    }
+    setLoadingSugestoes(true);
+    setSugestoes([]);
     const resp = await window.callClaude(
       [{ role: 'user', content: prompt }],
       'Você sugere ângulos de notícias para newsletters. Seja direto e útil. Responda em português.',
@@ -573,24 +579,8 @@ Formato: uma sugestão por linha, numeradas de 1 a 5. Seja específico e útil.`
     setSugestoes([]);
   }
 
-  async function gerar() {
-    if (!agenteSel) return;
-    if (!window.hasClaudeKey()) { showToast('Configure a chave da API Claude primeiro'); return; }
-
-    const obrigatorios = agenteSel.campos.filter(c => c.obrigatorio);
-    for (const c of obrigatorios) {
-      if (c.tipo === 'multi') {
-        const itens = (multiListas[c.id] || ['']).filter(s => s.trim());
-        if (!itens.length) { showToast(`Preencha: ${c.label}`); return; }
-      } else if (!campos[c.id]?.trim()) {
-        showToast(`Preencha: ${c.label}`); return;
-      }
-    }
-
-    setGerando(true);
-    setResultado('');
-
-    const detalhes = agenteSel.campos
+  function montarDetalhes() {
+    return agenteSel.campos
       .map(c => {
         if (c.tipo === 'multi') {
           const itens = (multiListas[c.id] || []).filter(s => s.trim());
@@ -603,13 +593,47 @@ Formato: uma sugestão por linha, numeradas de 1 a 5. Seja específico e útil.`
       })
       .filter(Boolean)
       .join('\n');
+  }
 
+  function montarUserMsg(detalhes) {
+    if (agenteSel.id === 'carta')   return `Escreva a newsletter desta semana com estas informações:\n\n${detalhes}`;
+    if (agenteSel.id === 'roteiro') return `Crie um roteiro com estas informações:\n\n${detalhes}`;
+    if (agenteSel.id === 'blog')    return `Escreva o artigo completo com estas informações:\n\n${detalhes}`;
+    return `Crie o conteúdo com estas informações:\n\n${detalhes}`;
+  }
+
+  async function gerar() {
+    if (!agenteSel) return;
+
+    const obrigatorios = agenteSel.campos.filter(c => c.obrigatorio);
+    for (const c of obrigatorios) {
+      if (c.tipo === 'multi') {
+        const itens = (multiListas[c.id] || ['']).filter(s => s.trim());
+        if (!itens.length) { showToast(`Preencha: ${c.label}`); return; }
+      } else if (!campos[c.id]?.trim()) {
+        showToast(`Preencha: ${c.label}`); return;
+      }
+    }
+
+    const detalhes = montarDetalhes();
     const systemPrompt = buildSystemPrompt(agenteSel, campos);
-    const userMsg = agenteSel.id === 'carta'
-      ? `Escreva a newsletter desta semana com estas informações:\n\n${detalhes}`
-      : agenteSel.id === 'roteiro'
-      ? `Crie um roteiro com estas informações:\n\n${detalhes}`
-      : `Crie um post com estas informações:\n\n${detalhes}`;
+    const userMsg = montarUserMsg(detalhes);
+
+    /* ── Sem chave API: abre Claude.ai com o prompt pronto ── */
+    if (!window.hasClaudeKey()) {
+      const promptCompleto = `${systemPrompt}\n\n---\n\n${userMsg}`;
+      try { await navigator.clipboard.writeText(promptCompleto); } catch {}
+      window.open('https://claude.ai/new', '_blank');
+      setResultado(promptCompleto);
+      setModoClaudeAi(true);
+      showToast('✅ Prompt copiado! Cole no Claude.ai que abriu agora.');
+      return;
+    }
+
+    /* ── Com chave API: gera direto aqui ── */
+    setGerando(true);
+    setResultado('');
+    setModoClaudeAi(false);
 
     const resp = await window.callClaude(
       [{ role: 'user', content: userMsg }],
@@ -621,7 +645,7 @@ Formato: uma sugestão por linha, numeradas de 1 a 5. Seja específico e útil.`
     if (resp) {
       setResultado(resp);
     } else {
-      showToast('Erro ao gerar. Verifique sua chave da API.');
+      showToast('Erro ao gerar. Verifique sua conexão.');
     }
     setGerando(false);
   }
@@ -834,10 +858,17 @@ Formato: uma sugestão por linha, numeradas de 1 a 5. Seja específico e útil.`
               </div>
 
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: 'var(--s-4)' }}>
-                <Button variant="primary" onClick={gerar} disabled={gerando}
-                  style={{ background: gerando ? undefined : agenteSel.cor }}>
-                  {gerando ? '⏳ Gerando...' : `✨ ${agenteSel.botao}`}
-                </Button>
+                <div className="row gap-3" style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                  <Button variant="primary" onClick={gerar} disabled={gerando}
+                    style={{ background: gerando ? undefined : agenteSel.cor, color: '#201e1f' }}>
+                    {gerando ? '⏳ Gerando...' : window.hasClaudeKey() ? `✨ ${agenteSel.botao}` : `✨ Gerar no Claude.ai`}
+                  </Button>
+                  {!window.hasClaudeKey() && (
+                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+                      Abre o Claude.ai com o prompt pronto para colar
+                    </span>
+                  )}
+                </div>
               </div>
             </CardBody>
           </Card>
@@ -847,15 +878,48 @@ Formato: uma sugestão por linha, numeradas de 1 a 5. Seja específico e útil.`
         {resultado && (
           <Card style={{ borderTop: `3px solid ${agenteSel?.cor || 'var(--pink)'}` }}>
             <CardBody className="col gap-4">
+
+              {/* Banner modo Claude.ai */}
+              {modoClaudeAi && (
+                <div style={{
+                  padding: '14px 16px', borderRadius: 'var(--r-md)',
+                  background: 'color-mix(in oklch, #f1e18d 20%, var(--bg-surface))',
+                  border: '1.5px solid #f1e18d',
+                  display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
+                }}>
+                  <span style={{ fontSize: 22 }}>📋</span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: '#201e1f' }}>Prompt pronto — já copiado!</div>
+                    <div style={{ fontSize: 14, color: '#201e1f', opacity: 0.7, marginTop: 2 }}>
+                      Cole no Claude.ai (Ctrl+V) e clique em enviar.
+                    </div>
+                  </div>
+                  <button onClick={() => window.open('https://claude.ai/new', '_blank')}
+                    style={{
+                      padding: '8px 18px', borderRadius: 999, border: '2px solid #201e1f',
+                      background: '#201e1f', color: '#fffcfa', fontSize: 14, fontWeight: 700,
+                      cursor: 'pointer', fontFamily: 'var(--font-body)', flexShrink: 0,
+                    }}>
+                    Abrir Claude.ai ↗
+                  </button>
+                </div>
+              )}
+
               <div className="row between" style={{ alignItems: 'center' }}>
                 <div>
-                  <div className="eyebrow" style={{ color: agenteSel?.cor }}>Resultado</div>
-                  <p className="tiny muted">Revise, ajuste e copie quando estiver pronto.</p>
+                  <div className="eyebrow" style={{ color: agenteSel?.cor }}>
+                    {modoClaudeAi ? 'Prompt gerado' : 'Resultado'}
+                  </div>
+                  <p className="tiny muted">
+                    {modoClaudeAi ? 'Prompt completo pronto para colar no Claude.ai.' : 'Revise, ajuste e copie quando estiver pronto.'}
+                  </p>
                 </div>
                 <div className="row gap-2">
-                  <Button variant="ghost" size="sm" onClick={gerar} disabled={gerando}>
-                    ↺ Regenerar
-                  </Button>
+                  {!modoClaudeAi && (
+                    <Button variant="ghost" size="sm" onClick={gerar} disabled={gerando}>
+                      ↺ Regenerar
+                    </Button>
+                  )}
                   <Button variant="primary" size="sm" onClick={copiar}
                     style={{ background: copiado ? '#f1e18d' : undefined, color: copiado ? '#201e1f' : undefined }}>
                     {copiado ? '✓ Copiado!' : '📋 Copiar'}
@@ -868,6 +932,8 @@ Formato: uma sugestão por linha, numeradas de 1 a 5. Seja específico e útil.`
                 borderRadius: 'var(--r-md)',
                 border: '1px solid var(--border)',
                 padding: 'var(--s-4)',
+                maxHeight: modoClaudeAi ? 260 : 'none',
+                overflow: modoClaudeAi ? 'auto' : 'visible',
               }}>
                 <pre style={{
                   whiteSpace: 'pre-wrap', fontFamily: 'var(--font-body)',
@@ -877,9 +943,14 @@ Formato: uma sugestão por linha, numeradas de 1 a 5. Seja específico e útil.`
               </div>
 
               <div className="row gap-2">
-                <Button variant="ghost" size="sm" onClick={() => { setResultado(''); }}>
+                <Button variant="ghost" size="sm" onClick={() => { setResultado(''); setModoClaudeAi(false); }}>
                   Limpar
                 </Button>
+                {modoClaudeAi && (
+                  <Button variant="ghost" size="sm" onClick={gerar}>
+                    ↺ Montar novamente
+                  </Button>
+                )}
               </div>
             </CardBody>
           </Card>
@@ -893,20 +964,20 @@ Formato: uma sugestão por linha, numeradas de 1 a 5. Seja específico e útil.`
             color: 'var(--text-muted)',
           }}>
             <span style={{ fontSize: 42 }}>✨</span>
-            <p className="small muted">Selecione um agente acima para começar</p>
-            {!window.hasClaudeKey() && (
-              <div style={{
-                padding: 'var(--s-3) var(--s-4)',
-                background: 'var(--bg-elevated)',
-                borderRadius: 'var(--r-md)',
-                border: '1px solid var(--border)',
-                maxWidth: 380, textAlign: 'center',
-              }}>
-                <p className="tiny muted">
-                  🤖 Configure sua chave da API Claude clicando no botão <strong>🤖</strong> no canto inferior direito.
-                </p>
-              </div>
-            )}
+            <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-secondary)' }}>Selecione um agente acima para começar</p>
+            <div style={{
+              padding: 'var(--s-3) var(--s-4)',
+              background: 'color-mix(in oklch, #f1e18d 15%, var(--bg-surface))',
+              borderRadius: 'var(--r-md)',
+              border: '1px solid #f1e18d',
+              maxWidth: 400, textAlign: 'center',
+            }}>
+              <p style={{ fontSize: 14, color: '#201e1f', lineHeight: 1.6 }}>
+                {window.hasClaudeKey()
+                  ? '✨ IA integrada ativa — conteúdo gerado direto aqui.'
+                  : '✨ Modo Claude.ai — preencha o formulário e clique em Gerar. O prompt abre direto no Claude.ai pronto para usar.'}
+              </p>
+            </div>
           </div>
         )}
 
