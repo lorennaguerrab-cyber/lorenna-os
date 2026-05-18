@@ -684,10 +684,10 @@ function RotinaSemanalWidget() {
                 border: `1.5px solid ${isToday ? 'var(--pink)' : 'var(--border)'}`,
                 textAlign: 'center',
               }}>
-                <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 6, color: isToday ? 'var(--pink-deep)' : 'var(--text-muted)' }}>{d.dia}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 6, color: isToday ? 'var(--pink-deep)' : 'var(--text-muted)' }}>{d.dia}</div>
                 <div className="col gap-1">
                   {d.temas.map((t, j) => (
-                    <div key={j} style={{ fontSize: 9.5, lineHeight: 1.3, color: isToday ? 'var(--ink)' : 'var(--text-secondary)' }}>{t}</div>
+                    <div key={j} style={{ fontSize: 11.5, lineHeight: 1.35, color: isToday ? 'var(--ink)' : 'var(--text-secondary)' }}>{t}</div>
                   ))}
                 </div>
               </div>
