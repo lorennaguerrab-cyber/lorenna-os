@@ -151,14 +151,15 @@ function NaoSeiAindaQuiz({ onClose, onResult }) {
   const q = MOOD_QUIZ[step];
   const e = result ? window.ENERGY[result] : null;
 
-  return (
+  return ReactDOM.createPortal(
     <div onClick={onClose} style={{
       position: 'fixed', inset: 0,
       background: 'rgba(43,34,34,0.45)',
       backdropFilter: 'blur(4px)',
-      zIndex: 200,
+      zIndex: 9999,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: 'var(--s-4)',
+      padding: '24px',
+      overflowY: 'auto',
     }}>
       <div onClick={ev => ev.stopPropagation()} style={{
         width: 'min(520px, 94vw)',
@@ -236,7 +237,7 @@ function NaoSeiAindaQuiz({ onClose, onResult }) {
         </div>
       </div>
     </div>
-  );
+  , document.body);
 }
 
 function EnergySelector({ energy, setEnergy }) {
@@ -296,7 +297,7 @@ function EnergySelector({ energy, setEnergy }) {
   );
 }
 
-function TaskRow({ task, dense }) {
+function TaskRow({ task, dense, large }) {
   const [open, setOpen] = useState(false);
   const [concluida, setConcluida] = useState(task.status === 'concluida');
   const [microDone, setMicroDone] = useState(() => Object.fromEntries(task.micro.map(m => [m.id, m.done])));
@@ -336,7 +337,7 @@ function TaskRow({ task, dense }) {
         <div className="grow">
           <div className="row between" style={{ alignItems: 'flex-start' }}>
             <div className="grow">
-              <div style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--text-primary)', lineHeight: 1.4 }}>
+              <div style={{ fontSize: large ? 15.5 : 13.5, fontWeight: large ? 600 : 500, color: 'var(--text-primary)', lineHeight: 1.4 }}>
                 {task.titulo}
               </div>
               {task.cliente && (
@@ -596,7 +597,7 @@ function PequenasVitorias() {
     <div>
       <div className="row between" style={{ marginBottom: 'var(--s-3)' }}>
         <div>
-          <div className="eyebrow" style={{ color: '#7FB68C' }}>Pequenas vitórias</div>
+          <div className="eyebrow" style={{ color: '#7FB68C' }}>🏆 Pequenas vitórias</div>
           <p className="tiny muted" style={{ marginTop: 4 }}>Tudo que você fez importa. Mesmo o que parece pequeno.</p>
         </div>
         <Button variant="ghost" size="sm" onClick={() => setAdding(a => !a)}>
@@ -647,6 +648,122 @@ function PequenasVitorias() {
             </button>
           )}
         </>
+      )}
+    </div>
+  );
+}
+
+const ROTINA_SEMANAL = [
+  { dia: 'Seg', temas: ['📋 Burocracias', '✍️ Roteiros', '📝 Blog'] },
+  { dia: 'Ter', temas: ['📸 Fotos ext.', '🎬 Vídeos ext.'] },
+  { dia: 'Qua', temas: ['💌 Newsletter', '🎬 Gravação', '✂️ Edição'] },
+  { dia: 'Qui', temas: ['📸 Fotos ext.', '🎬 Vídeos ext.'] },
+  { dia: 'Sex', temas: ['✂️ Edição', '⏳ Pendências'] },
+  { dia: 'Sáb', temas: ['🌿 Descanso'] },
+  { dia: 'Dom', temas: ['🌿 Descanso'] },
+];
+
+function RotinaSemanalWidget() {
+  const today = (new Date().getDay() + 6) % 7; // 0=Seg
+  const r = ROTINA_SEMANAL[today];
+  return (
+    <Card>
+      <CardBody>
+        <div className="row between" style={{ marginBottom: 'var(--s-3)' }}>
+          <div className="eyebrow">Rotina da semana</div>
+          <span className="tiny muted">Hoje: {r.temas.join(' · ')}</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6 }}>
+          {ROTINA_SEMANAL.map((d, i) => {
+            const isToday = i === today;
+            return (
+              <div key={d.dia} style={{
+                padding: '10px 6px',
+                borderRadius: 'var(--r-md)',
+                background: isToday ? 'var(--pink-tint)' : 'var(--bg-elevated)',
+                border: `1.5px solid ${isToday ? 'var(--pink)' : 'var(--border)'}`,
+                textAlign: 'center',
+              }}>
+                <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 6, color: isToday ? 'var(--pink-deep)' : 'var(--text-muted)' }}>{d.dia}</div>
+                <div className="col gap-1">
+                  {d.temas.map((t, j) => (
+                    <div key={j} style={{ fontSize: 9.5, lineHeight: 1.3, color: isToday ? 'var(--ink)' : 'var(--text-secondary)' }}>{t}</div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </CardBody>
+    </Card>
+  );
+}
+
+function MiniCalendarWidget() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startDow = (firstDay.getDay() + 6) % 7;
+  const monthName = today.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  const pad = n => String(n).padStart(2, '0');
+  const events = window.AGENDA_EVENTS || [];
+
+  const cells = [];
+  for (let i = 0; i < startDow; i++) cells.push(null);
+  for (let d = 1; d <= lastDay.getDate(); d++) cells.push(d);
+
+  function hasEvent(d) {
+    if (!d) return false;
+    const dateStr = `${year}-${pad(month + 1)}-${pad(d)}`;
+    return events.some(e => e.date === dateStr);
+  }
+
+  const todayStr = `${year}-${pad(month + 1)}-${pad(today.getDate())}`;
+  const todayEvents = events.filter(e => e.date === todayStr);
+
+  return (
+    <div>
+      <div className="row between" style={{ marginBottom: 'var(--s-3)' }}>
+        <div className="eyebrow">{monthName.charAt(0).toUpperCase() + monthName.slice(1)}</div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, textAlign: 'center' }}>
+        {['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].map((d, i) => (
+          <div key={i} style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', paddingBottom: 4 }}>{d}</div>
+        ))}
+        {cells.map((d, i) => {
+          if (!d) return <div key={i}/>;
+          const isToday = d === today.getDate();
+          const hasEv = hasEvent(d);
+          return (
+            <div key={i} style={{
+              aspectRatio: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexDirection: 'column', gap: 1, borderRadius: 6,
+              background: isToday ? 'var(--pink)' : 'transparent',
+              color: isToday ? 'white' : 'var(--text-primary)',
+              fontSize: 11, fontWeight: isToday ? 700 : 400, position: 'relative',
+            }}>
+              {d}
+              {hasEv && !isToday && (
+                <div style={{ width: 3, height: 3, borderRadius: 999, background: 'var(--pink)', position: 'absolute', bottom: 2 }}/>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      {todayEvents.length > 0 && (
+        <div style={{ marginTop: 'var(--s-3)', paddingTop: 'var(--s-2)', borderTop: '1px solid var(--border)' }}>
+          <div className="eyebrow" style={{ color: 'var(--pink-deep)', marginBottom: 6 }}>Hoje</div>
+          <div className="col gap-1">
+            {todayEvents.map(ev => (
+              <div key={ev.id} className="row gap-2">
+                <span className="tiny muted" style={{ flexShrink: 0 }}>{ev.hora}</span>
+                <span style={{ fontSize: 12, lineHeight: 1.3 }}>{ev.titulo}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );
@@ -710,22 +827,21 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
           </CardBody>
         </Card>
 
+        <RotinaSemanalWidget />
+
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 'var(--s-5)' }} className="dash-grid">
-          {/* LEFT */}
+          {/* LEFT — Tarefas em destaque */}
           <div className="col gap-4">
             {next && !e.show_heavy && <NextActionCard task={next} />}
 
-            <Card>
-              <CardBody>
-                <PequenasVitorias />
-              </CardBody>
-            </Card>
-
-            <Card>
+            <Card style={{
+              background: `color-mix(in oklch, ${e.color} 5%, var(--bg-surface))`,
+              borderColor: `color-mix(in oklch, ${e.color} 30%, var(--border))`,
+            }}>
               <CardHeader>
                 <div className="row between">
                   <div>
-                    <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 600 }}>Tarefas</h2>
+                    <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 700, color: 'var(--text-primary)' }}>Tarefas</h2>
                     <p className="tiny muted" style={{ marginTop: 2 }}>
                       {e.show_heavy
                         ? `${visible.length} para hoje`
@@ -747,7 +863,7 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
                   </div>
                 ) : (
                   <div className="col gap-2">
-                    {visible.map(t => <TaskRow key={t.id} task={t} />)}
+                    {visible.map(t => <TaskRow key={t.id} task={t} large />)}
                   </div>
                 )}
                 <div className="row gap-2" style={{ marginTop: 'var(--s-3)' }}
@@ -768,6 +884,18 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
 
           {/* RIGHT */}
           <div className="col gap-4">
+            <Card>
+              <CardBody>
+                <PequenasVitorias />
+              </CardBody>
+            </Card>
+
+            <Card>
+              <CardBody>
+                <MiniCalendarWidget />
+              </CardBody>
+            </Card>
+
             <Card>
               <CardBody>
                 <RoutinesWidget />
