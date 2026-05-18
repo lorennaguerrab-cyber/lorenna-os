@@ -66,17 +66,81 @@ function Sidebar({ route, setRoute, energy, setEnergy, collapsed, setCollapsed }
       </div>
 
       {/* Nav */}
-      <nav className="nav">
-        {window.NAV.map(item => (
-          <div key={item.href}
-            className={`nav-item ${route === item.href ? 'active' : ''}`}
-            onClick={() => setRoute(item.href)}
-            title={collapsed ? item.label : ''}>
-            <Icon name={item.icon} size={17} />
-            {!collapsed && <span>{item.label}</span>}
-          </div>
-        ))}
-      </nav>
+      {/* Color map by href */}
+      {(() => {
+        const NAV_COLORS = {
+          '/':             '#fe7dae',  // pink - dashboard
+          '/captura':      '#FF78B0',  // pink - captura
+          '/ideias':       '#f0bff8',  // lavender - ideias
+          '/tarefas':      '#C44878',  // deep pink - tarefas
+          '/conteudo':     '#A89AC9',  // purple - conteúdo
+          '/prompts':      '#A89AC9',  // purple
+          '/studio':       '#7FB68C',  // green - studio
+          '/clientes':     '#5B9BD5',  // blue - clientes
+          '/crm':          '#5B9BD5',  // blue
+          '/agenda':       '#bce1f6',  // light blue - agenda
+          '/monetizacao':  '#E89B4C',  // amber - monetização
+          '/financeiro':   '#E89B4C',  // amber
+          '/materiais':    '#f1e18d',  // yellow - materiais
+          '/precificacao': '#f1e18d',  // yellow
+          '/diario':       '#fec9df',  // soft pink - diário
+          '/saude':        '#ffe1bd',  // warm - saúde
+          '/habitos':      '#fec9df',  // soft pink - hábitos
+          '/blog':         '#A89AC9',  // purple - blog
+          '/referencias':  '#bce1f6',  // light blue
+          '/sobre':        '#f0bff8',  // lavender
+        };
+        return (
+          <nav className="nav">
+            {window.NAV.map(item => {
+              const active = route === item.href;
+              const col = NAV_COLORS[item.href] || 'var(--pink)';
+              return (
+                <div key={item.href}
+                  className={`nav-item ${active ? 'active' : ''}`}
+                  onClick={() => setRoute(item.href)}
+                  title={collapsed ? item.label : ''}
+                  style={{
+                    position: 'relative',
+                    background: active
+                      ? `color-mix(in oklch, ${col} 18%, var(--bg-surface))`
+                      : 'transparent',
+                    borderRadius: 10,
+                    margin: '1px 0',
+                  }}>
+                  {active && (
+                    <div style={{
+                      position: 'absolute', left: 0, top: '20%', bottom: '20%',
+                      width: 3, borderRadius: '0 3px 3px 0',
+                      background: col,
+                    }}/>
+                  )}
+                  <div style={{
+                    width: 32, height: 32,
+                    borderRadius: 8,
+                    background: active
+                      ? `color-mix(in oklch, ${col} 25%, var(--bg-surface))`
+                      : `color-mix(in oklch, ${col} 10%, var(--bg-surface))`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0,
+                    transition: 'all .15s',
+                  }}>
+                    <Icon name={item.icon} size={16} color={active ? col : `color-mix(in oklch, ${col} 60%, var(--text-muted))`} />
+                  </div>
+                  {!collapsed && (
+                    <span style={{
+                      color: active ? col : 'var(--text-secondary)',
+                      fontWeight: active ? 600 : 400,
+                      fontSize: 14,
+                      transition: 'color .15s',
+                    }}>{item.label}</span>
+                  )}
+                </div>
+              );
+            })}
+          </nav>
+        );
+      })()}
 
       {/* Collapse */}
       <div className="collapse-toggle">

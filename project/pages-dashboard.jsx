@@ -300,20 +300,20 @@ function EnergySelector({ energy, setEnergy }) {
 function TaskRow({ task, dense, large, onDelete, onUpdate }) {
   const [open, setOpen] = useState(false);
   const [concluida, setConcluida] = useState(task.status === 'concluida');
-  const [microDone, setMicroDone] = useState(() => Object.fromEntries(task.micro.map(m => [m.id, m.done])));
-  const total = task.micro.length;
+  const [microDone, setMicroDone] = useState(() => Object.fromEntries((task.micro || []).map(m => [m.id, m.done])));
+  const total = (task.micro || []).length;
   const done = Object.values(microDone).filter(Boolean).length;
-  const nextStep = task.micro.find(m => !microDone[m.id]);
-  const totalMin = task.micro.reduce((a, m) => a + (m.min || 0), 0);
+  const totalMin = (task.micro || []).reduce((a, m) => a + (m.min || 0), 0);
   const [editando, setEditando] = useState(false);
   const [tituloEdit, setTituloEdit] = useState(task.titulo);
 
-  const prioColor = {
-    urgente: '#C44878',
-    alta:    '#E89B4C',
-    media:   'var(--pink)',
-    baixa:   '#7FB68C',
-  }[task.prioridade];
+  const prioMap = {
+    urgente: '#B83868',
+    alta:    '#C97B1A',
+    media:   '#C44878',
+    baixa:   '#5A8A6A',
+  };
+  const bg = prioMap[task.prioridade] || '#C44878';
 
   function salvarEdicao() {
     if (tituloEdit.trim() && tituloEdit.trim() !== task.titulo) {
@@ -327,22 +327,27 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
   return (
     <div style={{
       borderRadius: 'var(--r-md)',
-      background: 'var(--bg-surface)',
-      border: '1px solid var(--border)',
+      background: bg,
+      border: 'none',
       transition: 'all .15s var(--easing)',
     }}>
       <div className="row gap-3" style={{ padding: dense ? '10px 14px' : '14px 16px', alignItems: 'flex-start' }}>
-        <div onClick={() => { const next = !concluida; setConcluida(next); window.DB.updateTarefaStatus(task.id, next ? 'concluida' : 'pendente'); showToast(concluida ? 'Tarefa reaberta' : 'Tarefa concluída! ✓'); }}
-          style={{
-            width: 18, height: 18, borderRadius: 999,
-            border: `1.5px solid ${prioColor}`,
-            background: concluida ? prioColor : 'transparent',
-            marginTop: 1, flexShrink: 0,
-            cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            transition: 'all .15s',
-          }}>
-          {concluida && <Icon name="check" size={10} color="white"/>}
+        {/* Checkbox */}
+        <div onClick={() => {
+          const next = !concluida;
+          setConcluida(next);
+          window.DB && window.DB.updateTarefaStatus && window.DB.updateTarefaStatus(task.id, next ? 'concluida' : 'pendente');
+          showToast(concluida ? 'Tarefa reaberta' : 'Tarefa concluída! ✓');
+        }} style={{
+          width: 20, height: 20, borderRadius: 999,
+          border: '2px solid rgba(255,255,255,0.8)',
+          background: concluida ? 'rgba(255,255,255,0.9)' : 'transparent',
+          marginTop: 1, flexShrink: 0,
+          cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'all .15s',
+        }}>
+          {concluida && <Icon name="check" size={11} color={bg}/>}
         </div>
 
         <div className="grow">
@@ -353,84 +358,113 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
                   onChange={e => setTituloEdit(e.target.value)}
                   onBlur={salvarEdicao}
                   onKeyDown={e => { if (e.key === 'Enter') salvarEdicao(); if (e.key === 'Escape') setEditando(false); }}
-                  style={{ fontSize: 16, fontWeight: 600 }}
+                  style={{ fontSize: 15, fontWeight: 700, background: 'rgba(255,255,255,0.2)', color: '#fff', border: '1.5px solid rgba(255,255,255,0.5)', borderRadius: 6, padding: '4px 8px' }}
                 />
               ) : (
-                <div style={{ fontSize: 16, fontWeight: 600, lineHeight: 1.35, color: concluida ? 'var(--text-muted)' : 'var(--text-primary)', textDecoration: concluida ? 'line-through' : 'none', opacity: concluida ? 0.6 : 1 }}>
+                <div style={{
+                  fontSize: 15, fontWeight: 700, lineHeight: 1.35,
+                  color: concluida ? 'rgba(255,255,255,0.5)' : '#ffffff',
+                  textDecoration: concluida ? 'line-through' : 'none',
+                }}>
+                  {task.hora && <span style={{ fontSize: 13, fontWeight: 500, opacity: 0.8, marginRight: 6 }}>{task.hora}</span>}
                   {task.titulo}
                 </div>
               )}
               {task.cliente && (
-                <div style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 2 }}>
-                  Para <strong style={{ color: 'var(--text-secondary)' }}>{task.cliente}</strong>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', marginTop: 3 }}>
+                  Para <strong style={{ color: 'rgba(255,255,255,0.95)' }}>{task.cliente}</strong>
                 </div>
               )}
+              {task.fonte && (
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 2 }}>{task.fonte}</div>
+              )}
             </div>
-            <div className="row gap-1" style={{ flexShrink: 0, alignItems: 'center' }}>
+            <div className="row gap-1" style={{ flexShrink: 0, alignItems: 'center', marginLeft: 8 }}>
               {total > 0 && (
                 <span style={{
-                  fontSize: 14, fontWeight: 700, padding: '2px 10px', borderRadius: 999,
-                  background: done === total ? `color-mix(in oklch, ${prioColor} 15%, var(--bg-surface))` : 'var(--bg-elevated)',
-                  color: done === total ? prioColor : 'var(--text-muted)',
-                  border: `1px solid ${done === total ? prioColor : 'var(--border)'}`,
+                  fontSize: 13, fontWeight: 700, padding: '2px 9px', borderRadius: 999,
+                  background: done === total ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.2)',
+                  color: '#fff',
+                  border: '1px solid rgba(255,255,255,0.3)',
                 }}>{done}/{total}</span>
               )}
               <button onClick={() => { setTituloEdit(task.titulo); setEditando(true); }}
-                style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: '1px solid var(--border)', background: 'var(--bg-elevated)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.15)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 title="Editar tarefa">
-                <Icon name="edit" size={13} color="var(--text-muted)"/>
+                <Icon name="edit" size={13} color="rgba(255,255,255,0.85)"/>
               </button>
               {total > 0 && (
                 <button onClick={() => setOpen(!open)}
-                  style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: '1px solid var(--border)', background: 'var(--bg-elevated)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Icon name={open ? 'chev-down' : 'chev-right'} size={14} color="var(--text-muted)"/>
+                  style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.15)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Icon name={open ? 'chev-down' : 'chev-right'} size={14} color="rgba(255,255,255,0.85)"/>
                 </button>
               )}
               {onDelete && (
                 <button onClick={ev => { ev.stopPropagation(); onDelete(task.id); }}
-                  style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: '1px solid var(--border)', background: 'var(--bg-elevated)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.5 }}
+                  style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.15)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.6 }}
                   title="Remover">
-                  <Icon name="x" size={13} color="var(--text-muted)"/>
+                  <Icon name="x" size={13} color="rgba(255,255,255,0.85)"/>
                 </button>
               )}
             </div>
           </div>
 
-          {/* progress bar */}
+          {/* Progress bar */}
           {total > 0 && (
-            <div style={{ marginTop: 8, height: 3, borderRadius: 999, background: 'var(--bg-hover)', overflow: 'hidden' }}>
-              <div style={{ width: `${(done/total)*100}%`, height: '100%', background: prioColor, transition: 'width .3s' }}/>
+            <div style={{ marginTop: 8, height: 4, borderRadius: 999, background: 'rgba(255,255,255,0.25)', overflow: 'hidden' }}>
+              <div style={{ width: `${(done/total)*100}%`, height: '100%', background: 'rgba(255,255,255,0.85)', borderRadius: 999, transition: 'width .3s' }}/>
             </div>
           )}
 
-          {/* microsteps */}
+          {/* Expanded microsteps + IA hints */}
           {open && (
             <div style={{ marginTop: 12 }} className="col gap-2">
-              {task.micro.map((m, i) => (
+              {(task.micro || []).map((m) => (
                 <div key={m.id} className="row gap-3"
                   onClick={() => setMicroDone(prev => ({ ...prev, [m.id]: !prev[m.id] }))}
-                  style={{ padding: '8px 10px', background: microDone[m.id] ? 'var(--bg-inset)' : 'var(--bg-elevated)', borderRadius: 'var(--r-sm)', cursor: 'pointer' }}>
+                  style={{ padding: '8px 10px', background: microDone[m.id] ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.15)', borderRadius: 'var(--r-sm)', cursor: 'pointer' }}>
                   <div style={{
                     width: 16, height: 16, borderRadius: 999,
-                    border: `1.5px solid ${microDone[m.id] ? prioColor : 'var(--border-strong)'}`,
-                    background: microDone[m.id] ? prioColor : 'transparent',
+                    border: `1.5px solid ${microDone[m.id] ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)'}`,
+                    background: microDone[m.id] ? 'rgba(255,255,255,0.9)' : 'transparent',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     flexShrink: 0, transition: 'all .15s',
                   }}>
-                    {microDone[m.id] && <Icon name="check" size={10} color="white"/>}
+                    {microDone[m.id] && <Icon name="check" size={10} color={bg}/>}
                   </div>
                   <span style={{
-                    fontSize: 14.5,
-                    color: microDone[m.id] ? 'var(--text-muted)' : 'var(--text-primary)',
+                    fontSize: 14, flex: 1,
+                    color: microDone[m.id] ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.92)',
                     textDecoration: microDone[m.id] ? 'line-through' : 'none',
-                    flex: 1,
                   }}>{m.desc}</span>
-                  {m.min && <span className="tiny muted">{m.min}min</span>}
+                  {m.min && <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', flexShrink: 0 }}>{m.min}min</span>}
                 </div>
               ))}
               {totalMin > 0 && (
-                <div className="tiny muted" style={{ textAlign: 'right', marginTop: 2 }}>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', textAlign: 'right', marginTop: 2 }}>
                   Estimado: {totalMin} min
+                </div>
+              )}
+              {/* IA hint block */}
+              {task.ferramentasIA && task.ferramentasIA.length > 0 && (
+                <div style={{
+                  marginTop: 4, padding: '10px 12px',
+                  background: 'rgba(255,255,255,0.12)',
+                  borderRadius: 'var(--r-sm)',
+                  borderLeft: '3px solid rgba(255,255,255,0.4)',
+                }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.9)', marginBottom: 6 }}>
+                    🤖 Travou? Ferramentas que podem ajudar:
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {task.ferramentasIA.map((f, i) => (
+                      <span key={i} style={{
+                        fontSize: 13, padding: '3px 10px',
+                        background: 'rgba(255,255,255,0.2)', color: '#fff',
+                        borderRadius: 999, border: '1px solid rgba(255,255,255,0.3)',
+                      }}>{f}</span>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -1179,8 +1213,9 @@ function LembretesHabitosWidget() {
   const aguaPct = Math.min(100, (aguaMl / 3000) * 100);
   const aguaCor = aguaPct >= 100 ? '#7FB68C' : aguaPct >= 60 ? '#5B9BD5' : '#bce1f6';
 
-  const done = window.RECURRENCES.filter(r => r.tipo !== 'agua' && checkedState(r)).length;
-  const total = window.RECURRENCES.filter(r => r.tipo !== 'agua').length;
+  const todayDow = (new Date().getDay() + 6) % 7;
+  const done = window.RECURRENCES.filter(r => r.tipo !== 'agua' && (!r.diasDaSemana || r.diasDaSemana.includes(todayDow)) && checkedState(r)).length;
+  const total = window.RECURRENCES.filter(r => r.tipo !== 'agua' && (!r.diasDaSemana || r.diasDaSemana.includes(todayDow))).length;
 
   return (
     <Card>
@@ -1233,7 +1268,14 @@ function LembretesHabitosWidget() {
         </div>
 
         {/* Demais lembretes com check */}
-        {window.RECURRENCES.filter(r => r.tipo !== 'agua').map(r => {
+        {window.RECURRENCES.filter(r => {
+          if (r.tipo === 'agua') return false;
+          if (r.diasDaSemana) {
+            const dow = (new Date().getDay() + 6) % 7;
+            return r.diasDaSemana.includes(dow);
+          }
+          return true;
+        }).map(r => {
           const checked = checkedState(r);
           return (
             <div key={r.texto} onClick={() => r.tipo === 'habito' ? toggleHabito(r.id) : toggleMeds(r.ids)}
@@ -1504,9 +1546,32 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
                     </p>
                   </div>
                 ) : (
-                  <div className="col gap-2">
-                    {listaHoje.map(t => <TaskRow key={t.id} task={t} />)}
-                  </div>
+                  (() => {
+                    const urgentes = listaHoje.filter(t => t.prioridade === 'urgente');
+                    const outros = listaHoje.filter(t => t.prioridade !== 'urgente');
+                    return (
+                      <div className="col gap-3">
+                        {urgentes.length > 0 && (
+                          <div className="col gap-2">
+                            <div style={{ fontSize: 13, fontWeight: 700, color: '#B83868', textTransform: 'uppercase', letterSpacing: '.06em', paddingLeft: 2 }}>
+                              🔥 Urgente
+                            </div>
+                            {urgentes.map(t => <TaskRow key={t.id} task={t} />)}
+                          </div>
+                        )}
+                        {outros.length > 0 && (
+                          <div className="col gap-2">
+                            {urgentes.length > 0 && (
+                              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '.06em', paddingLeft: 2 }}>
+                                📋 De hoje
+                              </div>
+                            )}
+                            {outros.map(t => <TaskRow key={t.id} task={t} />)}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()
                 )}
                 <div className="row gap-2" style={{ marginTop: 'var(--s-3)' }}
                   onClick={() => setRoute('/tarefas')}>

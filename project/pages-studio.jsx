@@ -212,7 +212,285 @@ function SugestoesList({ sugestoes, onSelect }) {
   );
 }
 
+const PROMPT_CAT_COLORS = {
+  conteudo:   '#fe7dae',
+  roteiro:    '#7FB68C',
+  blog:       '#5B9BD5',
+  newsletter: '#FF78B0',
+  branding:   '#A89AC9',
+  cliente:    '#E89B4C',
+  ugc:        '#f0bff8',
+  design:     '#f1e18d',
+  pesquisa:   '#bce1f6',
+  estrategia: '#ffe1bd',
+};
+
+function PromptsBancoTab() {
+  const [sel, setSel] = useState(null);
+  const [copiado, setCopiado] = useState(false);
+  const prompts = window.DEMO_PROMPTS || [];
+  const cats = window.PROMPT_CATS || {};
+  const iaColors = window.IA_COLORS || {};
+
+  function copiarPrompt(texto) {
+    navigator.clipboard.writeText(texto).then(() => {
+      setCopiado(true);
+      showToast('Prompt copiado!');
+      setTimeout(() => setCopiado(false), 2000);
+    });
+  }
+
+  if (sel) {
+    const cor = PROMPT_CAT_COLORS[sel.cat] || '#fe7dae';
+    return (
+      <div className="col gap-4 fade-up">
+        <div className="row gap-3" style={{ alignItems: 'center' }}>
+          <button onClick={() => setSel(null)} style={{
+            padding: '6px 14px', borderRadius: 'var(--r-md)',
+            border: '1px solid var(--border)', background: 'var(--bg-elevated)',
+            cursor: 'pointer', fontSize: 14, fontFamily: 'var(--font-body)', color: 'var(--text-secondary)',
+          }}>← Voltar</button>
+          <div>
+            <span style={{ fontSize: 13, fontWeight: 700, padding: '3px 10px', borderRadius: 999, background: cor, color: '#201e1f' }}>
+              {cats[sel.cat] || sel.cat}
+            </span>
+          </div>
+        </div>
+
+        <Card style={{ borderTop: `3px solid ${cor}` }}>
+          <CardBody className="col gap-4">
+            <div>
+              <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 20, fontWeight: 700, lineHeight: 1.3 }}>{sel.titulo}</h2>
+              <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 6 }}>{sel.desc}</p>
+            </div>
+
+            {/* Checklist */}
+            {sel.checklist && (
+              <div>
+                <div className="eyebrow" style={{ marginBottom: 8 }}>Como usar</div>
+                <div className="col gap-2">
+                  {sel.checklist.map((item, i) => (
+                    <div key={i} className="row gap-3" style={{ padding: '8px 12px', background: `color-mix(in oklch, ${cor} 10%, var(--bg-elevated))`, borderRadius: 'var(--r-md)' }}>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: cor, flexShrink: 0 }}>{i + 1}</span>
+                      <span style={{ fontSize: 14, color: 'var(--text-primary)' }}>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Prompt text */}
+            <div>
+              <div className="row between" style={{ marginBottom: 8, alignItems: 'center' }}>
+                <div className="eyebrow">Prompt completo</div>
+                <Button variant="primary" size="sm" onClick={() => copiarPrompt(sel.texto)}
+                  style={{ background: copiado ? '#7FB68C' : cor }}>
+                  {copiado ? '✓ Copiado!' : '📋 Copiar prompt'}
+                </Button>
+              </div>
+              <div style={{
+                background: 'var(--bg-elevated)', borderRadius: 'var(--r-md)',
+                border: '1px solid var(--border)', padding: 'var(--s-4)',
+              }}>
+                <pre style={{
+                  whiteSpace: 'pre-wrap', fontFamily: 'var(--font-body)',
+                  fontSize: 14, lineHeight: 1.7, color: 'var(--text-primary)', margin: 0,
+                }}>{sel.texto}</pre>
+              </div>
+            </div>
+
+            {/* AI tool */}
+            {sel.tool && (
+              <div style={{ padding: '10px 14px', background: `color-mix(in oklch, ${cor} 10%, var(--bg-surface))`, borderRadius: 'var(--r-md)', border: `1px solid color-mix(in oklch, ${cor} 25%, transparent)` }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-muted)', marginRight: 8 }}>Ferramentas:</span>
+                <span style={{ fontSize: 14, color: 'var(--text-primary)' }}>{sel.tool}</span>
+              </div>
+            )}
+          </CardBody>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="col gap-4">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--s-3)' }}>
+        {prompts.map(p => {
+          const cor = PROMPT_CAT_COLORS[p.cat] || '#fe7dae';
+          return (
+            <div key={p.id}
+              onClick={() => setSel(p)}
+              style={{
+                padding: 'var(--s-4)', borderRadius: 'var(--r-xl)',
+                background: 'var(--bg-surface)',
+                border: '1.5px solid var(--border)',
+                cursor: 'pointer', transition: 'all .15s',
+                borderTop: `4px solid ${cor}`,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = cor; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,.08)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.borderTopColor = cor; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}>
+              <div className="row between" style={{ marginBottom: 10, alignItems: 'flex-start' }}>
+                <span style={{ fontSize: 13, fontWeight: 700, padding: '3px 10px', borderRadius: 999, background: cor, color: '#201e1f' }}>
+                  {cats[p.cat] || p.cat}
+                </span>
+                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{p.tool?.split(' + ')[0]}</span>
+              </div>
+              <div style={{ fontFamily: 'var(--font-title)', fontSize: 15, fontWeight: 600, lineHeight: 1.35, marginBottom: 8, color: 'var(--text-primary)' }}>
+                {p.titulo}
+              </div>
+              <p style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.5, margin: 0 }}>{p.desc}</p>
+              {p.etapas && (
+                <div className="row gap-2" style={{ marginTop: 12, flexWrap: 'wrap' }}>
+                  {p.etapas.map((et, i) => (
+                    <span key={i} style={{ fontSize: 13, padding: '2px 8px', borderRadius: 999, background: `color-mix(in oklch, ${cor} 15%, var(--bg-elevated))`, color: 'var(--text-secondary)' }}>
+                      {et}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div style={{ marginTop: 12, fontSize: 14, color: cor, fontWeight: 600 }}>Ver prompt completo →</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+const FERRAMENTAS_IA = [
+  {
+    cat: 'Texto e escrita',
+    cor: '#fe7dae',
+    emoji: '✍️',
+    tools: [
+      { nome: 'Claude', desc: 'Melhor para escrita criativa, newsletters, blog, roteiros', gratuito: true, destaque: true },
+      { nome: 'ChatGPT', desc: 'Versatilidade para textos gerais, pesquisa e brainstorming', gratuito: true },
+      { nome: 'Gemini', desc: 'Google — bom para pesquisa com contexto atual', gratuito: true },
+      { nome: 'Perplexity', desc: 'Pesquisa com fontes citadas — ótimo para contextualizar pautas', gratuito: true },
+    ],
+  },
+  {
+    cat: 'Imagens e design',
+    cor: '#f0bff8',
+    emoji: '🎨',
+    tools: [
+      { nome: 'Canva AI', desc: 'Gerar imagens, fundo mágico, resize automático — integrado ao Canva', gratuito: true, destaque: true },
+      { nome: 'Ideogram', desc: 'Geração de imagens com texto legível — ótimo para posts', gratuito: true },
+      { nome: 'Adobe Firefly', desc: 'Geração de imagens e edição — integrado ao Photoshop', gratuito: true },
+      { nome: 'DALL-E (ChatGPT)', desc: 'Geração de imagens via ChatGPT Plus', gratuito: false },
+      { nome: 'Remove.bg', desc: 'Remove fundo de imagens em segundos', gratuito: true },
+    ],
+  },
+  {
+    cat: 'Vídeo e edição',
+    cor: '#bce1f6',
+    emoji: '🎬',
+    tools: [
+      { nome: 'CapCut', desc: 'Edição de vídeo com IA — legendas automáticas, voz, efeitos', gratuito: true, destaque: true },
+      { nome: 'DaVinci Resolve', desc: 'Edição profissional de vídeo — totalmente gratuito', gratuito: true },
+      { nome: 'RunwayML', desc: 'Geração e edição de vídeo com IA (plano limitado gratuito)', gratuito: false },
+      { nome: 'Clipe', desc: 'App BR para edição rápida de reels com templates', gratuito: true },
+    ],
+  },
+  {
+    cat: 'Voz e narração',
+    cor: '#ffe1bd',
+    emoji: '🎙️',
+    tools: [
+      { nome: 'Adobe Podcast (Enhance)', desc: 'Melhora qualidade do áudio automaticamente — gratuito', gratuito: true, destaque: true },
+      { nome: 'ElevenLabs', desc: 'Geração de voz com IA — clone de voz (plan free limitado)', gratuito: false },
+      { nome: 'Whisper (OpenAI)', desc: 'Transcrição de áudio/vídeo para texto — precisíssimo', gratuito: true },
+      { nome: 'Otter.ai', desc: 'Transcrição em tempo real de reuniões e entrevistas', gratuito: true },
+    ],
+  },
+  {
+    cat: 'Fotos e estética',
+    cor: '#fec9df',
+    emoji: '📸',
+    tools: [
+      { nome: 'Lightroom (mobile)', desc: 'Edição profissional com IA — ajuste automático, máscaras', gratuito: true, destaque: true },
+      { nome: 'Snapseed', desc: 'Edição avançada no celular — gratuito', gratuito: true },
+      { nome: 'Remini', desc: 'Melhora qualidade de fotos com IA', gratuito: true },
+      { nome: 'Lensa', desc: 'Retratos artísticos com IA — ensaios fotográficos', gratuito: false },
+    ],
+  },
+  {
+    cat: 'SEO e pesquisa',
+    cor: '#f1e18d',
+    emoji: '🔍',
+    tools: [
+      { nome: 'Google Search Console', desc: 'Ver palavras-chave reais que geram tráfego pro blog', gratuito: true, destaque: true },
+      { nome: 'Ubersuggest', desc: 'Pesquisa de palavras-chave — plano free limitado', gratuito: true },
+      { nome: 'AnswerThePublic', desc: 'Perguntas que as pessoas fazem sobre um tema', gratuito: true },
+      { nome: 'Google Trends', desc: 'Tendências de busca em tempo real', gratuito: true },
+    ],
+  },
+  {
+    cat: 'Logo e identidade',
+    cor: '#A89AC9',
+    emoji: '💎',
+    tools: [
+      { nome: 'Canva AI', desc: 'Criação de logos e paletas com IA', gratuito: true, destaque: true },
+      { nome: 'Looka', desc: 'Geração de logotipos com IA — plano inicial gratuito', gratuito: false },
+      { nome: 'Brandmark.io', desc: 'Logo com IA — simples e rápido', gratuito: false },
+      { nome: 'Coolors', desc: 'Geração de paletas de cores — totalmente gratuito', gratuito: true },
+    ],
+  },
+  {
+    cat: 'Bancos de imagens grátis',
+    cor: '#7FB68C',
+    emoji: '🖼️',
+    tools: [
+      { nome: 'Unsplash', desc: 'Fotos de alta qualidade — gratuitas para uso comercial', gratuito: true, destaque: true },
+      { nome: 'Pexels', desc: 'Fotos e vídeos gratuitos de alta qualidade', gratuito: true },
+      { nome: 'Freepik', desc: 'Vetores, ícones e fotos — free com atribuição', gratuito: true },
+      { nome: 'Storyset', desc: 'Ilustrações customizáveis gratuitas', gratuito: true },
+    ],
+  },
+];
+
+function FerramentasIATab() {
+  return (
+    <div className="col gap-5">
+      <p style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+        Ferramentas gratuitas (ou com plano free útil) organizadas por categoria. Sempre que uma tarefa indicar ferramentas de IA, você encontrará o link aqui.
+      </p>
+      {FERRAMENTAS_IA.map(grupo => (
+        <div key={grupo.cat}>
+          <div className="row gap-2" style={{ marginBottom: 12, alignItems: 'center' }}>
+            <span style={{ fontSize: 22 }}>{grupo.emoji}</span>
+            <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700 }}>{grupo.cat}</h3>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 'var(--s-3)' }}>
+            {grupo.tools.map(t => (
+              <div key={t.nome} style={{
+                padding: 'var(--s-3) var(--s-4)',
+                borderRadius: 'var(--r-md)',
+                background: t.destaque
+                  ? `color-mix(in oklch, ${grupo.cor} 18%, var(--bg-surface))`
+                  : 'var(--bg-elevated)',
+                border: `1.5px solid ${t.destaque ? grupo.cor : 'var(--border)'}`,
+              }}>
+                <div className="row between" style={{ marginBottom: 6, alignItems: 'center' }}>
+                  <div style={{ fontWeight: 700, fontSize: 14.5, color: 'var(--text-primary)' }}>{t.nome}</div>
+                  <span style={{
+                    fontSize: 12, fontWeight: 700, padding: '2px 8px', borderRadius: 999,
+                    background: t.gratuito ? '#7FB68C' : '#E89B4C',
+                    color: '#fff',
+                  }}>{t.gratuito ? 'Grátis' : 'Pago'}</span>
+                </div>
+                <p style={{ fontSize: 13.5, color: 'var(--text-muted)', margin: 0, lineHeight: 1.4 }}>{t.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function StudioPage() {
+  const [tab, setTab] = useState('agentes');
   const [agenteSel, setAgenteSel] = useState(null);
   const [campos, setCampos] = useState({});
   const [multiListas, setMultiListas] = useState({});
@@ -371,6 +649,31 @@ Formato: uma sugestão por linha, numeradas de 1 a 5. Seja específico e útil.`
           title="Studio IA"
           subtitle="Agentes que criam conteúdo com a sua voz"
         />
+
+        {/* Tab bar */}
+        <div className="row gap-2" style={{ borderBottom: '2px solid var(--border)', paddingBottom: 0 }}>
+          {[
+            { id: 'agentes',     label: '🤖 Agentes IA'     },
+            { id: 'prompts',     label: '📋 Banco de Prompts' },
+            { id: 'ferramentas', label: '✨ Ferramentas'      },
+          ].map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)}
+              style={{
+                padding: '10px 18px',
+                border: 'none', background: 'transparent',
+                cursor: 'pointer', fontFamily: 'var(--font-body)',
+                fontSize: 14.5, fontWeight: tab === t.id ? 700 : 500,
+                color: tab === t.id ? 'var(--pink-deep)' : 'var(--text-muted)',
+                borderBottom: tab === t.id ? '2px solid var(--pink)' : '2px solid transparent',
+                marginBottom: -2,
+                transition: 'all .15s',
+              }}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {tab === 'agentes' && (<React.Fragment>
 
         {/* Agent cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 'var(--s-3)' }}>
@@ -607,6 +910,18 @@ Formato: uma sugestão por linha, numeradas de 1 a 5. Seja específico e útil.`
               </div>
             )}
           </div>
+        )}
+
+        </React.Fragment>)}
+
+        {/* PROMPTS TAB */}
+        {tab === 'prompts' && (
+          <PromptsBancoTab />
+        )}
+
+        {/* FERRAMENTAS TAB */}
+        {tab === 'ferramentas' && (
+          <FerramentasIATab />
         )}
       </div>
     </div>

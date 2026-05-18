@@ -114,85 +114,179 @@ const RECURRENCES = [
     desc: 'Dar GROWVIT todos os dias antes do almoço' },
   { texto: 'Tarefas escolares Mateus & Murilo', icon: '📚', hora: 'Manhã',      cor: '#f0bff8', tipo: 'habito', id: 'tarefas_escolares' },
   { texto: 'Brincadeiras com Miguel, Mateus e Murilo', icon: '🐣', hora: 'Manhã e noite', cor: '#fec9df', tipo: 'habito', id: 'brincadeira_miguel' },
-  { texto: 'Futebol Mateus & Murilo',      icon: '⚽', hora: 'Qua e Sex',        cor: '#f1e18d', tipo: 'habito', id: 'futebol' },
+  { texto: 'Futebol Mateus & Murilo',      icon: '⚽', hora: 'Qua e Sex 8h20',   cor: '#f1e18d', tipo: 'habito', id: 'futebol', diasDaSemana: [2, 4] },
 ];
 
 /* ── Tarefas demo ── */
 const DEMO_TASKS = [
-  {
-    id: 't2', titulo: 'Entregar vídeos semana Pratique',
-    status: 'em_progresso', prioridade: 'urgente', energia: ['operacional'],
-    categoria: 'cliente', cliente: 'Pratique', recorrente: true,
-    diasDaSemana: [1, 3, 4],
-    micro: [
-      { id: 'm4', desc: 'Criar artes no Canva',              done: true,  min: 20 },
-      { id: 'm5', desc: 'Escrever legendas',                 done: false, min: 15 },
-      { id: 'm6', desc: 'Agendar no Meta Business Suite',    done: false, min: 10 },
-    ],
-  },
-  {
-    id: 't3', titulo: 'Escrever newsletter semanal (Carta da Lola)',
-    status: 'pendente', prioridade: 'alta', energia: ['criativa', 'foco'],
-    categoria: 'conteudo', recorrente: true,
-    diasDaSemana: [2],
-    micro: [
-      { id: 'm7',  desc: 'Definir tema e cena da semana',    done: false, min: 5 },
-      { id: 'm8',  desc: 'Escrever rascunho com Claude',     done: false, min: 20 },
-      { id: 'm9',  desc: 'Revisar e adicionar toque pessoal',done: false, min: 15 },
-      { id: 'm10', desc: 'Programar envio no Substack',      done: false, min: 5 },
-    ],
-  },
+  // ── E-mails: diário
   {
     id: 't4', titulo: 'Responder e-mails e DMs pendentes',
     status: 'pendente', prioridade: 'media',
     energia: ['operacional', 'social', 'cansada'],
     categoria: 'admin', recorrente: true, diario: true, micro: [],
   },
+
+  // ── Blog: segunda
   {
-    id: 't5', titulo: 'Post para o blog Papel da Lola',
+    id: 't5', titulo: 'Escrever post para o blog Papel da Lola',
     status: 'pendente', prioridade: 'media', energia: ['criativa', 'foco'],
-    categoria: 'conteudo', recorrente: false,
-    diasDaSemana: [0],
+    categoria: 'conteudo', recorrente: false, diasDaSemana: [0],
     micro: [
       { id: 'm11', desc: 'Escolher tema com potencial SEO',  done: false, min: 10 },
       { id: 'm12', desc: 'Estruturar o artigo',              done: false, min: 10 },
       { id: 'm13', desc: 'Escrever com apoio do Claude',     done: false, min: 30 },
       { id: 'm14', desc: 'Otimizar SEO e publicar',          done: false, min: 15 },
     ],
+    ferramentasIA: ['Blog SEO (Studio IA)', 'Claude', 'Ubersuggest (SEO gratuito)'],
   },
-  {
-    id: 't6', titulo: 'Campanha Dia dos Namorados — Ótica Igor Giordano',
-    status: 'em_progresso', prioridade: 'urgente', energia: ['operacional', 'criativa'],
-    categoria: 'cliente', cliente: 'Ótica Igor Giordano', recorrente: false,
-    micro: [
-      { id: 'm15', desc: 'Criar 3 peças visuais no Canva',   done: true,  min: 45 },
-      { id: 'm16', desc: 'Escrever legendas para cada peça', done: false, min: 20 },
-      { id: 'm17', desc: 'Enviar para aprovação do Igor',    done: false, min: 5 },
-      { id: 'm18', desc: 'Agendar publicação',               done: false, min: 10 },
-    ],
-  },
-  {
-    id: 't8', titulo: 'Roteiro e edição vídeo Jornal Cidades Minerais',
-    status: 'em_progresso', prioridade: 'urgente', energia: ['foco', 'operacional'],
-    categoria: 'cliente', cliente: 'Jornal Cidades Minerais', recorrente: true,
-    diasDaSemana: [0, 2, 4],
-    micro: [
-      { id: 'm24', desc: 'Escrever roteiro da plenária',     done: true,  min: 30 },
-      { id: 'm25', desc: 'Fazer entrevista (terça 14h)',      done: false, min: 60 },
-      { id: 'm26', desc: 'Editar vídeo semanal',             done: false, min: 90 },
-      { id: 'm27', desc: 'Enviar para aprovação do Marcos',  done: false, min: 5 },
-    ],
-  },
+
+  // ── Divulgar serviços: seg + qua
   {
     id: 't10', titulo: 'Divulgar serviços da Agência Logue',
     status: 'pendente', prioridade: 'alta', energia: ['social', 'criativa'],
-    categoria: 'marketing', recorrente: true,
-    diasDaSemana: [0, 2],
+    categoria: 'marketing', recorrente: true, diasDaSemana: [0, 2],
     micro: [
       { id: 'm28', desc: 'Postar story mostrando serviço ou resultado de cliente', done: false, min: 15 },
       { id: 'm29', desc: 'Responder DMs e comentários de potenciais clientes',     done: false, min: 10 },
       { id: 'm30', desc: 'Prospectar 1 novo contato no CRM',                       done: false, min: 10 },
     ],
+    ferramentasIA: ['Roteirista (Studio IA)', 'Canva AI', 'Claude'],
+  },
+
+  // ── Pratique — texto/narração: seg + qua
+  {
+    id: 't2a', titulo: 'Criar texto e narração — vídeos Pratique',
+    status: 'pendente', prioridade: 'alta', energia: ['criativa', 'foco'],
+    categoria: 'cliente', cliente: 'Pratique', recorrente: true, diasDaSemana: [0, 2],
+    micro: [
+      { id: 'p2a1', desc: 'Escrever legendas e roteiro de narração', done: false, min: 20 },
+      { id: 'p2a2', desc: 'Gravar narração (se necessário)',          done: false, min: 15 },
+      { id: 'p2a3', desc: 'Revisar textos com o cliente',            done: false, min: 10 },
+    ],
+    ferramentasIA: ['Roteirista (Studio IA)', 'Post de Cliente (Studio IA)', 'Claude', 'Adobe Podcast (voz)'],
+  },
+
+  // ── Pratique — edição/entrega: sexta
+  {
+    id: 't2b', titulo: 'Editar e entregar vídeos Pratique',
+    status: 'em_progresso', prioridade: 'urgente', energia: ['operacional'],
+    categoria: 'cliente', cliente: 'Pratique', recorrente: true, diasDaSemana: [4],
+    micro: [
+      { id: 'p2b1', desc: 'Editar vídeos no CapCut ou Premiere',   done: false, min: 60 },
+      { id: 'p2b2', desc: 'Adicionar legendas e texto na tela',     done: false, min: 15 },
+      { id: 'p2b3', desc: 'Enviar para aprovação do cliente',       done: false, min: 5 },
+      { id: 'p2b4', desc: 'Alterar ou agendar no Meta Business',   done: false, min: 10 },
+    ],
+    ferramentasIA: ['CapCut AI', 'CapCut (legendas automáticas)', 'Meta Business Suite'],
+  },
+
+  // ── Newsletter: quarta
+  {
+    id: 't3', titulo: 'Escrever newsletter semanal (Carta da Lola)',
+    status: 'pendente', prioridade: 'alta', energia: ['criativa', 'foco'],
+    categoria: 'conteudo', recorrente: true, diasDaSemana: [2],
+    micro: [
+      { id: 'm7',  desc: 'Definir tema e cena da semana',    done: false, min: 5 },
+      { id: 'm8',  desc: 'Escrever rascunho com Claude',     done: false, min: 20 },
+      { id: 'm9',  desc: 'Revisar e adicionar toque pessoal',done: false, min: 15 },
+      { id: 'm10', desc: 'Programar envio no Substack',      done: false, min: 5 },
+    ],
+    ferramentasIA: ['Carta da Lola (Studio IA)', 'Claude'],
+  },
+
+  // ── Jornal — roteiro: segunda
+  {
+    id: 't8r', titulo: 'Escrever roteiro — Jornal Cidades Minerais',
+    status: 'em_progresso', prioridade: 'alta', energia: ['foco'],
+    categoria: 'cliente', cliente: 'Jornal Cidades Minerais', recorrente: true, diasDaSemana: [0],
+    micro: [
+      { id: 'j8r1', desc: 'Revisar pauta da semana com Marcos',     done: true,  min: 15 },
+      { id: 'j8r2', desc: 'Pesquisar contexto e dados da plenária', done: false, min: 20 },
+      { id: 'j8r3', desc: 'Escrever roteiro completo',              done: false, min: 30 },
+      { id: 'j8r4', desc: 'Enviar roteiro para aprovação prévia',   done: false, min: 5 },
+    ],
+    ferramentasIA: ['Roteirista (Studio IA)', 'Claude', 'Perplexity (pesquisa)'],
+  },
+
+  // ── Jornal — edição/entrega: qua + sex
+  {
+    id: 't8e', titulo: 'Editar e finalizar vídeo Jornal Cidades Minerais',
+    status: 'pendente', prioridade: 'urgente', energia: ['foco', 'operacional'],
+    categoria: 'cliente', cliente: 'Jornal Cidades Minerais', recorrente: true, diasDaSemana: [2, 4],
+    micro: [
+      { id: 'j8e1', desc: 'Fazer entrevista ou usar brutos gravados', done: false, min: 60 },
+      { id: 'j8e2', desc: 'Editar vídeo semanal',                     done: false, min: 90 },
+      { id: 'j8e3', desc: 'Adicionar vinheta e legendas',              done: false, min: 15 },
+      { id: 'j8e4', desc: 'Enviar para aprovação do Marcos',           done: false, min: 5 },
+      { id: 'j8e5', desc: 'Alterar ou publicar no YouTube/sociais',   done: false, min: 10 },
+    ],
+    ferramentasIA: ['CapCut AI', 'DaVinci Resolve (gratuito)', 'Adobe Podcast (áudio)'],
+  },
+
+  // ── Campanha Namorados — qua + sex
+  {
+    id: 't6', titulo: 'Campanha Dia dos Namorados — Ótica Igor Giordano',
+    status: 'em_progresso', prioridade: 'alta', energia: ['operacional', 'criativa'],
+    categoria: 'cliente', cliente: 'Ótica Igor Giordano', recorrente: false, diasDaSemana: [2, 4],
+    micro: [
+      { id: 'm15', desc: 'Criar peças visuais no Canva (3 posts)',   done: true,  min: 45 },
+      { id: 'm16', desc: 'Escrever copy e legenda para cada peça',   done: false, min: 20 },
+      { id: 'm17', desc: 'Enviar para aprovação do Igor',            done: false, min: 5 },
+      { id: 'm18', desc: 'Alterar conforme feedback ou agendar',     done: false, min: 10 },
+    ],
+    ferramentasIA: ['Post de Cliente (Studio IA)', 'Canva AI', 'Claude', 'Meta Business Suite'],
+  },
+
+  // ── Campanha Copa do Mundo — Igor: seg + qua
+  {
+    id: 't11', titulo: 'Campanha Copa do Mundo 2026 — Ótica Igor Giordano',
+    status: 'pendente', prioridade: 'alta', energia: ['criativa', 'operacional'],
+    categoria: 'cliente', cliente: 'Ótica Igor Giordano', recorrente: false, diasDaSemana: [0, 2],
+    micro: [
+      { id: 'c11a', desc: 'Criar roteiro e conceito da campanha',        done: false, min: 20 },
+      { id: 'c11b', desc: 'Captar vídeos (agendar sessão externa)',       done: false, min: 60 },
+      { id: 'c11c', desc: 'Editar vídeo principal da campanha',           done: false, min: 90 },
+      { id: 'c11d', desc: 'Criar copy e legenda para os posts',           done: false, min: 20 },
+      { id: 'c11e', desc: 'Criar imagem/design dos posts (Canva/foto)',   done: false, min: 30 },
+      { id: 'c11f', desc: 'Enviar tudo para aprovação do Igor',           done: false, min: 5 },
+      { id: 'c11g', desc: 'Alterar conforme feedback ou agendar',         done: false, min: 10 },
+    ],
+    ferramentasIA: ['Roteirista (Studio IA)', 'Post de Cliente (Studio IA)', 'Canva AI', 'CapCut AI', 'Claude'],
+  },
+
+  // ── Campanha Aniversário Igor: qua + sex
+  {
+    id: 't12', titulo: 'Campanha Aniversário — Ótica Igor Giordano',
+    status: 'pendente', prioridade: 'media', energia: ['criativa', 'operacional'],
+    categoria: 'cliente', cliente: 'Ótica Igor Giordano', recorrente: false, diasDaSemana: [2, 4],
+    micro: [
+      { id: 'c12a', desc: 'Definir conceito e linha visual da campanha',  done: false, min: 20 },
+      { id: 'c12b', desc: 'Criar roteiro para vídeo de aniversário',      done: false, min: 20 },
+      { id: 'c12c', desc: 'Captar ou reunir fotos/vídeos do histórico',   done: false, min: 30 },
+      { id: 'c12d', desc: 'Editar vídeo comemorativo',                    done: false, min: 60 },
+      { id: 'c12e', desc: 'Criar posts e stories da campanha',            done: false, min: 30 },
+      { id: 'c12f', desc: 'Criar copy e legendas',                        done: false, min: 15 },
+      { id: 'c12g', desc: 'Enviar para aprovação e agendar',              done: false, min: 10 },
+    ],
+    ferramentasIA: ['Roteirista (Studio IA)', 'Post de Cliente (Studio IA)', 'Canva AI', 'CapCut AI'],
+  },
+
+  // ── Campanha Espaço Criar: qua
+  {
+    id: 't13', titulo: 'Nova campanha — Espaço Criar',
+    status: 'pendente', prioridade: 'media', energia: ['criativa'],
+    categoria: 'cliente', cliente: 'Espaço Criar', recorrente: false, diasDaSemana: [2],
+    micro: [
+      { id: 'c13a', desc: 'Definir nome e conceito da campanha com cliente', done: false, min: 20 },
+      { id: 'c13b', desc: 'Criar roteiro e storyboard',                      done: false, min: 20 },
+      { id: 'c13c', desc: 'Captar fotos e vídeos (agendar sessão)',          done: false, min: 60 },
+      { id: 'c13d', desc: 'Editar material visual',                          done: false, min: 45 },
+      { id: 'c13e', desc: 'Criar copy e legenda para cada post',             done: false, min: 15 },
+      { id: 'c13f', desc: 'Criar imagem/design dos posts',                   done: false, min: 30 },
+      { id: 'c13g', desc: 'Enviar para aprovação e agendar',                 done: false, min: 10 },
+    ],
+    ferramentasIA: ['Roteirista (Studio IA)', 'Post de Cliente (Studio IA)', 'Canva AI', 'CapCut AI', 'Claude'],
   },
 ];
 
