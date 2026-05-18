@@ -104,22 +104,26 @@ const TYPE_EMOJI = {
 
 /* ── Lembretes recorrentes (família) ── */
 const RECURRENCES = [
-  { texto: 'Beber água',                                                          icon: '💧', hora: 'Ao longo do dia',   cor: '#bce1f6', tipo: 'agua' },
-  { texto: 'Comer fruta',                                                         icon: '🍎', hora: 'Manhã e tarde',     cor: '#f1e18d', tipo: 'habito', id: 'fruta' },
-  { texto: 'Exercício físico',                                                    icon: '🏃', hora: 'Diário',            cor: '#ffe1bd', tipo: 'habito', id: 'exercicio' },
-  { texto: 'Remédios manhã — VENVANSE · BUPROPIONA · OLMESARTANA · FLUOXETINA',  icon: '💊', hora: 'Manhã (Lorenna)',   cor: '#fe7dae', tipo: 'meds', ids: ['venvanse','bupropiona','olmesartana','fluoxetina'] },
-  { texto: 'AMITRIL (Mateus)',                                                    icon: '💊', hora: 'Noite',             cor: '#bce1f6', tipo: 'meds', ids: ['amitril_mateus'] },
-  { texto: 'Tarefas escolares Mateus & Murilo',                                   icon: '📚', hora: 'Manhã',             cor: '#f0bff8', tipo: 'habito', id: 'tarefas_escolares' },
-  { texto: 'Brincadeira Miguel (1a10m)',                                          icon: '🐣', hora: 'Bloco 9h e 14h',   cor: '#fec9df', tipo: 'habito', id: 'brincadeira_miguel' },
-  { texto: 'Futebol Mateus & Murilo',                                             icon: '⚽', hora: 'Qua e Sex às 8h20', cor: '#f1e18d', tipo: 'habito', id: 'futebol' },
+  { texto: 'Beber água',                   icon: '💧', hora: 'Ao longo do dia',  cor: '#bce1f6', tipo: 'agua' },
+  { texto: 'Comer fruta',                  icon: '🍎', hora: 'Manhã e tarde',    cor: '#f1e18d', tipo: 'habito', id: 'fruta' },
+  { texto: 'Exercício físico',             icon: '🏃', hora: 'Diário',           cor: '#ffe1bd', tipo: 'habito', id: 'exercicio' },
+  { texto: 'Tomar remédios da manhã',      icon: '💊', hora: 'Manhã (Lorenna)',  cor: '#fe7dae', tipo: 'meds',  ids: ['venvanse','bupropiona','olmesartana','fluoxetina'],
+    desc: 'VENVANSE · BUPROPIONA · OLMESARTANA · FLUOXETINA' },
+  { texto: 'AMITRIL (Mateus)',             icon: '💊', hora: 'Noite',            cor: '#bce1f6', tipo: 'meds',  ids: ['amitril_mateus'] },
+  { texto: 'Vitamina do Miguel',           icon: '🌿', hora: 'Manhã',            cor: '#f1e18d', tipo: 'habito', id: 'vitamina_miguel',
+    desc: 'Dar GROWVIT todos os dias antes do almoço' },
+  { texto: 'Tarefas escolares Mateus & Murilo', icon: '📚', hora: 'Manhã',      cor: '#f0bff8', tipo: 'habito', id: 'tarefas_escolares' },
+  { texto: 'Brincadeiras com Miguel, Mateus e Murilo', icon: '🐣', hora: 'Manhã e noite', cor: '#fec9df', tipo: 'habito', id: 'brincadeira_miguel' },
+  { texto: 'Futebol Mateus & Murilo',      icon: '⚽', hora: 'Qua e Sex',        cor: '#f1e18d', tipo: 'habito', id: 'futebol' },
 ];
 
 /* ── Tarefas demo ── */
 const DEMO_TASKS = [
   {
-    id: 't2', titulo: 'Entregar posts semana Pratique',
+    id: 't2', titulo: 'Entregar vídeos semana Pratique',
     status: 'em_progresso', prioridade: 'urgente', energia: ['operacional'],
     categoria: 'cliente', cliente: 'Pratique', recorrente: true,
+    diasDaSemana: [1, 3, 4],
     micro: [
       { id: 'm4', desc: 'Criar artes no Canva',              done: true,  min: 20 },
       { id: 'm5', desc: 'Escrever legendas',                 done: false, min: 15 },
@@ -130,6 +134,7 @@ const DEMO_TASKS = [
     id: 't3', titulo: 'Escrever newsletter semanal (Carta da Lola)',
     status: 'pendente', prioridade: 'alta', energia: ['criativa', 'foco'],
     categoria: 'conteudo', recorrente: true,
+    diasDaSemana: [2],
     micro: [
       { id: 'm7',  desc: 'Definir tema e cena da semana',    done: false, min: 5 },
       { id: 'm8',  desc: 'Escrever rascunho com Claude',     done: false, min: 20 },
@@ -141,12 +146,13 @@ const DEMO_TASKS = [
     id: 't4', titulo: 'Responder e-mails e DMs pendentes',
     status: 'pendente', prioridade: 'media',
     energia: ['operacional', 'social', 'cansada'],
-    categoria: 'admin', recorrente: false, micro: [],
+    categoria: 'admin', recorrente: true, diario: true, micro: [],
   },
   {
     id: 't5', titulo: 'Post para o blog Papel da Lola',
     status: 'pendente', prioridade: 'media', energia: ['criativa', 'foco'],
     categoria: 'conteudo', recorrente: false,
+    diasDaSemana: [0],
     micro: [
       { id: 'm11', desc: 'Escolher tema com potencial SEO',  done: false, min: 10 },
       { id: 'm12', desc: 'Estruturar o artigo',              done: false, min: 10 },
@@ -169,11 +175,23 @@ const DEMO_TASKS = [
     id: 't8', titulo: 'Roteiro e edição vídeo Jornal Cidades Minerais',
     status: 'em_progresso', prioridade: 'urgente', energia: ['foco', 'operacional'],
     categoria: 'cliente', cliente: 'Jornal Cidades Minerais', recorrente: true,
+    diasDaSemana: [0, 2, 4],
     micro: [
       { id: 'm24', desc: 'Escrever roteiro da plenária',     done: true,  min: 30 },
       { id: 'm25', desc: 'Fazer entrevista (terça 14h)',      done: false, min: 60 },
       { id: 'm26', desc: 'Editar vídeo semanal',             done: false, min: 90 },
       { id: 'm27', desc: 'Enviar para aprovação do Marcos',  done: false, min: 5 },
+    ],
+  },
+  {
+    id: 't10', titulo: 'Divulgar serviços da Agência Logue',
+    status: 'pendente', prioridade: 'alta', energia: ['social', 'criativa'],
+    categoria: 'marketing', recorrente: true,
+    diasDaSemana: [0, 2],
+    micro: [
+      { id: 'm28', desc: 'Postar story mostrando serviço ou resultado de cliente', done: false, min: 15 },
+      { id: 'm29', desc: 'Responder DMs e comentários de potenciais clientes',     done: false, min: 10 },
+      { id: 'm30', desc: 'Prospectar 1 novo contato no CRM',                       done: false, min: 10 },
     ],
   },
 ];

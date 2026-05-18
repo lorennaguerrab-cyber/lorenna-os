@@ -11,13 +11,14 @@ const MEDICAMENTOS_CONFIG = [
 ];
 
 const HABITOS_PADRAO = [
-  { id: 'exercicio',         nome: 'Exercício físico',       emoji: '🏃' },
-  { id: 'fruta',             nome: 'Comer fruta',             emoji: '🍎' },
-  { id: 'leitura',           nome: 'Leitura',                 emoji: '📖' },
-  { id: 'meditacao',         nome: 'Meditação / respiro',     emoji: '🧘' },
-  { id: 'tarefas_escolares', nome: 'Tarefas escolares M&M',  emoji: '✏️' },
-  { id: 'brincadeira_miguel',nome: 'Brincadeira Miguel',      emoji: '🐣' },
-  { id: 'futebol',           nome: 'Futebol M&M',             emoji: '⚽' },
+  { id: 'exercicio',         nome: 'Exercício físico',              emoji: '🏃' },
+  { id: 'fruta',             nome: 'Comer fruta',                    emoji: '🍎' },
+  { id: 'leitura',           nome: 'Leitura',                        emoji: '📖' },
+  { id: 'meditacao',         nome: 'Meditação / respiro',            emoji: '🧘' },
+  { id: 'vitamina_miguel',   nome: 'Vitamina do Miguel (GROWVIT)',   emoji: '🌿' },
+  { id: 'tarefas_escolares', nome: 'Tarefas escolares M&M',         emoji: '✏️' },
+  { id: 'brincadeira_miguel',nome: 'Brincadeiras com os meninos',   emoji: '🐣' },
+  { id: 'futebol',           nome: 'Futebol M&M',                    emoji: '⚽' },
 ];
 
 const META_AGUA_ML = 3000;

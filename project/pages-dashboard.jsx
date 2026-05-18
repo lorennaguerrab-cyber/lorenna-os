@@ -1249,12 +1249,19 @@ function LembretesHabitosWidget() {
               }}>
               <div className="row gap-2" style={{ flex: 1, minWidth: 0 }}>
                 <span style={{ fontSize: 16, flexShrink: 0 }}>{r.icon}</span>
-                <span style={{
-                  fontSize: 14, fontWeight: 500, color: '#201e1f',
-                  textDecoration: checked ? 'line-through' : 'none',
-                  opacity: checked ? 0.6 : 1,
-                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                }}>{r.texto}</span>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{
+                    fontSize: 14, fontWeight: 600, color: '#201e1f',
+                    textDecoration: checked ? 'line-through' : 'none',
+                    opacity: checked ? 0.6 : 1,
+                  }}>{r.texto}</div>
+                  {r.desc && (
+                    <div style={{
+                      fontSize: 14, color: '#201e1f', opacity: checked ? 0.5 : 0.75,
+                      marginTop: 1, lineHeight: 1.3,
+                    }}>{r.desc}</div>
+                  )}
+                </div>
               </div>
               <div style={{
                 width: 24, height: 24, borderRadius: 999, flexShrink: 0, marginLeft: 8,
@@ -1419,15 +1426,23 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
   const next = all.find(t => t.status !== 'concluida' && t.micro.some(m => !m.done));
 
   function buildListaHoje() {
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const lista = [];
-    // Tarefas abertas, ordenadas por prioridade
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    const dayOfWeek = (now.getDay() + 6) % 7; // 0=Seg … 6=Dom
     const prioOrd = { urgente: 0, alta: 1, media: 2, baixa: 3 };
+
+    const lista = [];
     [...all]
       .filter(t => t.status !== 'concluida')
+      .filter(t => {
+        if (t.diario) return true;
+        if (t.prioridade === 'urgente') return true;
+        if (t.diasDaSemana && t.diasDaSemana.includes(dayOfWeek)) return true;
+        return false;
+      })
       .sort((a, b) => (prioOrd[a.prioridade] ?? 2) - (prioOrd[b.prioridade] ?? 2))
       .forEach(t => lista.push(t));
-    // Eventos de hoje da agenda
+
     (window.AGENDA_EVENTS || [])
       .filter(ev => ev.date === todayStr)
       .forEach(ev => lista.push({
@@ -1457,8 +1472,6 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
         <RotinaSemanalWidget />
 
         <HolidayAlertBanner />
-
-        <SugestoesWidget setRoute={setRoute} />
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 'var(--s-5)' }} className="dash-grid">
           {/* LEFT — Tarefas em destaque */}
@@ -1509,6 +1522,8 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
                 <WeekView />
               </CardBody>
             </Card>
+
+            <SugestoesWidget setRoute={setRoute} />
           </div>
 
           {/* RIGHT */}
@@ -1518,12 +1533,6 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
             <Card>
               <CardBody>
                 <PequenasVitorias />
-              </CardBody>
-            </Card>
-
-            <Card>
-              <CardBody>
-                <RoutinesWidget />
               </CardBody>
             </Card>
           </div>
