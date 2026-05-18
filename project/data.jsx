@@ -882,7 +882,7 @@ Tom: profissional sem ser engessado. Confiante sem ser arrogante.`,
 
   { id: 'p8', titulo: 'Plano semanal adaptativo (TDAH + AHSD)',
     cat: 'estrategia', desc: 'Plano da semana que respeita energia variada, hiperfoco e drenagem.',
-    ia: 'claude', tool: 'Claude + Lorenna OS',
+    ia: 'claude', tool: 'Claude + Córtex Lola',
     etapas: ['Dump', 'Diagnóstico', 'Plano', 'Revisão', 'Execução'],
     checklist: [
       'Dump mental de tudo (sem filtro)',
@@ -1075,7 +1075,7 @@ const MAP_NODES = [
   { id: 'f-blog',      label: 'Blog Papel da Lola',   x: 130, y: 730, parent: 'cluster-formatos', type: 'format' },
 
   /* SISTEMA (5) */
-  { id: 's-os',        label: 'Lorenna OS',           x: 800, y: 590, parent: 'cluster-sistema', type: 'system-core' },
+  { id: 's-os',        label: 'Córtex Lola',           x: 800, y: 590, parent: 'cluster-sistema', type: 'system-core' },
   { id: 's-notion',    label: 'Notion (criativo)',    x: 970, y: 600, parent: 'cluster-sistema', type: 'system' },
   { id: 's-supabase',  label: 'Supabase (invisível)', x: 970, y: 670, parent: 'cluster-sistema', type: 'system' },
   { id: 's-claude',    label: 'Claude (copiloto)',    x: 800, y: 670, parent: 'cluster-sistema', type: 'system' },
@@ -1147,7 +1147,7 @@ VOCÊ TEM PERMISSÃO PARA ACESSAR MEU NOTION.`,
       { id: 'r2', desc: 'Definir prioridade principal',                  min: 1 },
       { id: 'r3', desc: 'Mateus e Murilo — organizar pra escola',         min: 30 },
       { id: 'r4', desc: 'Miguel — café + presença',                       min: 20 },
-      { id: 'r5', desc: 'Sentar na mesa · abrir Lorenna OS',              min: 5 },
+      { id: 'r5', desc: 'Sentar na mesa · abrir Córtex Lola',              min: 5 },
       { id: 'r6', desc: 'Captura mental do dia',                         min: 5 },
     ],
   },

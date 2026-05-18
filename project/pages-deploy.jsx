@@ -125,7 +125,7 @@ function DeployVisao() {
     <Step>
       <H2>A arquitetura em uma página</H2>
       <Para>
-        O Lorenna OS roda como um app web (Next.js no servidor) que conecta três fontes invisíveis:
+        O Córtex Lola roda como um app web (Next.js no servidor) que conecta três fontes invisíveis:
         Supabase pra dados, Notion pra criação livre e Claude pra IA. Você só interage com o app —
         o resto trabalha por baixo.
       </Para>
@@ -182,7 +182,7 @@ function DeployGithub() {
       <H2>GitHub · o esqueleto</H2>
       <Para>
         Você já tem o repositório <code>lorennaguerrab-cyber/agencia-logue</code> conectado.
-        Aqui mora todo o código do Lorenna OS. Quando precisar mudar algo, ou eu (Claude) fizer uma atualização,
+        Aqui mora todo o código do Córtex Lola. Quando precisar mudar algo, ou eu (Claude) fizer uma atualização,
         cai aqui antes.
       </Para>
 
@@ -309,16 +309,16 @@ function DeployNotion() {
       <H2>Notion · sua base criativa</H2>
       <Para>
         Notion entra pra coisas que precisam de espaço pra respirar: rascunhos longos, banco de prompts editáveis,
-        biblioteca de referências, conteúdo do blog em construção. O Lorenna OS lê e escreve no Notion via API —
+        biblioteca de referências, conteúdo do blog em construção. O Córtex Lola lê e escreve no Notion via API —
         você não precisa abrir o Notion todo dia.
       </Para>
 
       <H3>Setup (10 minutos)</H3>
       <Checklist items={[
         'Criar integração em notion.so/my-integrations',
-        'Nome: "Lorenna OS" · Tipo: Internal',
+        'Nome: "Córtex Lola" · Tipo: Internal',
         'Copiar o "Internal Integration Token"',
-        'Criar uma página-mãe no Notion: "🌸 Lorenna OS"',
+        'Criar uma página-mãe no Notion: "🌸 Córtex Lola"',
         'Compartilhar essa página com a integração (botão "..." > "Connections")',
         'Pegar o ID da página (último trecho da URL, antes do "?")',
         'Adicionar no .env.local',
@@ -329,7 +329,7 @@ function DeployNotion() {
 NOTION_PARENT_PAGE_ID=21abc...`}</Code>
 
       <H3>Estrutura sugerida dentro do Notion</H3>
-      <Code>{`🌸 Lorenna OS (página-mãe)
+      <Code>{`🌸 Córtex Lola (página-mãe)
 ├── 📥 Inbox (capturas que viraram texto longo)
 ├── 📚 Biblioteca de prompts (versão editável)
 ├── ✍️ Rascunhos longos
@@ -426,12 +426,12 @@ function DeployManutencao() {
     <Step>
       <H2>Manutenção · rotina de cuidado</H2>
       <Para>
-        Um sistema vivo pede pouco cuidado, mas regular. Bota essas tarefas no Lorenna OS como recorrências.
+        Um sistema vivo pede pouco cuidado, mas regular. Bota essas tarefas no Córtex Lola como recorrências.
       </Para>
 
       <H3>Diário · 2 minutos</H3>
       <Checklist items={[
-        'Abrir o Lorenna OS de manhã (parte do ritual)',
+        'Abrir o Córtex Lola de manhã (parte do ritual)',
         'Conferir foco do dia',
         'Definir energia atual',
       ]}/>

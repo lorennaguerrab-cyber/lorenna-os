@@ -43,7 +43,7 @@ function Sidebar({ route, setRoute, energy, setEnergy, collapsed, setCollapsed }
         <input type="file" ref={fileRef} accept="image/*" style={{ display: 'none' }} onChange={handlePhotoChange} />
         {!collapsed && (
           <div className="brand-text">
-            <div className="name">Lorenna OS</div>
+            <div className="name">Córtex Lola</div>
             <div className="sub">@lorennagn · Papel da Lola · Agência Logue</div>
           </div>
         )}

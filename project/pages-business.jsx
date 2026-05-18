@@ -456,7 +456,7 @@ function FormPedidoPost({ client, onSent }) {
       <div>
         <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 19, fontWeight: 600 }}>Novo pedido de conteúdo</h3>
         <p className="small muted" style={{ marginTop: 6 }}>
-          Brief que vira tarefa no Lorenna OS + página no Notion.
+          Brief que vira tarefa no Córtex Lola + página no Notion.
         </p>
       </div>
 

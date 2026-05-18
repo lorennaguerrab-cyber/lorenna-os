@@ -59,7 +59,7 @@ const INTEGRATION_DEFS = {
     name: 'Google Drive',
     emoji: '💾',
     color: '#0F9D58',
-    description: 'Acessa arquivos de clientes e faz upload de entregas direto do Lorenna OS.',
+    description: 'Acessa arquivos de clientes e faz upload de entregas direto do Córtex Lola.',
     fields: [
       { key: 'api_key', label: 'API Key', placeholder: 'AIzaSy...', type: 'password' },
       { key: 'folder_id', label: 'Pasta raiz (opcional)', placeholder: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms', type: 'text' },
@@ -206,7 +206,7 @@ function IntegrationPage() {
       <div className="col gap-5 fade-up">
         <PageHeader
           title="Integrações"
-          subtitle="Conecte seus apps favoritos ao Lorenna OS"
+          subtitle="Conecte seus apps favoritos ao Córtex Lola"
         />
 
         {connected.length > 0 && (
