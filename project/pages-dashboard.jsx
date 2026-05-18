@@ -308,12 +308,12 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
   const [tituloEdit, setTituloEdit] = useState(task.titulo);
 
   const prioMap = {
-    urgente: '#B83868',
-    alta:    '#C97B1A',
-    media:   '#C44878',
-    baixa:   '#5A8A6A',
+    urgente: '#fe7dae',
+    alta:    '#ffe1bd',
+    media:   '#bce1f6',
+    baixa:   '#f1e18d',
   };
-  const bg = prioMap[task.prioridade] || '#C44878';
+  const bg = prioMap[task.prioridade] || '#fec9df';
 
   function salvarEdicao() {
     if (tituloEdit.trim() && tituloEdit.trim() !== task.titulo) {
@@ -340,14 +340,14 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
           showToast(concluida ? 'Tarefa reaberta' : 'Tarefa concluída! ✓');
         }} style={{
           width: 20, height: 20, borderRadius: 999,
-          border: '2px solid rgba(255,255,255,0.8)',
-          background: concluida ? 'rgba(255,255,255,0.9)' : 'transparent',
+          border: '2px solid rgba(32,30,31,0.4)',
+          background: concluida ? 'rgba(32,30,31,0.7)' : 'transparent',
           marginTop: 1, flexShrink: 0,
           cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           transition: 'all .15s',
         }}>
-          {concluida && <Icon name="check" size={11} color={bg}/>}
+          {concluida && <Icon name="check" size={11} color="#fffcfa"/>}
         </div>
 
         <div className="grow">
@@ -358,12 +358,12 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
                   onChange={e => setTituloEdit(e.target.value)}
                   onBlur={salvarEdicao}
                   onKeyDown={e => { if (e.key === 'Enter') salvarEdicao(); if (e.key === 'Escape') setEditando(false); }}
-                  style={{ fontSize: 15, fontWeight: 700, background: 'rgba(255,255,255,0.2)', color: '#fff', border: '1.5px solid rgba(255,255,255,0.5)', borderRadius: 6, padding: '4px 8px' }}
+                  style={{ fontSize: 15, fontWeight: 700, background: 'rgba(32,30,31,0.08)', color: '#201e1f', border: '1.5px solid rgba(32,30,31,0.25)', borderRadius: 6, padding: '4px 8px' }}
                 />
               ) : (
                 <div style={{
                   fontSize: 15, fontWeight: 700, lineHeight: 1.35,
-                  color: concluida ? 'rgba(255,255,255,0.5)' : '#ffffff',
+                  color: concluida ? 'rgba(32,30,31,0.4)' : '#201e1f',
                   textDecoration: concluida ? 'line-through' : 'none',
                 }}>
                   {task.hora && <span style={{ fontSize: 13, fontWeight: 500, opacity: 0.8, marginRight: 6 }}>{task.hora}</span>}
@@ -371,39 +371,39 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
                 </div>
               )}
               {task.cliente && (
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', marginTop: 3 }}>
-                  Para <strong style={{ color: 'rgba(255,255,255,0.95)' }}>{task.cliente}</strong>
+                <div style={{ fontSize: 13, color: 'rgba(32,30,31,0.65)', marginTop: 3 }}>
+                  Para <strong style={{ color: '#201e1f' }}>{task.cliente}</strong>
                 </div>
               )}
               {task.fonte && (
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 2 }}>{task.fonte}</div>
+                <div style={{ fontSize: 13, color: 'rgba(32,30,31,0.6)', marginTop: 2 }}>{task.fonte}</div>
               )}
             </div>
             <div className="row gap-1" style={{ flexShrink: 0, alignItems: 'center', marginLeft: 8 }}>
               {total > 0 && (
                 <span style={{
                   fontSize: 13, fontWeight: 700, padding: '2px 9px', borderRadius: 999,
-                  background: done === total ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.2)',
-                  color: '#fff',
-                  border: '1px solid rgba(255,255,255,0.3)',
+                  background: done === total ? 'rgba(32,30,31,0.2)' : 'rgba(32,30,31,0.1)',
+                  color: '#201e1f',
+                  border: '1px solid rgba(32,30,31,0.2)',
                 }}>{done}/{total}</span>
               )}
               <button onClick={() => { setTituloEdit(task.titulo); setEditando(true); }}
-                style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.15)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: '1px solid rgba(32,30,31,0.2)', background: 'rgba(32,30,31,0.08)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 title="Editar tarefa">
-                <Icon name="edit" size={13} color="rgba(255,255,255,0.85)"/>
+                <Icon name="edit" size={13} color="rgba(32,30,31,0.6)"/>
               </button>
               {total > 0 && (
                 <button onClick={() => setOpen(!open)}
-                  style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.15)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Icon name={open ? 'chev-down' : 'chev-right'} size={14} color="rgba(255,255,255,0.85)"/>
+                  style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: '1px solid rgba(32,30,31,0.2)', background: 'rgba(32,30,31,0.08)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Icon name={open ? 'chev-down' : 'chev-right'} size={14} color="rgba(32,30,31,0.6)"/>
                 </button>
               )}
               {onDelete && (
                 <button onClick={ev => { ev.stopPropagation(); onDelete(task.id); }}
-                  style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.15)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.6 }}
+                  style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: '1px solid rgba(32,30,31,0.2)', background: 'rgba(32,30,31,0.08)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.6 }}
                   title="Remover">
-                  <Icon name="x" size={13} color="rgba(255,255,255,0.85)"/>
+                  <Icon name="x" size={13} color="rgba(32,30,31,0.6)"/>
                 </button>
               )}
             </div>
@@ -411,8 +411,8 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
 
           {/* Progress bar */}
           {total > 0 && (
-            <div style={{ marginTop: 8, height: 4, borderRadius: 999, background: 'rgba(255,255,255,0.25)', overflow: 'hidden' }}>
-              <div style={{ width: `${(done/total)*100}%`, height: '100%', background: 'rgba(255,255,255,0.85)', borderRadius: 999, transition: 'width .3s' }}/>
+            <div style={{ marginTop: 8, height: 4, borderRadius: 999, background: 'rgba(32,30,31,0.15)', overflow: 'hidden' }}>
+              <div style={{ width: `${(done/total)*100}%`, height: '100%', background: 'rgba(32,30,31,0.5)', borderRadius: 999, transition: 'width .3s' }}/>
             </div>
           )}
 
@@ -422,26 +422,26 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
               {(task.micro || []).map((m) => (
                 <div key={m.id} className="row gap-3"
                   onClick={() => setMicroDone(prev => ({ ...prev, [m.id]: !prev[m.id] }))}
-                  style={{ padding: '8px 10px', background: microDone[m.id] ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.15)', borderRadius: 'var(--r-sm)', cursor: 'pointer' }}>
+                  style={{ padding: '8px 10px', background: microDone[m.id] ? 'rgba(32,30,31,0.06)' : 'rgba(32,30,31,0.1)', borderRadius: 'var(--r-sm)', cursor: 'pointer' }}>
                   <div style={{
                     width: 16, height: 16, borderRadius: 999,
-                    border: `1.5px solid ${microDone[m.id] ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)'}`,
-                    background: microDone[m.id] ? 'rgba(255,255,255,0.9)' : 'transparent',
+                    border: `1.5px solid ${microDone[m.id] ? 'rgba(32,30,31,0.7)' : 'rgba(32,30,31,0.35)'}`,
+                    background: microDone[m.id] ? 'rgba(32,30,31,0.7)' : 'transparent',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     flexShrink: 0, transition: 'all .15s',
                   }}>
-                    {microDone[m.id] && <Icon name="check" size={10} color={bg}/>}
+                    {microDone[m.id] && <Icon name="check" size={10} color="#fffcfa"/>}
                   </div>
                   <span style={{
                     fontSize: 14, flex: 1,
-                    color: microDone[m.id] ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.92)',
+                    color: microDone[m.id] ? 'rgba(32,30,31,0.4)' : '#201e1f',
                     textDecoration: microDone[m.id] ? 'line-through' : 'none',
                   }}>{m.desc}</span>
-                  {m.min && <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', flexShrink: 0 }}>{m.min}min</span>}
+                  {m.min && <span style={{ fontSize: 13, color: 'rgba(32,30,31,0.55)', flexShrink: 0 }}>{m.min}min</span>}
                 </div>
               ))}
               {totalMin > 0 && (
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', textAlign: 'right', marginTop: 2 }}>
+                <div style={{ fontSize: 13, color: 'rgba(32,30,31,0.55)', textAlign: 'right', marginTop: 2 }}>
                   Estimado: {totalMin} min
                 </div>
               )}
@@ -449,19 +449,19 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
               {task.ferramentasIA && task.ferramentasIA.length > 0 && (
                 <div style={{
                   marginTop: 4, padding: '10px 12px',
-                  background: 'rgba(255,255,255,0.12)',
+                  background: 'rgba(32,30,31,0.08)',
                   borderRadius: 'var(--r-sm)',
-                  borderLeft: '3px solid rgba(255,255,255,0.4)',
+                  borderLeft: '3px solid rgba(32,30,31,0.3)',
                 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.9)', marginBottom: 6 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#201e1f', marginBottom: 6 }}>
                     🤖 Travou? Ferramentas que podem ajudar:
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {task.ferramentasIA.map((f, i) => (
                       <span key={i} style={{
                         fontSize: 13, padding: '3px 10px',
-                        background: 'rgba(255,255,255,0.2)', color: '#fff',
-                        borderRadius: 999, border: '1px solid rgba(255,255,255,0.3)',
+                        background: 'rgba(32,30,31,0.1)', color: '#201e1f',
+                        borderRadius: 999, border: '1px solid rgba(32,30,31,0.2)',
                       }}>{f}</span>
                     ))}
                   </div>
@@ -669,7 +669,7 @@ function PequenasVitorias() {
     <div>
       <div className="row between" style={{ marginBottom: 'var(--s-3)' }}>
         <div>
-          <div className="eyebrow" style={{ color: '#7FB68C' }}>🏆 Pequenas vitórias</div>
+          <div className="eyebrow" style={{ color: 'var(--text-secondary)' }}>🏆 Pequenas vitórias</div>
           <p className="tiny muted" style={{ marginTop: 4 }}>Tudo que você fez importa. Mesmo o que parece pequeno.</p>
         </div>
         <Button variant="ghost" size="sm" onClick={() => setAdding(a => !a)}>
@@ -704,8 +704,8 @@ function PequenasVitorias() {
             {all.slice(0, showing).map((v, i) => (
               <div key={v.id || i} className="row gap-3" style={{
                 padding: '10px 14px',
-                background: 'color-mix(in oklch, #7FB68C 8%, var(--bg-surface))',
-                border: '1px solid color-mix(in oklch, #7FB68C 20%, transparent)',
+                background: 'color-mix(in oklch, #f1e18d 15%, var(--bg-surface))',
+                border: '1px solid color-mix(in oklch, #f1e18d 30%, transparent)',
                 borderRadius: 'var(--r-md)',
               }}>
                 <span style={{ fontSize: 15, flexShrink: 0 }}>{v.icon}</span>
@@ -715,7 +715,7 @@ function PequenasVitorias() {
           </div>
           {showing < all.length && (
             <button onClick={() => setShowing(all.length)}
-              style={{ marginTop: 'var(--s-3)', fontSize: 14, color: '#7FB68C', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+              style={{ marginTop: 'var(--s-3)', fontSize: 14, color: 'var(--text-secondary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
               Ver todas ({all.length}) →
             </button>
           )}
@@ -739,48 +739,54 @@ const ROTINA_PALETTE = ['#bce1f6', '#f0bff8', '#fe7dae', '#f1e18d', '#ffe1bd', '
 
 function RotinaSemanalWidget() {
   const today = (new Date().getDay() + 6) % 7;
-  const r = ROTINA_SEMANAL[today];
-  const col = ROTINA_PALETTE[today];
+  const [selected, setSelected] = React.useState(today);
+  const r = ROTINA_SEMANAL[selected];
+  const col = ROTINA_PALETTE[selected];
+  const isToday = selected === today;
 
   return (
     <Card>
       <CardBody>
         <div className="eyebrow" style={{ marginBottom: 'var(--s-3)' }}>Rotina da semana</div>
 
-        {/* Barra decorativa dos 7 dias */}
+        {/* Dias clicáveis */}
         <div style={{ display: 'flex', gap: 4, marginBottom: 'var(--s-4)' }}>
           {ROTINA_SEMANAL.map((d, i) => {
-            const isToday = i === today;
+            const isActiveDay = i === today;
+            const isSel = i === selected;
             const c = ROTINA_PALETTE[i];
             return (
-              <div key={d.dia} style={{ flex: 1, textAlign: 'center' }}>
+              <div key={d.dia} onClick={() => setSelected(i)}
+                style={{ flex: 1, textAlign: 'center', cursor: 'pointer' }}>
                 <div style={{
                   height: 6, borderRadius: 99, marginBottom: 6,
-                  background: isToday ? c : `color-mix(in oklch, ${c} 35%, var(--bg-elevated))`,
+                  background: isSel ? c : `color-mix(in oklch, ${c} 35%, var(--bg-elevated))`,
+                  transition: 'background .15s',
                 }} />
                 <div style={{
-                  fontSize: 14, fontWeight: isToday ? 700 : 400,
-                  color: isToday ? '#201e1f' : 'var(--text-muted)',
+                  fontSize: 14, fontWeight: isActiveDay ? 700 : 400,
+                  color: isSel ? '#201e1f' : 'var(--text-muted)',
+                  transition: 'color .15s',
                 }}>{d.dia}</div>
               </div>
             );
           })}
         </div>
 
-        {/* Bloco de hoje com contraste garantido */}
+        {/* Bloco do dia selecionado */}
         <div style={{
           background: col,
           borderRadius: 'var(--r-md)',
           padding: 'var(--s-4)',
         }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: '#201e1f', marginBottom: 10 }}>
-            Hoje · {r.dia}
+          <div style={{ fontSize: 14, fontWeight: 700, color: '#fffcfa', marginBottom: 10, opacity: .9 }}>
+            {isToday ? 'Hoje' : r.dia} · {r.dia}
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {r.temas.map((t, j) => (
               <div key={j} style={{
-                fontSize: 14, color: '#201e1f',
-                background: 'rgba(32,30,31,.12)',
+                fontSize: 14, color: '#fffcfa',
+                background: 'rgba(32,30,31,.18)',
                 padding: '5px 12px', borderRadius: 999,
                 fontWeight: 500,
               }}>{t}</div>
@@ -917,14 +923,14 @@ function HolidayAlertBanner() {
         return (
           <div key={h.date} className="row gap-3" style={{
             padding: '12px 16px',
-            background: '#FFF8EE',
-            border: '1px solid #FDDBB0',
+            background: '#fffcfa',
+            border: '1px solid #ffe1bd',
             borderRadius: 'var(--r-md)',
             alignItems: 'center',
           }}>
             <span style={{ fontSize: 22, flexShrink: 0 }}>{h.emoji}</span>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 14.5, fontWeight: 600, color: '#B5720A' }}>
+              <div style={{ fontSize: 14.5, fontWeight: 600, color: '#201e1f' }}>
                 {h.nome} — em {daysLeft} dia{daysLeft !== 1 ? 's' : ''}! Hora de planejar.
               </div>
               <div style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 2 }}>
@@ -932,8 +938,8 @@ function HolidayAlertBanner() {
               </div>
             </div>
             <div style={{
-              fontSize: 15, fontWeight: 700, color: 'white',
-              background: '#E89B4C', padding: '5px 12px',
+              fontSize: 15, fontWeight: 700, color: '#201e1f',
+              background: '#ffe1bd', padding: '5px 12px',
               borderRadius: 999, flexShrink: 0,
             }}>
               {daysLeft}d
@@ -1032,10 +1038,10 @@ function FullCalendarWidget() {
                 style={{
                   minHeight: 80, padding: '7px 8px',
                   borderRadius: 'var(--r-md)',
-                  border: `1.5px solid ${isToday ? 'var(--pink)' : isSelected ? 'var(--ink)' : holiday ? '#FDDBB0' : 'var(--border)'}`,
+                  border: `1.5px solid ${isToday ? 'var(--pink)' : isSelected ? 'var(--ink)' : holiday ? '#ffe1bd' : 'var(--border)'}`,
                   background: isToday
                     ? 'color-mix(in oklch, var(--pink) 10%, var(--bg-surface))'
-                    : holiday ? '#FFF8EE' : 'var(--bg-elevated)',
+                    : holiday ? '#fffcfa' : 'var(--bg-elevated)',
                   cursor: 'pointer',
                   transition: 'border-color .15s',
                   overflow: 'hidden',
@@ -1043,7 +1049,7 @@ function FullCalendarWidget() {
                 <div className="row gap-1" style={{ marginBottom: 4, alignItems: 'center' }}>
                   <span style={{
                     fontSize: 14, fontWeight: isToday ? 700 : 500,
-                    color: isToday ? 'var(--pink-deep)' : holiday ? '#B5720A' : 'var(--text-primary)',
+                    color: isToday ? 'var(--pink-deep)' : holiday ? '#201e1f' : 'var(--text-primary)',
                     lineHeight: 1,
                   }}>{d}</span>
                   {holiday && <span style={{ fontSize: 11 }}>{holiday.emoji}</span>}
@@ -1086,14 +1092,14 @@ function FullCalendarWidget() {
             </div>
 
             {selHoliday && selHoliday.campanha && (
-              <div style={{ marginBottom: selDayEvents.length > 0 ? 'var(--s-3)' : 0, padding: 'var(--s-3)', background: '#FFF8EE', border: '1px solid #FDDBB0', borderRadius: 'var(--r-md)' }}>
-                <div style={{ fontSize: 14.5, fontWeight: 600, color: '#B5720A', marginBottom: 8 }}>
+              <div style={{ marginBottom: selDayEvents.length > 0 ? 'var(--s-3)' : 0, padding: 'var(--s-3)', background: '#fffcfa', border: '1px solid #ffe1bd', borderRadius: 'var(--r-md)' }}>
+                <div style={{ fontSize: 14.5, fontWeight: 600, color: '#201e1f', marginBottom: 8 }}>
                   {selHoliday.emoji} Oportunidade de campanha
                 </div>
                 <div className="col gap-1">
                   {selHoliday.sugestoes.map((s, idx) => (
                     <div key={idx} className="row gap-2">
-                      <span style={{ color: '#E89B4C', fontSize: 14, flexShrink: 0 }}>→</span>
+                      <span style={{ color: '#201e1f', fontSize: 14, flexShrink: 0 }}>→</span>
                       <span style={{ fontSize: 14, color: 'var(--ink-soft)' }}>{s}</span>
                     </div>
                   ))}
@@ -1102,7 +1108,7 @@ function FullCalendarWidget() {
                   <div className="row gap-2" style={{ marginTop: 10, flexWrap: 'wrap', alignItems: 'center' }}>
                     <span style={{ fontSize: 14, color: 'var(--text-muted)' }}>Clientes:</span>
                     {selHoliday.clientes.map((c, idx) => (
-                      <span key={idx} style={{ fontSize: 13.5, padding: '2px 8px', background: 'rgba(232,155,76,0.2)', borderRadius: 999, color: '#B5720A', fontWeight: 500 }}>{c}</span>
+                      <span key={idx} style={{ fontSize: 13.5, padding: '2px 8px', background: '#ffe1bd', borderRadius: 999, color: '#201e1f', fontWeight: 500 }}>{c}</span>
                     ))}
                   </div>
                 )}
@@ -1211,7 +1217,7 @@ function LembretesHabitosWidget() {
 
   const aguaMl = dia.agua_ml || 0;
   const aguaPct = Math.min(100, (aguaMl / 3000) * 100);
-  const aguaCor = aguaPct >= 100 ? '#7FB68C' : aguaPct >= 60 ? '#5B9BD5' : '#bce1f6';
+  const aguaCor = aguaPct >= 100 ? '#f1e18d' : aguaPct >= 60 ? '#bce1f6' : 'color-mix(in oklch, #bce1f6 50%, var(--bg-elevated))';
 
   const todayDow = (new Date().getDay() + 6) % 7;
   const done = window.RECURRENCES.filter(r => r.tipo !== 'agua' && (!r.diasDaSemana || r.diasDaSemana.includes(todayDow)) && checkedState(r)).length;
@@ -1227,8 +1233,8 @@ function LembretesHabitosWidget() {
           </div>
           <span style={{
             fontSize: 14, fontWeight: 600, padding: '2px 10px', borderRadius: 999,
-            background: done === total ? '#7FB68C' : 'var(--bg-elevated)',
-            color: done === total ? 'white' : 'var(--text-muted)',
+            background: done === total ? '#f1e18d' : 'var(--bg-elevated)',
+            color: done === total ? '#201e1f' : 'var(--text-muted)',
           }}>{done}/{total}</span>
         </div>
       </CardHeader>
@@ -1245,7 +1251,7 @@ function LembretesHabitosWidget() {
               <span style={{ fontSize: 16 }}>💧</span>
               <span style={{ fontSize: 14, fontWeight: 500, color: '#201e1f' }}>Beber água</span>
             </div>
-            <span style={{ fontSize: 14, fontWeight: 600, color: aguaPct >= 100 ? '#7FB68C' : '#5B9BD5' }}>
+            <span style={{ fontSize: 14, fontWeight: 600, color: '#201e1f' }}>
               {aguaMl >= 1000 ? `${(aguaMl/1000).toFixed(1)}L` : `${aguaMl}ml`} / 3L
             </span>
           </div>
@@ -1503,17 +1509,23 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
   return (
     <div className="content">
       <div className="col gap-5 fade-up-stagger">
-        <DayFocusCard energy={energy} />
+        {/* Saudação + Energia lado a lado */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-4)' }} className="dash-top-grid">
+          <DayFocusCard energy={energy} />
+          <Card>
+            <CardBody>
+              <EnergySelector energy={energy} setEnergy={setEnergy} />
+            </CardBody>
+          </Card>
+        </div>
 
-        <Card>
-          <CardBody>
-            <EnergySelector energy={energy} setEnergy={setEnergy} />
-          </CardBody>
-        </Card>
-
-        <RotinaSemanalWidget />
-
-        <HolidayAlertBanner />
+        {/* Rotina + Datas sazonais lado a lado */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-4)' }} className="dash-middle-grid">
+          <RotinaSemanalWidget />
+          <div className="col gap-3">
+            <HolidayAlertBanner />
+          </div>
+        </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 'var(--s-5)' }} className="dash-grid">
           {/* LEFT — Tarefas em destaque */}
@@ -1553,7 +1565,7 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
                       <div className="col gap-3">
                         {urgentes.length > 0 && (
                           <div className="col gap-2">
-                            <div style={{ fontSize: 13, fontWeight: 700, color: '#B83868', textTransform: 'uppercase', letterSpacing: '.06em', paddingLeft: 2 }}>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: '#fe7dae', textTransform: 'uppercase', letterSpacing: '.06em', paddingLeft: 2 }}>
                               🔥 Urgente
                             </div>
                             {urgentes.map(t => <TaskRow key={t.id} task={t} />)}

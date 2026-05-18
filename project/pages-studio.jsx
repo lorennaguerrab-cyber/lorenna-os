@@ -19,7 +19,7 @@ const STUDIO_AGENTS = [
     nome: 'Carta da Lola',
     emoji: '✉️',
     desc: 'Newsletter semanal no seu tom',
-    cor: '#FF78B0',
+    cor: '#fe7dae',
     botao: 'Escrever newsletter',
     campos: [
       { id: 'tema',     label: 'Tema da semana',             tipo: 'text',     placeholder: 'Ex: sobre deixar de agradar todo mundo', obrigatorio: true },
@@ -34,7 +34,7 @@ const STUDIO_AGENTS = [
     nome: 'Roteirista',
     emoji: '🎬',
     desc: 'Roteiros para reels, YouTube e UGC',
-    cor: '#7FB68C',
+    cor: '#f1e18d',
     botao: 'Criar roteiro',
     campos: [
       { id: 'tema',    label: 'Tema / mensagem principal', tipo: 'text',     placeholder: 'Ex: por que parei de postar todo dia', obrigatorio: true },
@@ -49,7 +49,7 @@ const STUDIO_AGENTS = [
     nome: 'Blog SEO',
     emoji: '📝',
     desc: 'Artigo completo + SEO + monetização + conteúdo relacionado',
-    cor: '#5B9BD5',
+    cor: '#bce1f6',
     botao: 'Escrever artigo completo',
     campos: [
       { id: 'tema',    label: 'Tema / palavra-chave principal', tipo: 'text',     placeholder: 'Ex: como se organizar com TDAH sendo mãe', obrigatorio: true },
@@ -64,7 +64,7 @@ const STUDIO_AGENTS = [
     nome: 'Post de Cliente',
     emoji: '✨',
     desc: 'Captions e copies com a voz do cliente',
-    cor: '#A89AC9',
+    cor: '#f0bff8',
     botao: 'Criar post',
     campos: [
       { id: 'cliente',    label: 'Cliente',                        tipo: 'select',   dinamico: 'clientes_lista', obrigatorio: true },
@@ -214,11 +214,11 @@ function SugestoesList({ sugestoes, onSelect }) {
 
 const PROMPT_CAT_COLORS = {
   conteudo:   '#fe7dae',
-  roteiro:    '#7FB68C',
-  blog:       '#5B9BD5',
-  newsletter: '#FF78B0',
-  branding:   '#A89AC9',
-  cliente:    '#E89B4C',
+  roteiro:    '#f1e18d',
+  blog:       '#bce1f6',
+  newsletter: '#fec9df',
+  branding:   '#f0bff8',
+  cliente:    '#ffe1bd',
   ugc:        '#f0bff8',
   design:     '#f1e18d',
   pesquisa:   '#bce1f6',
@@ -284,7 +284,7 @@ function PromptsBancoTab() {
               <div className="row between" style={{ marginBottom: 8, alignItems: 'center' }}>
                 <div className="eyebrow">Prompt completo</div>
                 <Button variant="primary" size="sm" onClick={() => copiarPrompt(sel.texto)}
-                  style={{ background: copiado ? '#7FB68C' : cor }}>
+                  style={{ background: copiado ? '#f1e18d' : cor, color: '#201e1f' }}>
                   {copiado ? '✓ Copiado!' : '📋 Copiar prompt'}
                 </Button>
               </div>
@@ -427,7 +427,7 @@ const FERRAMENTAS_IA = [
   },
   {
     cat: 'Logo e identidade',
-    cor: '#A89AC9',
+    cor: '#f0bff8',
     emoji: '💎',
     tools: [
       { nome: 'Canva AI', desc: 'Criação de logos e paletas com IA', gratuito: true, destaque: true },
@@ -438,7 +438,7 @@ const FERRAMENTAS_IA = [
   },
   {
     cat: 'Bancos de imagens grátis',
-    cor: '#7FB68C',
+    cor: '#f1e18d',
     emoji: '🖼️',
     tools: [
       { nome: 'Unsplash', desc: 'Fotos de alta qualidade — gratuitas para uso comercial', gratuito: true, destaque: true },
@@ -475,8 +475,8 @@ function FerramentasIATab() {
                   <div style={{ fontWeight: 700, fontSize: 14.5, color: 'var(--text-primary)' }}>{t.nome}</div>
                   <span style={{
                     fontSize: 12, fontWeight: 700, padding: '2px 8px', borderRadius: 999,
-                    background: t.gratuito ? '#7FB68C' : '#E89B4C',
-                    color: '#fff',
+                    background: t.gratuito ? '#f1e18d' : '#ffe1bd',
+                    color: '#201e1f',
                   }}>{t.gratuito ? 'Grátis' : 'Pago'}</span>
                 </div>
                 <p style={{ fontSize: 13.5, color: 'var(--text-muted)', margin: 0, lineHeight: 1.4 }}>{t.desc}</p>
@@ -859,7 +859,7 @@ Formato: uma sugestão por linha, numeradas de 1 a 5. Seja específico e útil.`
                     ↺ Regenerar
                   </Button>
                   <Button variant="primary" size="sm" onClick={copiar}
-                    style={{ background: copiado ? '#7FB68C' : undefined }}>
+                    style={{ background: copiado ? '#f1e18d' : undefined, color: copiado ? '#201e1f' : undefined }}>
                     {copiado ? '✓ Copiado!' : '📋 Copiar'}
                   </Button>
                 </div>
