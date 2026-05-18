@@ -77,7 +77,7 @@ function AgendaEventCard({ ev }) {
       )}
       {ev.hora && (
         <div style={{
-          fontSize: 10.5,
+          fontSize: 14.5,
           fontFamily: 'var(--font-title)',
           fontWeight: 700,
           color: cfg.text,
@@ -88,7 +88,7 @@ function AgendaEventCard({ ev }) {
         </div>
       )}
       <div style={{
-        fontSize: 12,
+        fontSize: 14,
         fontFamily: 'var(--font-body)',
         color: cfg.text,
         lineHeight: 1.35,
@@ -158,7 +158,7 @@ function AgendaPage() {
 
     return (
       <div className="col gap-4">
-        <div style={{ fontSize: 13, color: 'var(--gray)', fontWeight: 500 }}>
+        <div style={{ fontSize: 14, color: 'var(--gray)', fontWeight: 500 }}>
           Semana de {startStr} a {endStr}
         </div>
         <div style={{
@@ -186,21 +186,21 @@ function AgendaPage() {
                   borderBottom: `1px solid ${isToday ? 'var(--pink-soft)' : 'var(--gray-light)'}`,
                   background: isToday ? 'var(--pink-tint)' : 'transparent',
                 }}>
-                  <div style={{ fontSize: 10.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: isToday ? 'var(--pink-deep)' : 'var(--gray)', marginBottom: 2 }}>
+                  <div style={{ fontSize: 14.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: isToday ? 'var(--pink-deep)' : 'var(--gray)', marginBottom: 2 }}>
                     {WEEK_NAMES[i]}
                   </div>
                   <div style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 700, color: isToday ? 'var(--pink-deep)' : 'var(--ink)', lineHeight: 1 }}>
                     {day.getDate()}
                   </div>
                   {events.length > 0 && (
-                    <div style={{ fontSize: 10, color: isToday ? 'var(--pink-deep)' : 'var(--gray)', marginTop: 3, opacity: 0.8 }}>
+                    <div style={{ fontSize: 14, color: isToday ? 'var(--pink-deep)' : 'var(--gray)', marginTop: 3, opacity: 0.8 }}>
                       {events.length} {events.length === 1 ? 'item' : 'itens'}
                     </div>
                   )}
                 </div>
                 <div style={{ padding: '10px 10px 8px' }}>
                   {events.length === 0 ? (
-                    <div style={{ fontSize: 11, color: 'var(--gray)', fontStyle: 'italic', textAlign: 'center', padding: '12px 0', opacity: 0.6 }}>
+                    <div style={{ fontSize: 14, color: 'var(--gray)', fontStyle: 'italic', textAlign: 'center', padding: '12px 0', opacity: 0.6 }}>
                       Livre
                     </div>
                   ) : (
@@ -252,7 +252,7 @@ function AgendaPage() {
         {/* Headers */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
           {['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'].map(d => (
-            <div key={d} style={{ textAlign: 'center', fontSize: 10.5, fontWeight: 700, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 0' }}>
+            <div key={d} style={{ textAlign: 'center', fontSize: 14.5, fontWeight: 700, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 0' }}>
               {d}
             </div>
           ))}
@@ -302,7 +302,7 @@ function AgendaPage() {
                     );
                   })}
                   {events.length > 3 && (
-                    <div style={{ fontSize: 9, color: 'var(--gray)', fontWeight: 600 }}>+{events.length - 3}</div>
+                    <div style={{ fontSize: 14, color: 'var(--gray)', fontWeight: 600 }}>+{events.length - 3}</div>
                   )}
                 </div>
               </div>
@@ -331,14 +331,14 @@ function AgendaPage() {
           {dayLabel}
         </div>
         {events.length === 0 && (
-          <div style={{ padding: 'var(--s-5)', textAlign: 'center', color: 'var(--gray)', fontSize: 13, fontStyle: 'italic' }}>
+          <div style={{ padding: 'var(--s-5)', textAlign: 'center', color: 'var(--gray)', fontSize: 14, fontStyle: 'italic' }}>
             Sem compromissos
           </div>
         )}
         {/* All-day events (no hora) */}
         {events.filter(e => !e.hora).length > 0 && (
           <div className="col gap-2" style={{ marginBottom: 4 }}>
-            <div style={{ fontSize: 10.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray)' }}>Dia todo</div>
+            <div style={{ fontSize: 14.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray)' }}>Dia todo</div>
             {events.filter(e => !e.hora).map(ev => <AgendaEventCard key={ev.id} ev={ev} />)}
           </div>
         )}
@@ -357,7 +357,7 @@ function AgendaPage() {
               }}>
                 <div style={{
                   padding: '10px 8px 0',
-                  fontSize: 11,
+                  fontSize: 14,
                   fontWeight: 600,
                   color: 'var(--gray)',
                   borderRight: '1px solid var(--gray-light)',
@@ -428,7 +428,7 @@ function AgendaPage() {
                   color: currentView === v ? 'var(--pink-deep)' : 'var(--gray)',
                   fontFamily: 'var(--font-body)',
                   fontWeight: currentView === v ? 600 : 400,
-                  fontSize: 13,
+                  fontSize: 14,
                   cursor: 'pointer',
                   transition: 'all 0.15s var(--easing)',
                 }}
@@ -444,7 +444,7 @@ function AgendaPage() {
               <Icon name="chev-left" size={14} />
               Anterior
             </Button>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)', minWidth: 120, textAlign: 'center', textTransform: 'capitalize' }}>
+            <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)', minWidth: 120, textAlign: 'center', textTransform: 'capitalize' }}>
               {navLabel()}
             </span>
             <Button variant="ghost" size="sm" onClick={() => navigate(1)}>
@@ -464,7 +464,7 @@ function AgendaPage() {
               border: `1px solid ${cfg.border}`,
             }}>
               <div style={{ width: 7, height: 7, borderRadius: 999, background: cfg.dot, flexShrink: 0 }} />
-              <span style={{ fontSize: 11.5, color: cfg.text, fontWeight: 500, textTransform: 'capitalize' }}>
+              <span style={{ fontSize: 14.5, color: cfg.text, fontWeight: 500, textTransform: 'capitalize' }}>
                 {tipo === 'filho' ? 'Filhos' : tipo === 'gravacao' ? 'Gravação' : tipo.charAt(0).toUpperCase() + tipo.slice(1)}
               </span>
             </div>
@@ -528,7 +528,7 @@ function PieChart({ data, title }) {
           {slices.map((s, i) => (
             <path key={i} d={s.path} fill={s.color} />
           ))}
-          <text x="70" y="74" textAnchor="middle" style={{ fontSize: 11, fontFamily: 'Poppins', fill: '#2B2B2B', fontWeight: 600 }}>
+          <text x="70" y="74" textAnchor="middle" style={{ fontSize: 14, fontFamily: 'Poppins', fill: '#2B2B2B', fontWeight: 600 }}>
             R$ {(total / 1000).toFixed(1)}k
           </text>
         </svg>
@@ -536,8 +536,8 @@ function PieChart({ data, title }) {
           {slices.map((s, i) => (
             <div key={i} className="row gap-2" style={{ alignItems: 'center' }}>
               <div style={{ width: 10, height: 10, borderRadius: 3, background: s.color, flexShrink: 0 }} />
-              <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{s.nome}</span>
-              <span style={{ fontSize: 12, fontWeight: 600, marginLeft: 'auto' }}>R$ {s.valor.toLocaleString('pt-BR')}</span>
+              <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>{s.nome}</span>
+              <span style={{ fontSize: 14, fontWeight: 600, marginLeft: 'auto' }}>R$ {s.valor.toLocaleString('pt-BR')}</span>
             </div>
           ))}
         </div>
@@ -556,7 +556,7 @@ function SummaryCard({ label, value, sub, color, highlight }) {
       flex: 1,
       minWidth: 140,
     }}>
-      <div style={{ fontSize: 11.5, color: 'var(--gray)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
+      <div style={{ fontSize: 14.5, color: 'var(--gray)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
         {label}
       </div>
       <div style={{
@@ -570,7 +570,7 @@ function SummaryCard({ label, value, sub, color, highlight }) {
       }}>
         {value}
       </div>
-      {sub && <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 4 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 14, color: 'var(--gray)', marginTop: 4 }}>{sub}</div>}
     </div>
   );
 }
@@ -684,7 +684,7 @@ function FinanceiroPage() {
     borderRadius: 'var(--r-md)',
     border: '1px solid var(--gray-light)',
     fontFamily: 'var(--font-body)',
-    fontSize: 13,
+    fontSize: 14,
     color: 'var(--ink)',
     background: 'var(--white)',
     width: '100%',
@@ -703,7 +703,7 @@ function FinanceiroPage() {
           background: cfg.bg,
           border: `1px solid ${cfg.border}`,
           color: cfg.text,
-          fontSize: 11,
+          fontSize: 14,
           fontWeight: 600,
           fontFamily: 'var(--font-body)',
           cursor: onClick ? 'pointer' : 'default',
@@ -729,8 +729,8 @@ function FinanceiroPage() {
         gap: 12,
       }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', marginBottom: 2 }}>{item.nome}</div>
-          <div style={{ fontSize: 11, color: 'var(--gray)' }}>Dia {item.dia || '—'}</div>
+          <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--ink)', marginBottom: 2 }}>{item.nome}</div>
+          <div style={{ fontSize: 14, color: 'var(--gray)' }}>Dia {item.dia || '—'}</div>
         </div>
         {isPensao ? (
           <span
@@ -741,7 +741,7 @@ function FinanceiroPage() {
               background: item.status === 'pago' ? '#E8F5ED' : '#FFF8E3',
               border: `1px solid ${item.status === 'pago' ? '#C3DEC9' : '#FDDBB0'}`,
               color: item.status === 'pago' ? '#3A8C50' : '#B5720A',
-              fontSize: 11,
+              fontSize: 14,
               fontWeight: 600,
               cursor: 'pointer',
               userSelect: 'none',
@@ -778,8 +778,8 @@ function FinanceiroPage() {
         gap: 12,
       }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', marginBottom: 2 }}>{item.nome}</div>
-          <div style={{ fontSize: 11, color: 'var(--gray)' }}>
+          <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--ink)', marginBottom: 2 }}>{item.nome}</div>
+          <div style={{ fontSize: 14, color: 'var(--gray)' }}>
             {item.dia ? `Dia ${item.dia}` : '—'}
             {' · '}
             <span style={{ textTransform: 'capitalize' }}>{item.categoria}</span>
@@ -912,7 +912,7 @@ function FinanceiroPage() {
                     color: 'var(--pink-deep)',
                     fontFamily: 'var(--font-body)',
                     fontWeight: 600,
-                    fontSize: 12.5,
+                    fontSize: 14.5,
                     cursor: 'pointer',
                     width: '100%',
                     textAlign: 'center',
@@ -995,7 +995,7 @@ function FinanceiroPage() {
                     color: 'var(--gray)',
                     fontFamily: 'var(--font-body)',
                     fontWeight: 600,
-                    fontSize: 12.5,
+                    fontSize: 14.5,
                     cursor: 'pointer',
                     width: '100%',
                     textAlign: 'center',
@@ -1013,7 +1013,7 @@ function FinanceiroPage() {
                 border: `1px solid ${saldo >= 0 ? '#C3DEC9' : '#F5C0BE'}`,
                 borderRadius: 'var(--r-md)',
               }}>
-                <div style={{ fontSize: 11, color: 'var(--gray)', marginBottom: 4 }}>Saldo do mês (recebido − saídas)</div>
+                <div style={{ fontSize: 14, color: 'var(--gray)', marginBottom: 4 }}>Saldo do mês (recebido − saídas)</div>
                 <div style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 700, color: saldo >= 0 ? '#3A8C50' : '#C0392B' }}>
                   R$ {fmt(saldo)}
                 </div>
@@ -1024,7 +1024,7 @@ function FinanceiroPage() {
 
         {/* Status legend */}
         <div className="row gap-3" style={{ flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 11.5, color: 'var(--gray)', fontWeight: 500 }}>Status (clique para alternar):</span>
+          <span style={{ fontSize: 14.5, color: 'var(--gray)', fontWeight: 500 }}>Status (clique para alternar):</span>
           {Object.entries(STATUS_FIN).map(([key, cfg]) => (
             <span key={key} style={{
               padding: '2px 10px',
@@ -1032,7 +1032,7 @@ function FinanceiroPage() {
               background: cfg.bg,
               border: `1px solid ${cfg.border}`,
               color: cfg.text,
-              fontSize: 11,
+              fontSize: 14,
               fontWeight: 600,
             }}>{cfg.label}</span>
           ))}
@@ -1106,7 +1106,7 @@ function SobreTabLorenna() {
           </g>
         </svg>
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--pink-deep)', fontWeight: 600, marginBottom: 8 }}>
+          <div style={{ fontSize: 14, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--pink-deep)', fontWeight: 600, marginBottom: 8 }}>
             Lorenna Luiza Guerra Nunes Barbosa
           </div>
           <h1 style={{ fontFamily: 'var(--font-title)', fontSize: 28, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.2, marginBottom: 16 }}>
@@ -1119,7 +1119,7 @@ function SobreTabLorenna() {
                 borderRadius: 'var(--r-pill)',
                 background: 'var(--white)',
                 border: '1px solid var(--pink-soft)',
-                fontSize: 12,
+                fontSize: 14,
                 color: 'var(--pink-deep)',
                 fontWeight: 500,
               }}>{r}</span>
@@ -1142,7 +1142,7 @@ function SobreTabLorenna() {
                   borderRadius: 'var(--r-md)',
                 }}>
                   <div style={{ width: 7, height: 7, borderRadius: 999, background: 'var(--pink)', flexShrink: 0 }} />
-                  <span style={{ fontSize: 13, color: 'var(--ink)', fontWeight: 500 }}>{tag}</span>
+                  <span style={{ fontSize: 14, color: 'var(--ink)', fontWeight: 500 }}>{tag}</span>
                 </div>
               ))}
             </div>
@@ -1160,8 +1160,8 @@ function SobreTabLorenna() {
                 border: '1px solid #C3DEC9',
                 borderRadius: 'var(--r-md)',
               }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#3A8C50' }}>Mateus e Murilo</div>
-                <div style={{ fontSize: 12, color: '#5FAD74' }}>Gêmeos · 7 anos</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: '#3A8C50' }}>Mateus e Murilo</div>
+                <div style={{ fontSize: 14, color: '#5FAD74' }}>Gêmeos · 7 anos</div>
               </div>
               <div style={{
                 padding: '10px 12px',
@@ -1169,8 +1169,8 @@ function SobreTabLorenna() {
                 border: '1px solid #BFC9F5',
                 borderRadius: 'var(--r-md)',
               }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#3A50C4' }}>Miguel</div>
-                <div style={{ fontSize: 12, color: '#5B72E8' }}>1 ano e 10 meses</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: '#3A50C4' }}>Miguel</div>
+                <div style={{ fontSize: 14, color: '#5B72E8' }}>1 ano e 10 meses</div>
               </div>
             </div>
           </CardBody>
@@ -1226,13 +1226,13 @@ function SobreTabPapelDaLola() {
         border: '1px solid var(--pink-soft)',
         borderRadius: 'var(--r-xl)',
       }}>
-        <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--pink-deep)', fontWeight: 600, marginBottom: 6 }}>
+        <div style={{ fontSize: 14, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--pink-deep)', fontWeight: 600, marginBottom: 6 }}>
           papeldalola.com
         </div>
         <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 700, marginBottom: 10 }}>
           Papel da Lola
         </h2>
-        <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', lineHeight: 1.6, margin: 0 }}>
+        <p style={{ fontSize: 14.5, color: 'var(--ink-soft)', lineHeight: 1.6, margin: 0 }}>
           Blog e marca pessoal de Lorenna. Conteúdo sobre criatividade, marcas e maternidade com profundidade e sem frescura.
         </p>
       </div>
@@ -1245,7 +1245,7 @@ function SobreTabPapelDaLola() {
               {pilares.map((p, i) => (
                 <div key={i} className="row gap-3" style={{ alignItems: 'center' }}>
                   <div style={{ width: 6, height: 6, borderRadius: 999, background: 'var(--pink)', flexShrink: 0 }} />
-                  <span style={{ fontSize: 13, color: 'var(--ink)' }}>{p}</span>
+                  <span style={{ fontSize: 14, color: 'var(--ink)' }}>{p}</span>
                 </div>
               ))}
             </div>
@@ -1266,8 +1266,8 @@ function SobreTabPapelDaLola() {
                 }}>
                   <Icon name={p.icon} size={13} color="var(--pink-deep)" />
                   <div>
-                    <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ink)' }}>{p.nome}</div>
-                    <div style={{ fontSize: 11, color: 'var(--gray)' }}>{p.handle}</div>
+                    <div style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--ink)' }}>{p.nome}</div>
+                    <div style={{ fontSize: 14, color: 'var(--gray)' }}>{p.handle}</div>
                   </div>
                 </div>
               ))}
@@ -1310,13 +1310,13 @@ function SobreTabLogue() {
         border: '1px solid var(--gray-light)',
         borderRadius: 'var(--r-xl)',
       }}>
-        <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gray)', fontWeight: 600, marginBottom: 6 }}>
+        <div style={{ fontSize: 14, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gray)', fontWeight: 600, marginBottom: 6 }}>
           Agência
         </div>
         <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 700, marginBottom: 10 }}>
           Agência Logue
         </h2>
-        <p style={{ fontSize: 13.5, color: 'var(--ink-soft)', lineHeight: 1.6, margin: 0 }}>
+        <p style={{ fontSize: 14.5, color: 'var(--ink-soft)', lineHeight: 1.6, margin: 0 }}>
           Agência de social media focada em negócios locais. Pacotes mensais recorrentes com gestão completa de presença digital.
         </p>
       </div>
@@ -1334,7 +1334,7 @@ function SobreTabLogue() {
                   borderRadius: 'var(--r-md)',
                 }}>
                   <div style={{ width: 8, height: 8, borderRadius: 999, background: c.cor, flexShrink: 0 }} />
-                  <span style={{ fontSize: 13, color: 'var(--ink)', fontWeight: 500 }}>{c.nome}</span>
+                  <span style={{ fontSize: 14, color: 'var(--ink)', fontWeight: 500 }}>{c.nome}</span>
                 </div>
               ))}
             </div>
@@ -1353,7 +1353,7 @@ function SobreTabLogue() {
                   borderRadius: 'var(--r-md)',
                 }}>
                   <Icon name={s.icon} size={14} color="var(--pink-deep)" />
-                  <span style={{ fontSize: 13, color: 'var(--ink)' }}>{s.nome}</span>
+                  <span style={{ fontSize: 14, color: 'var(--ink)' }}>{s.nome}</span>
                 </div>
               ))}
             </div>
@@ -1363,7 +1363,7 @@ function SobreTabLogue() {
               background: 'var(--pink-tint)',
               border: '1px solid var(--pink-soft)',
               borderRadius: 'var(--r-md)',
-              fontSize: 12,
+              fontSize: 14,
               color: 'var(--pink-deep)',
             }}>
               Modelo: pacotes mensais recorrentes
@@ -1408,14 +1408,14 @@ function SobreTabMonetizacao() {
             }}>
               <Icon name={f.icon} size={16} color={cfg.text} />
               <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)', marginBottom: 4 }}>{f.nome}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)', marginBottom: 4 }}>{f.nome}</div>
                 <span style={{
                   display: 'inline-block',
                   padding: '2px 8px',
                   borderRadius: 'var(--r-pill)',
                   background: 'rgba(255,255,255,0.6)',
                   border: `1px solid ${cfg.border}`,
-                  fontSize: 10.5,
+                  fontSize: 14.5,
                   color: cfg.text,
                   fontWeight: 600,
                 }}>
@@ -1437,7 +1437,7 @@ function SobreTabMonetizacao() {
                 borderRadius: 'var(--r-pill)',
                 background: 'var(--offwhite)',
                 border: '1px solid var(--gray-light)',
-                fontSize: 12,
+                fontSize: 14,
                 color: 'var(--ink-soft)',
                 fontWeight: 500,
               }}>
@@ -1486,8 +1486,8 @@ function SobreTabRedes() {
               <Icon name={r.icon} size={16} color="var(--pink-deep)" />
             </div>
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ink)', marginBottom: 2 }}>{r.plataforma}</div>
-              <div style={{ fontSize: 11.5, color: 'var(--pink-deep)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.handle}</div>
+              <div style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--ink)', marginBottom: 2 }}>{r.plataforma}</div>
+              <div style={{ fontSize: 14.5, color: 'var(--pink-deep)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.handle}</div>
             </div>
           </a>
         ))}
@@ -1535,7 +1535,7 @@ function SobrePage() {
                 color: tab === t.id ? 'var(--pink-deep)' : 'var(--gray)',
                 fontFamily: 'var(--font-body)',
                 fontWeight: tab === t.id ? 600 : 400,
-                fontSize: 13,
+                fontSize: 14,
                 cursor: 'pointer',
                 transition: 'all 0.15s var(--easing)',
               }}
@@ -1641,13 +1641,13 @@ function MonetizacaoPage() {
             border: '1px solid var(--pink-soft)',
             borderRadius: 'var(--r-lg)',
           }}>
-            <div style={{ fontSize: 11, color: 'var(--pink-deep)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
+            <div style={{ fontSize: 14, color: 'var(--pink-deep)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
               Potencial ativo (mês)
             </div>
             <div style={{ fontFamily: 'var(--font-title)', fontSize: 26, fontWeight: 700, color: 'var(--pink-deep)', lineHeight: 1 }}>
               R$ {ativoMin.toLocaleString('pt-BR')} – {ativoMax.toLocaleString('pt-BR')}
             </div>
-            <div style={{ fontSize: 11.5, color: 'var(--pink-deep)', marginTop: 6, opacity: 0.8 }}>
+            <div style={{ fontSize: 14.5, color: 'var(--pink-deep)', marginTop: 6, opacity: 0.8 }}>
               {MON_FONTES.filter(f => f.status === 'ativo').length} fontes ativas
             </div>
           </div>
@@ -1658,7 +1658,7 @@ function MonetizacaoPage() {
             border: '1px solid var(--gray-light)',
             borderRadius: 'var(--r-lg)',
           }}>
-            <div style={{ fontSize: 11, color: 'var(--gray)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
+            <div style={{ fontSize: 14, color: 'var(--gray)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
               Meta mensal
             </div>
             <div style={{ fontFamily: 'var(--font-title)', fontSize: 26, fontWeight: 700, color: 'var(--ink)', lineHeight: 1 }}>
@@ -1667,7 +1667,7 @@ function MonetizacaoPage() {
             <div style={{ marginTop: 10, height: 6, background: 'var(--gray-light)', borderRadius: 'var(--r-pill)', overflow: 'hidden' }}>
               <div style={{ width: `${pctMeta}%`, height: '100%', background: 'var(--pink)', borderRadius: 'var(--r-pill)' }} />
             </div>
-            <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 4 }}>{pctMeta}% atingido (R$ {MON_ATUAL.toLocaleString('pt-BR')} realizado)</div>
+            <div style={{ fontSize: 14, color: 'var(--gray)', marginTop: 4 }}>{pctMeta}% atingido (R$ {MON_ATUAL.toLocaleString('pt-BR')} realizado)</div>
           </div>
         </div>
 
@@ -1707,7 +1707,7 @@ function MonetizacaoPage() {
                       <Icon name={f.icon} size={16} color={tipoCor} />
                     </div>
                     <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)', flex: 1 }}>{f.nome}</span>
-                    <span style={{ fontSize: 12, color: 'var(--gray)', marginLeft: 'auto' }}>
+                    <span style={{ fontSize: 14, color: 'var(--gray)', marginLeft: 'auto' }}>
                       {isOpen ? '▲' : '▼'}
                     </span>
                   </div>
@@ -1716,27 +1716,27 @@ function MonetizacaoPage() {
                   {isOpen && (
                     <div className="col gap-2" style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--gray-light)' }}>
                       <div className="row between">
-                        <span style={{ fontSize: 11, color: tipoCor, fontWeight: 500, textTransform: 'capitalize' }}>{f.tipo}</span>
+                        <span style={{ fontSize: 14, color: tipoCor, fontWeight: 500, textTransform: 'capitalize' }}>{f.tipo}</span>
                         <span style={{
                           padding: '2px 8px',
                           borderRadius: 'var(--r-pill)',
                           background: stCfg.bg,
                           border: `1px solid ${stCfg.border}`,
                           color: stCfg.text,
-                          fontSize: 10.5,
+                          fontSize: 14.5,
                           fontWeight: 600,
                         }}>{stCfg.label}</span>
                       </div>
                       <div className="row between">
-                        <span style={{ fontSize: 12, color: 'var(--gray)' }}>Potencial</span>
-                        <span style={{ fontFamily: 'var(--font-title)', fontSize: 13, fontWeight: 700, color: f.status === 'futuro' ? 'var(--gray)' : 'var(--ink)' }}>
+                        <span style={{ fontSize: 14, color: 'var(--gray)' }}>Potencial</span>
+                        <span style={{ fontFamily: 'var(--font-title)', fontSize: 14, fontWeight: 700, color: f.status === 'futuro' ? 'var(--gray)' : 'var(--ink)' }}>
                           R$ {f.minVal.toLocaleString('pt-BR')}–{f.maxVal.toLocaleString('pt-BR')}
                         </span>
                       </div>
                       {f.mesPassado > 0 && (
                         <div className="row between">
-                          <span style={{ fontSize: 12, color: 'var(--gray)' }}>Mês passado</span>
-                          <span style={{ fontFamily: 'var(--font-title)', fontSize: 13, fontWeight: 700, color: '#3A8C50' }}>
+                          <span style={{ fontSize: 14, color: 'var(--gray)' }}>Mês passado</span>
+                          <span style={{ fontFamily: 'var(--font-title)', fontSize: 14, fontWeight: 700, color: '#3A8C50' }}>
                             R$ {f.mesPassado.toLocaleString('pt-BR')}
                           </span>
                         </div>
@@ -1760,7 +1760,7 @@ function MonetizacaoPage() {
                   borderRadius: 'var(--r-pill)',
                   background: 'var(--offwhite)',
                   border: '1px solid var(--gray-light)',
-                  fontSize: 12,
+                  fontSize: 14,
                   color: 'var(--ink-soft)',
                   fontWeight: 500,
                 }}>
@@ -1795,7 +1795,7 @@ function MonetizacaoPage() {
                 position: 'relative',
               }}>
                 <div style={{
-                  fontSize: 11,
+                  fontSize: 14,
                   textTransform: 'uppercase',
                   letterSpacing: '0.08em',
                   color: 'var(--pink-deep)',
@@ -1817,7 +1817,7 @@ function MonetizacaoPage() {
                   onClick={gerarIdeia}
                   style={{
                     marginTop: 14,
-                    fontSize: 12,
+                    fontSize: 14,
                     color: 'var(--pink-deep)',
                     fontFamily: 'var(--font-body)',
                     fontWeight: 600,
@@ -1849,13 +1849,13 @@ function MonetizacaoPage() {
                 <div style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700, marginBottom: 2 }}>
                   Meta de renda mensal
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--gray)' }}>Maio 2026</div>
+                <div style={{ fontSize: 14, color: 'var(--gray)' }}>Maio 2026</div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 700, color: 'var(--ink)' }}>
                   R$ {MON_ATUAL.toLocaleString('pt-BR')}
                 </div>
-                <div style={{ fontSize: 11, color: 'var(--gray)' }}>de R$ {MON_META.toLocaleString('pt-BR')}</div>
+                <div style={{ fontSize: 14, color: 'var(--gray)' }}>de R$ {MON_META.toLocaleString('pt-BR')}</div>
               </div>
             </div>
             <div style={{ height: 12, background: 'var(--gray-light)', borderRadius: 'var(--r-pill)', overflow: 'hidden', marginBottom: 8 }}>
@@ -1868,7 +1868,7 @@ function MonetizacaoPage() {
               }} />
             </div>
             <div className="row between">
-              <span style={{ fontSize: 12, color: 'var(--gray)' }}>R$ {(MON_META - MON_ATUAL).toLocaleString('pt-BR')} para a meta</span>
+              <span style={{ fontSize: 14, color: 'var(--gray)' }}>R$ {(MON_META - MON_ATUAL).toLocaleString('pt-BR')} para a meta</span>
               <span style={{
                 fontFamily: 'var(--font-title)',
                 fontSize: 14,

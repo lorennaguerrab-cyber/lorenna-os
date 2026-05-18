@@ -96,7 +96,7 @@ function ClientConteudo({ client, setRoute }) {
               }}>
                 <span style={{ fontSize: 18 }}>{window.TYPE_EMOJI[c.tipo]}</span>
                 <div className="grow">
-                  <p style={{ fontSize: 13.5, fontWeight: 500 }}>{c.titulo}</p>
+                  <p style={{ fontSize: 14.5, fontWeight: 500 }}>{c.titulo}</p>
                   <p className="tiny muted" style={{ marginTop: 2 }}>{c.data || '—'}</p>
                 </div>
                 <span className="tiny" style={{
@@ -153,7 +153,7 @@ function ClientDetail({ client, onClose, setRoute }) {
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
               background: 'transparent', border: 'none', cursor: 'pointer',
-              color: 'var(--ink-soft)', fontSize: 13.5, fontFamily: 'var(--font-body)',
+              color: 'var(--ink-soft)', fontSize: 14.5, fontFamily: 'var(--font-body)',
               fontWeight: 500, padding: '6px 0',
             }}>
             <Icon name="arrow" size={13} style={{ transform: 'rotate(180deg)' }}/>
@@ -197,7 +197,7 @@ function ClientDetail({ client, onClose, setRoute }) {
                   border: 'none',
                   color: tab === t.id ? 'var(--pink-deep)' : 'var(--gray)',
                   fontWeight: tab === t.id ? 600 : 500,
-                  fontSize: 13,
+                  fontSize: 14,
                   fontFamily: 'var(--font-body)',
                   cursor: 'pointer',
                   borderBottom: tab === t.id ? '2px solid var(--pink)' : '2px solid transparent',
@@ -262,7 +262,7 @@ function ClientOverview({ client, cogLabel, cogColor }) {
           alignItems: 'flex-start',
         }}>
           <Icon name="alert" size={16} color="#A04F4F" style={{ flexShrink:0, marginTop:2 }}/>
-          <p style={{ fontSize: 13, color: '#7A3939', lineHeight: 1.5 }}>
+          <p style={{ fontSize: 14, color: '#7A3939', lineHeight: 1.5 }}>
             Custo cognitivo muito alto. Veja em <strong>Insights</strong> a sugestão de renegociação.
           </p>
         </div>
@@ -286,7 +286,7 @@ function ClientOverview({ client, cogLabel, cogColor }) {
           {client.proximas.map((a, i) => (
             <div key={i} className="row gap-3" style={{ padding: '12px 16px', background: 'var(--offwhite)', borderRadius: 15 }}>
               <div style={{ width: 16, height: 16, borderRadius: 5, border: '1.5px solid var(--gray)', flexShrink: 0 }}/>
-              <span style={{ fontSize: 13.5, color: 'var(--ink-soft)' }}>{a}</span>
+              <span style={{ fontSize: 14.5, color: 'var(--ink-soft)' }}>{a}</span>
             </div>
           ))}
         </div>
@@ -329,7 +329,7 @@ function ClientTarefas({ client }) {
                 border: `1.5px solid ${prioColor}`, flexShrink: 0,
               }}/>
               <div className="grow">
-                <div style={{ fontSize: 13.5, fontWeight: 500 }}>{t.titulo}</div>
+                <div style={{ fontSize: 14.5, fontWeight: 500 }}>{t.titulo}</div>
                 <div className="row gap-3 tiny muted" style={{ marginTop: 4 }}>
                   <span>Prazo: <strong style={{ color: 'var(--ink-soft)' }}>{t.deadline}</strong></span>
                   <span style={{ color: stColor, fontWeight: 600 }}>● {stLabel}</span>
@@ -364,7 +364,7 @@ function ClientArquivos({ client }) {
           }}>
             <span style={{ fontSize: 22, flexShrink: 0 }}>{FILE_ICONS[f.tipo] || '📎'}</span>
             <div className="grow">
-              <div style={{ fontSize: 13.5, fontWeight: 500 }}>{f.nome}</div>
+              <div style={{ fontSize: 14.5, fontWeight: 500 }}>{f.nome}</div>
               <div className="tiny muted">{f.size} · {f.data}</div>
             </div>
             <button className="btn ghost icon" title="Baixar">
@@ -408,7 +408,7 @@ function ClientInsights({ client }) {
                 <h4 style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 600, letterSpacing: '-0.02em' }}>{i.titulo}</h4>
                 <Badge variant="pink">{i.custo}</Badge>
               </div>
-              <p style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--ink-soft)' }}>{i.ideia}</p>
+              <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--ink-soft)' }}>{i.ideia}</p>
               <div className="row gap-2">
                 <Button size="sm" variant="primary" onClick={() => showToast('Insight virou tarefa!')}>
                   <Icon name="plus" size={12} color="white"/> Virar tarefa
@@ -652,7 +652,7 @@ function CRMStatusBadge({ status }) {
   const cfg = CRM_NEW_STATUS[status] || CRM_NEW_STATUS.potencial;
   return (
     <span style={{
-      padding: '3px 11px', borderRadius: 999, fontSize: 12, fontWeight: 600,
+      padding: '3px 11px', borderRadius: 999, fontSize: 14, fontWeight: 600,
       background: cfg.bg, color: cfg.color, flexShrink: 0,
     }}>{cfg.label}</span>
   );
@@ -732,7 +732,7 @@ function CRMPage() {
           borderRadius: 15, padding: '10px 16px', maxWidth: 400,
         }}>
           <Icon name="search" size={14} color="var(--gray)"/>
-          <input className="grow" style={{ background: 'transparent', fontSize: 13 }}
+          <input className="grow" style={{ background: 'transparent', fontSize: 14 }}
             placeholder="Buscar contatos..." value={search} onChange={e => setSearch(e.target.value)}/>
           {search && (
             <button onClick={() => setSearch('')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--gray)', lineHeight: 1 }}>
@@ -796,14 +796,14 @@ function CRMPage() {
                   background: 'transparent', border: 'none',
                   color: activeTab === t.id ? 'var(--pink-deep)' : 'var(--gray)',
                   fontWeight: activeTab === t.id ? 600 : 500,
-                  fontSize: 13.5, fontFamily: 'var(--font-body)',
+                  fontSize: 14.5, fontFamily: 'var(--font-body)',
                   cursor: 'pointer',
                   borderBottom: activeTab === t.id ? '2px solid var(--pink)' : '2px solid transparent',
                   marginBottom: -1, whiteSpace: 'nowrap',
                 }}>
                 {t.label}
                 <span style={{
-                  marginLeft: 8, fontSize: 11, fontWeight: 600,
+                  marginLeft: 8, fontSize: 14, fontWeight: 600,
                   padding: '2px 7px', borderRadius: 999,
                   background: activeTab === t.id ? 'var(--pink-soft)' : 'var(--gray-light)',
                   color: activeTab === t.id ? 'var(--pink-deep)' : 'var(--gray)',
@@ -945,7 +945,7 @@ function MapaPage() {
                       border: isPrimary ? 'none' : `1.5px solid ${c}`,
                       fontFamily: isPrimary ? 'var(--font-title)' : 'var(--font-body)',
                       fontWeight: isPrimary ? 700 : 500,
-                      fontSize: isCore ? 16 : isCluster ? 13 : 12,
+                      fontSize: isCore ? 16 : isCluster ? 14 : 14,
                       letterSpacing: isPrimary ? '0.01em' : 'normal',
                       whiteSpace: 'nowrap',
                       cursor: 'pointer',

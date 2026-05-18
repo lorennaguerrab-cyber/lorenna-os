@@ -48,7 +48,7 @@ function DayFocusCard({ energy }) {
             borderRadius: 999, border: '1px solid var(--border)',
           }}>
             <span style={{ fontSize: 16 }}>{e.emoji}</span>
-            <span style={{ fontSize: 12, fontWeight: 500 }}>{e.label}</span>
+            <span style={{ fontSize: 14, fontWeight: 500 }}>{e.label}</span>
           </div>
 
           <div className="row gap-2" style={{
@@ -57,7 +57,7 @@ function DayFocusCard({ energy }) {
             borderRadius: 999, border: '1px solid var(--border)',
           }}>
             <span style={{ width: 8, height: 8, borderRadius: 999, background: 'var(--pink)' }}/>
-            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>3 prioridades pra hoje</span>
+            <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>3 prioridades pra hoje</span>
           </div>
 
           <div className="row gap-2" style={{
@@ -66,7 +66,7 @@ function DayFocusCard({ energy }) {
             borderRadius: 999, border: '1px solid var(--border)',
           }}>
             <Icon name="calendar" size={12} color="var(--text-muted)" />
-            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>2 lembretes fixos</span>
+            <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>2 lembretes fixos</span>
           </div>
         </div>
       </CardBody>
@@ -253,7 +253,7 @@ function EnergySelector({ energy, setEnergy }) {
       <div className="row between" style={{ marginBottom: 'var(--s-3)' }}>
         <div>
           <div className="eyebrow">Sua energia agora</div>
-          <p className="secondary" style={{ fontSize: 12, marginTop: 4 }}>
+          <p className="secondary" style={{ fontSize: 14, marginTop: 4 }}>
             O sistema adapta tarefas e prioridades ao seu estado.
           </p>
         </div>
@@ -269,7 +269,7 @@ function EnergySelector({ energy, setEnergy }) {
                 background: active ? `color-mix(in oklch, ${e.color} 14%, var(--bg-surface))` : 'var(--bg-surface)',
                 borderColor: active ? e.color : 'var(--border)',
                 color: active ? e.color : 'var(--text-secondary)',
-                cursor: 'pointer', fontSize: 12.5,
+                cursor: 'pointer', fontSize: 14.5,
                 fontWeight: active ? 600 : 500,
                 transition: 'all .15s var(--easing)',
               }}>
@@ -286,7 +286,7 @@ function EnergySelector({ energy, setEnergy }) {
             border: '1.5px dashed var(--pink-soft)',
             background: 'var(--pink-tint)',
             color: 'var(--pink-deep)',
-            cursor: 'pointer', fontSize: 12.5, fontWeight: 500,
+            cursor: 'pointer', fontSize: 14.5, fontWeight: 500,
             transition: 'all .15s var(--easing)',
           }}>
           <span style={{ fontSize: 14 }}>🤍</span>
@@ -337,7 +337,7 @@ function TaskRow({ task, dense, large }) {
         <div className="grow">
           <div className="row between" style={{ alignItems: 'flex-start' }}>
             <div className="grow">
-              <div style={{ fontSize: large ? 15.5 : 13.5, fontWeight: large ? 600 : 500, color: 'var(--text-primary)', lineHeight: 1.4 }}>
+              <div style={{ fontSize: large ? 15.5 : 14, fontWeight: large ? 600 : 500, color: 'var(--text-primary)', lineHeight: 1.4 }}>
                 {task.titulo}
               </div>
               {task.cliente && (
@@ -382,7 +382,7 @@ function TaskRow({ task, dense, large }) {
                     {microDone[m.id] && <Icon name="check" size={10} color="white"/>}
                   </div>
                   <span style={{
-                    fontSize: 12.5,
+                    fontSize: 14.5,
                     color: microDone[m.id] ? 'var(--text-muted)' : 'var(--text-primary)',
                     textDecoration: microDone[m.id] ? 'line-through' : 'none',
                     flex: 1,
@@ -466,7 +466,7 @@ function WeekView() {
                 background: isToday ? `color-mix(in oklch, ${cfg.color} 10%, var(--bg-surface))` : 'var(--bg-elevated)',
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center',
-                fontSize: 11, color: 'var(--text-muted)',
+                fontSize: 14, color: 'var(--text-muted)',
                 position: 'relative',
               }}>
                 <div style={{ fontSize: 22, fontFamily: 'var(--font-title)', color: cfg.color, fontWeight: 600 }}>
@@ -521,7 +521,7 @@ function RoutinesWidget() {
                 }}>
                 <span style={{ fontSize: 18, flexShrink: 0 }}>{r.icone}</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{r.titulo}</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)' }}>{r.titulo}</div>
                   <div className="tiny muted" style={{ marginTop: 2 }}>{r.horario} · {doneCount}/{total}</div>
                 </div>
                 <Icon name={isOpen ? 'chev-down' : 'chev-right'} size={14} color="var(--gray)"/>
@@ -550,7 +550,7 @@ function RoutinesWidget() {
                         }}>{isDone && <Icon name="check" size={10} color="white"/>}</div>
                         <span style={{
                           flex: 1,
-                          fontSize: 12.5,
+                          fontSize: 14.5,
                           color: isDone ? 'var(--gray)' : 'var(--ink)',
                           textDecoration: isDone ? 'line-through' : 'none',
                         }}>{p.desc}</span>
@@ -609,7 +609,7 @@ function PequenasVitorias() {
         <div className="row gap-2" style={{ marginBottom: 'var(--s-3)' }}>
           <input
             className="input" autoFocus
-            style={{ flex: 1, fontSize: 13 }}
+            style={{ flex: 1, fontSize: 14 }}
             placeholder="Qual foi sua vitória de hoje?"
             value={newText}
             onChange={e => setNewText(e.target.value)}
@@ -637,13 +637,13 @@ function PequenasVitorias() {
                 borderRadius: 'var(--r-md)',
               }}>
                 <span style={{ fontSize: 15, flexShrink: 0 }}>{v.icon}</span>
-                <span style={{ fontSize: 12.5, color: 'var(--ink-soft)', lineHeight: 1.4 }}>{v.text}</span>
+                <span style={{ fontSize: 14.5, color: 'var(--ink-soft)', lineHeight: 1.4 }}>{v.text}</span>
               </div>
             ))}
           </div>
           {showing < all.length && (
             <button onClick={() => setShowing(all.length)}
-              style={{ marginTop: 'var(--s-3)', fontSize: 12, color: '#7FB68C', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+              style={{ marginTop: 'var(--s-3)', fontSize: 14, color: '#7FB68C', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
               Ver todas ({all.length}) →
             </button>
           )}
@@ -684,10 +684,10 @@ function RotinaSemanalWidget() {
                 border: `1.5px solid ${isToday ? 'var(--pink)' : 'var(--border)'}`,
                 textAlign: 'center',
               }}>
-                <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 6, color: isToday ? 'var(--pink-deep)' : 'var(--text-muted)' }}>{d.dia}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6, color: isToday ? 'var(--pink-deep)' : 'var(--text-muted)' }}>{d.dia}</div>
                 <div className="col gap-1">
                   {d.temas.map((t, j) => (
-                    <div key={j} style={{ fontSize: 11.5, lineHeight: 1.35, color: isToday ? 'var(--ink)' : 'var(--text-secondary)' }}>{t}</div>
+                    <div key={j} style={{ fontSize: 14.5, lineHeight: 1.35, color: isToday ? 'var(--ink)' : 'var(--text-secondary)' }}>{t}</div>
                   ))}
                 </div>
               </div>
@@ -730,7 +730,7 @@ function MiniCalendarWidget() {
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, textAlign: 'center' }}>
         {['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].map((d, i) => (
-          <div key={i} style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', paddingBottom: 4 }}>{d}</div>
+          <div key={i} style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-muted)', paddingBottom: 4 }}>{d}</div>
         ))}
         {cells.map((d, i) => {
           if (!d) return <div key={i}/>;
@@ -742,7 +742,7 @@ function MiniCalendarWidget() {
               flexDirection: 'column', gap: 1, borderRadius: 6,
               background: isToday ? 'var(--pink)' : 'transparent',
               color: isToday ? 'white' : 'var(--text-primary)',
-              fontSize: 11, fontWeight: isToday ? 700 : 400, position: 'relative',
+              fontSize: 14, fontWeight: isToday ? 700 : 400, position: 'relative',
             }}>
               {d}
               {hasEv && !isToday && (
@@ -759,7 +759,7 @@ function MiniCalendarWidget() {
             {todayEvents.map(ev => (
               <div key={ev.id} className="row gap-2">
                 <span className="tiny muted" style={{ flexShrink: 0 }}>{ev.hora}</span>
-                <span style={{ fontSize: 12, lineHeight: 1.3 }}>{ev.titulo}</span>
+                <span style={{ fontSize: 14, lineHeight: 1.3 }}>{ev.titulo}</span>
               </div>
             ))}
           </div>
@@ -788,7 +788,7 @@ function ClientsWidget() {
               width: 8, height: 8, borderRadius: 999, background: c.cor, flexShrink: 0,
             }}/>
             <div className="grow">
-              <div style={{ fontSize: 12.5, fontWeight: 500 }}>{c.nome}</div>
+              <div style={{ fontSize: 14.5, fontWeight: 500 }}>{c.nome}</div>
               <div className="tiny muted">R$ {c.receita.toLocaleString('pt-BR')}/mês</div>
             </div>
             {c.pendentes > 0 && (
@@ -928,7 +928,7 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
                       alignItems: 'flex-start',
                     }}>
                     <Icon name="bulb" size={13} color="var(--pink)" style={{ marginTop: 2, flexShrink: 0 }}/>
-                    <span style={{ fontSize: 12, lineHeight: 1.45, color: 'var(--text-secondary)' }}>
+                    <span style={{ fontSize: 14, lineHeight: 1.45, color: 'var(--text-secondary)' }}>
                       {i.titulo}
                     </span>
                   </div>
@@ -956,7 +956,7 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
                   }}>
                     <div className="row gap-2">
                       <span style={{ fontSize: 14 }}>{r.icon}</span>
-                      <span style={{ fontSize: 12.5 }}>{r.texto}</span>
+                      <span style={{ fontSize: 14.5 }}>{r.texto}</span>
                     </div>
                     <span className="tiny" style={{
                       padding: '2px 8px',

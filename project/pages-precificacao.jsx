@@ -210,7 +210,7 @@ function PrecificacaoPage() {
                           style={{ accentColor: 'var(--pink)', cursor: 'pointer' }}
                         />
                         <span style={{
-                          fontSize: 13, fontWeight: form.complexidade === c.value ? 600 : 400,
+                          fontSize: 14, fontWeight: form.complexidade === c.value ? 600 : 400,
                           color: form.complexidade === c.value ? 'var(--pink-deep)' : 'var(--text-secondary)',
                         }}>
                           {c.label}
@@ -233,7 +233,7 @@ function PrecificacaoPage() {
                           onChange={() => toggleInclui(o.id)}
                           style={{ accentColor: 'var(--pink)', cursor: 'pointer', width: 15, height: 15 }}
                         />
-                        <span style={{ fontSize: 13, color: form.inclui.includes(o.id) ? 'var(--text-primary)' : 'var(--text-secondary)', fontWeight: form.inclui.includes(o.id) ? 500 : 400 }}>{o.label}</span>
+                        <span style={{ fontSize: 14, color: form.inclui.includes(o.id) ? 'var(--text-primary)' : 'var(--text-secondary)', fontWeight: form.inclui.includes(o.id) ? 500 : 400 }}>{o.label}</span>
                       </label>
                     ))}
                   </div>
@@ -310,7 +310,7 @@ function PrecificacaoPage() {
                   position: 'relative',
                 }}>
                   <pre style={{
-                    fontSize: 12,
+                    fontSize: 14,
                     fontFamily: 'ui-monospace, SF Mono, monospace',
                     color: 'var(--text-secondary)',
                     lineHeight: 1.65,
@@ -350,7 +350,7 @@ function PrecificacaoPage() {
                             <Icon name="doc" size={16} color="var(--pink-deep)"/>
                           </div>
                           <div className="grow">
-                            <p style={{ fontSize: 13, fontWeight: 600 }}>{entry.tipo}</p>
+                            <p style={{ fontSize: 14, fontWeight: 600 }}>{entry.tipo}</p>
                             <p className="tiny muted" style={{ marginTop: 2 }}>{entry.cliente} · {entry.data}</p>
                           </div>
                           <div className="col" style={{ alignItems: 'flex-end', gap: 4, flexShrink: 0 }}>

@@ -222,7 +222,7 @@ function CapturaPage({ energy }) {
                     }}>
                       <span style={{ fontSize: 16 }}>{c.icon}</span>
                       <div>
-                        <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--pink-deep)' }}>{c.tipo}</div>
+                        <div style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--pink-deep)' }}>{c.tipo}</div>
                         <div className="tiny muted" style={{ marginTop: 2 }}>{c.desc}</div>
                       </div>
                     </div>
@@ -249,8 +249,8 @@ function CapturaPage({ energy }) {
                         background: 'var(--bg-surface)', border: '1px solid var(--border)',
                       }}>
                         <div className="row gap-2">
-                          <span style={{ color: 'var(--pink-deep)', fontSize: 12 }}>→</span>
-                          <span style={{ fontSize: 13 }}>{t.desc}</span>
+                          <span style={{ color: 'var(--pink-deep)', fontSize: 14 }}>→</span>
+                          <span style={{ fontSize: 14 }}>{t.desc}</span>
                         </div>
                         <Badge variant="pink">{t.min} min</Badge>
                       </li>
@@ -276,8 +276,8 @@ function CapturaPage({ energy }) {
                         padding: '12px 14px', borderRadius: 'var(--r-md)',
                         background: 'var(--bg-surface)', border: '1px solid var(--border)',
                       }} className="col gap-1">
-                        <span style={{ fontSize: 13, fontWeight: 500 }}>{m.desc}</span>
-                        <span style={{ fontSize: 12, color: 'var(--pink-deep)', fontWeight: 600 }}>{m.potencial}</span>
+                        <span style={{ fontSize: 14, fontWeight: 500 }}>{m.desc}</span>
+                        <span style={{ fontSize: 14, color: 'var(--pink-deep)', fontWeight: 600 }}>{m.potencial}</span>
                       </div>
                     ))}
                   </div>
@@ -297,8 +297,8 @@ function CapturaPage({ energy }) {
                 <ul style={{ margin: 0, padding: 0, listStyle: 'none' }} className="col gap-2">
                   {resultado.ideia.map((id, i) => (
                     <li key={i} className="row gap-2" style={{ alignItems: 'flex-start', padding: '6px 0' }}>
-                      <span style={{ color: 'var(--e-social)', fontSize: 12, marginTop: 3 }}>→</span>
-                      <span style={{ fontSize: 13, lineHeight: 1.4 }}>{id.desc}</span>
+                      <span style={{ color: 'var(--e-social)', fontSize: 14, marginTop: 3 }}>→</span>
+                      <span style={{ fontSize: 14, lineHeight: 1.4 }}>{id.desc}</span>
                     </li>
                   ))}
                 </ul>
@@ -319,7 +319,7 @@ function CapturaPage({ energy }) {
                   <CardBody tight>
                     <div className="row between" style={{ alignItems: 'flex-start' }}>
                       <div className="grow">
-                        <p style={{ fontSize: 13, lineHeight: 1.45, color: 'var(--text-primary)' }}>{h.raw}</p>
+                        <p style={{ fontSize: 14, lineHeight: 1.45, color: 'var(--text-primary)' }}>{h.raw}</p>
                         <div className="row gap-2" style={{ marginTop: 6 }}>
                           {h.tarefas > 0 && <Badge variant="pink">{h.tarefas} tarefa{h.tarefas>1?'s':''}</Badge>}
                           {h.ideias > 0 && <Badge variant="yellow">{h.ideias} ideia{h.ideias>1?'s':''}</Badge>}
@@ -369,7 +369,7 @@ function IdeiasPage() {
             flex: 1, minWidth: 220, maxWidth: 320,
           }}>
             <Icon name="search" size={13} color="var(--text-muted)" />
-            <input className="grow" style={{ background:'transparent', border:'none', fontSize: 13 }}
+            <input className="grow" style={{ background:'transparent', border:'none', fontSize: 14 }}
               placeholder="Buscar ideias..." value={search} onChange={e => setSearch(e.target.value)} />
           </div>
           <select className="select" style={{ width: 'auto', minWidth: 180 }} value={cat} onChange={e => setCat(e.target.value)}>
@@ -389,7 +389,7 @@ function IdeiasPage() {
               <Card key={i.id} hoverable>
                 <CardBody className="col gap-3">
                   <div className="row between" style={{ alignItems: 'flex-start' }}>
-                    <p style={{ fontSize: 13.5, fontWeight: 500, lineHeight: 1.4, flex: 1 }}>{i.titulo}</p>
+                    <p style={{ fontSize: 14.5, fontWeight: 500, lineHeight: 1.4, flex: 1 }}>{i.titulo}</p>
                     <Badge variant={cfg.variant}>{cfg.label}</Badge>
                   </div>
                   {i.desc && <p className="small secondary" style={{ lineHeight: 1.5 }}>{i.desc}</p>}
@@ -467,7 +467,7 @@ function TarefasPage() {
             ].map(([s, l]) => (
               <button key={s} onClick={() => setFilter(s)}
                 style={{
-                  fontSize: 12.5, padding: '8px 16px', borderRadius: 15,
+                  fontSize: 14.5, padding: '8px 16px', borderRadius: 15,
                   border: '1px solid',
                   background: filter === s ? 'var(--pink-tint)' : 'var(--white)',
                   borderColor: filter === s ? 'var(--pink-soft)' : 'var(--gray-light)',
@@ -477,7 +477,7 @@ function TarefasPage() {
                 }}>{l}</button>
             ))}
           </div>
-          <select className="select" style={{ width: 'auto', padding: '8px 14px', fontSize: 12.5 }}
+          <select className="select" style={{ width: 'auto', padding: '8px 14px', fontSize: 14.5 }}
             value={energyFilter} onChange={e => setEnergyFilter(e.target.value)}>
             <option value="todas">Todas energias</option>
             {window.ENERGY_LIST.map(e => <option key={e.id} value={e.id}>{e.emoji} {e.label}</option>)}

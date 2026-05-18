@@ -32,7 +32,7 @@ function BlogPostCard({ post, onOpen }) {
             {post.titulo}
           </p>
           <span style={{
-            padding: '2px 10px', borderRadius: 999, fontSize: 11, fontWeight: 600, flexShrink: 0,
+            padding: '2px 10px', borderRadius: 999, fontSize: 14, fontWeight: 600, flexShrink: 0,
             background: `color-mix(in oklch, ${cfg.color} 16%, transparent)`,
             color: cfg.color,
           }}>{cfg.label}</span>
@@ -113,21 +113,21 @@ function BlogPostModal({ post, onClose, onSave }) {
 
           <div className="col gap-4">
             <div className="col gap-1">
-              <label style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Título do post</label>
+              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Título do post</label>
               <input className="input" style={{ fontSize: 15, fontWeight: 500 }}
                 placeholder="Escreva um título que desperta curiosidade..."
                 value={titulo} onChange={e => setTitulo(e.target.value)}/>
             </div>
 
             <div className="col gap-1">
-              <label style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Palavras-chave</label>
+              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Palavras-chave</label>
               <input className="input" style={{ fontSize: 14 }}
                 placeholder="Ex: organização TDAH, sistema de produtividade, criador de conteúdo..."
                 value={keywords} onChange={e => setKeywords(e.target.value)}/>
             </div>
 
             <div className="col gap-1">
-              <label style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Roteiro / Rascunho</label>
+              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Roteiro / Rascunho</label>
               <textarea
                 style={{
                   width: '100%', minHeight: 200, padding: '14px 16px',
@@ -150,7 +150,7 @@ function BlogPostModal({ post, onClose, onSave }) {
                   padding: '10px 16px', borderRadius: 'var(--r-md)', cursor: 'pointer',
                   background: 'linear-gradient(135deg, color-mix(in oklch, var(--pink-deep) 12%, var(--bg-surface)), color-mix(in oklch, var(--pink) 7%, var(--bg-surface)))',
                   border: '1px solid color-mix(in oklch, var(--pink-deep) 28%, var(--border))',
-                  color: 'var(--pink-deep)', fontSize: 13, fontWeight: 600,
+                  color: 'var(--pink-deep)', fontSize: 14, fontWeight: 600,
                   fontFamily: 'var(--font-body)', display: 'flex', alignItems: 'center', gap: 6,
                   opacity: gerando ? 0.6 : 1,
                 }}>
@@ -165,7 +165,7 @@ function BlogPostModal({ post, onClose, onSave }) {
                 borderRadius: 'var(--r-md)',
               }}>
                 <div className="eyebrow" style={{ color: 'var(--pink-deep)', marginBottom: 'var(--s-2)' }}>✨ Análise SEO</div>
-                <pre style={{ fontSize: 13, fontFamily: 'var(--font-body)', lineHeight: 1.65, whiteSpace: 'pre-wrap', color: 'var(--ink-soft)', margin: 0 }}>
+                <pre style={{ fontSize: 14, fontFamily: 'var(--font-body)', lineHeight: 1.65, whiteSpace: 'pre-wrap', color: 'var(--ink-soft)', margin: 0 }}>
                   {seoAnalise}
                 </pre>
               </div>
@@ -251,7 +251,7 @@ function BlogPage() {
           {tabs.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               style={{
-                padding: '7px 16px', borderRadius: 'var(--r-sm)', fontSize: 13, fontWeight: 500,
+                padding: '7px 16px', borderRadius: 'var(--r-sm)', fontSize: 14, fontWeight: 500,
                 background: tab === t.id ? 'var(--bg-surface)' : 'transparent',
                 boxShadow: tab === t.id ? 'var(--shadow-sm)' : 'none',
                 color: tab === t.id ? 'var(--pink-deep)' : 'var(--text-muted)',
@@ -269,7 +269,7 @@ function BlogPage() {
               borderRadius: 'var(--r-md)', padding: '8px 12px', maxWidth: 360,
             }}>
               <Icon name="search" size={13} color="var(--text-muted)"/>
-              <input className="grow" style={{ background: 'transparent', border: 'none', fontSize: 13 }}
+              <input className="grow" style={{ background: 'transparent', border: 'none', fontSize: 14 }}
                 placeholder="Buscar posts..." value={search} onChange={e => setSearch(e.target.value)}/>
             </div>
 
@@ -321,7 +321,7 @@ function BlogPage() {
                     <CardBody className="row gap-3">
                       <span style={{ fontSize: 22, flexShrink: 0 }}>{tip.icon}</span>
                       <div>
-                        <p style={{ fontSize: 13.5, fontWeight: 600, marginBottom: 4 }}>{tip.title}</p>
+                        <p style={{ fontSize: 14.5, fontWeight: 600, marginBottom: 4 }}>{tip.title}</p>
                         <p className="small secondary" style={{ lineHeight: 1.55 }}>{tip.desc}</p>
                       </div>
                     </CardBody>
@@ -338,7 +338,7 @@ function BlogPage() {
                     <CardBody className="row gap-3">
                       <span style={{ fontSize: 22, flexShrink: 0 }}>{idea.emoji}</span>
                       <div>
-                        <p style={{ fontSize: 13.5, fontWeight: 600, marginBottom: 4 }}>{idea.title}</p>
+                        <p style={{ fontSize: 14.5, fontWeight: 600, marginBottom: 4 }}>{idea.title}</p>
                         <p className="small secondary" style={{ lineHeight: 1.55 }}>{idea.desc}</p>
                       </div>
                     </CardBody>

@@ -80,30 +80,30 @@ Seja direta e prática. Foque em como posso USAR essa inspiração, não apenas 
               <div className="row gap-2" style={{ flexWrap: 'wrap', alignItems: 'center' }}>
                 <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--ink)' }}>{r.titulo}</span>
                 <span style={{
-                  fontSize: 11, padding: '2px 8px', borderRadius: 999,
+                  fontSize: 14, padding: '2px 8px', borderRadius: 999,
                   background: `color-mix(in oklch, ${tipo.color} 14%, transparent)`,
                   color: tipo.color, fontWeight: 600,
                 }}>{tipo.label}</span>
               </div>
               {r.url && (
                 <a href={r.url} target="_blank" rel="noopener" style={{
-                  display: 'block', marginTop: 3, fontSize: 12,
+                  display: 'block', marginTop: 3, fontSize: 14,
                   overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                   color: 'var(--pink-deep)',
                 }}>{r.url}</a>
               )}
               {r.nota && (
-                <p style={{ marginTop: 6, fontSize: 13, lineHeight: 1.5, color: 'var(--ink-soft)' }}>
+                <p style={{ marginTop: 6, fontSize: 14, lineHeight: 1.5, color: 'var(--ink-soft)' }}>
                   {open ? r.nota : r.nota.slice(0, 100) + (r.nota.length > 100 ? '…' : '')}
                   {r.nota.length > 100 && (
                     <button onClick={() => setOpen(!open)} style={{
                       color: 'var(--pink-deep)', background: 'none', border: 'none',
-                      padding: '0 4px', cursor: 'pointer', fontSize: 12,
+                      padding: '0 4px', cursor: 'pointer', fontSize: 14,
                     }}>{open ? 'menos' : 'mais'}</button>
                   )}
                 </p>
               )}
-              <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 4 }}>{r.data}</div>
+              <div style={{ fontSize: 14, color: 'var(--gray)', marginTop: 4 }}>{r.data}</div>
             </div>
 
             <div className="row gap-1" style={{ flexShrink: 0 }}>
@@ -123,7 +123,7 @@ Seja direta e prática. Foque em como posso USAR essa inspiração, não apenas 
           {/* Analyze button */}
           {!analise && (
             <Button variant="ghost" size="sm" onClick={analisarEsta} disabled={analisando}
-              style={{ alignSelf: 'flex-start', color: 'var(--pink-deep)', fontSize: 13 }}>
+              style={{ alignSelf: 'flex-start', color: 'var(--pink-deep)', fontSize: 14 }}>
               {analisando ? '✨ Analisando…' : '✨ Analisar esta referência'}
             </Button>
           )}
@@ -135,11 +135,11 @@ Seja direta e prática. Foque em como posso USAR essa inspiração, não apenas 
               background: 'color-mix(in oklch, var(--pink) 5%, var(--bg-elevated))',
               borderRadius: 'var(--r-md)',
               border: '1px solid var(--pink-soft)',
-              fontSize: 13, lineHeight: 1.7, color: 'var(--text-secondary)',
+              fontSize: 14, lineHeight: 1.7, color: 'var(--text-secondary)',
               whiteSpace: 'pre-wrap',
             }}>
               <div className="row between" style={{ marginBottom: 8 }}>
-                <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--pink-deep)' }}>✨ Análise da IA</span>
+                <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--pink-deep)' }}>✨ Análise da IA</span>
                 <div className="row gap-1">
                   <Button variant="ghost" size="sm" className="icon" onClick={() => { navigator.clipboard.writeText(analise); showToast('Copiado!'); }}>
                     <Icon name="copy" size={12}/>
@@ -245,23 +245,23 @@ function ReferenciasPage() {
               <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 17, fontWeight: 600 }}>Nova referência</h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-3)' }}>
                 <div className="col gap-1">
-                  <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-secondary)' }}>Título *</label>
+                  <label style={{ fontSize: 14, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-secondary)' }}>Título *</label>
                   <input className="input" placeholder="Nome do perfil, título do post…" value={form.titulo} onChange={e => setForm({...form, titulo: e.target.value})}
                     onKeyDown={e => e.key === 'Enter' && addRef()}/>
                 </div>
                 <div className="col gap-1">
-                  <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-secondary)' }}>Tipo</label>
+                  <label style={{ fontSize: 14, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-secondary)' }}>Tipo</label>
                   <select className="select" value={form.tipo} onChange={e => setForm({...form, tipo: e.target.value})}>
                     {Object.entries(REF_TIPOS).map(([k, v]) => <option key={k} value={k}>{v.emoji} {v.label}</option>)}
                   </select>
                 </div>
               </div>
               <div className="col gap-1">
-                <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-secondary)' }}>Link (opcional)</label>
+                <label style={{ fontSize: 14, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-secondary)' }}>Link (opcional)</label>
                 <input className="input" placeholder="https://…" value={form.url} onChange={e => setForm({...form, url: e.target.value})}/>
               </div>
               <div className="col gap-1">
-                <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-secondary)' }}>O que te inspirou nessa referência?</label>
+                <label style={{ fontSize: 14, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-secondary)' }}>O que te inspirou nessa referência?</label>
                 <textarea className="textarea" placeholder="Estética, texto, formato, vibe, o que te chamou atenção…" value={form.nota}
                   onChange={e => setForm({...form, nota: e.target.value})} style={{ minHeight: 80 }}/>
               </div>
@@ -307,7 +307,7 @@ function ReferenciasPage() {
         {refs.length > 0 && (
           <div className="row gap-2" style={{ flexWrap: 'wrap' }}>
             <button onClick={() => setFiltro('todos')} style={{
-              fontSize: 13, padding: '6px 14px', borderRadius: 999,
+              fontSize: 14, padding: '6px 14px', borderRadius: 999,
               border: '1px solid', cursor: 'pointer', fontFamily: 'var(--font-body)',
               background: filtro === 'todos' ? 'var(--pink-tint)' : 'var(--bg-surface)',
               borderColor: filtro === 'todos' ? 'var(--pink)' : 'var(--border)',
@@ -319,7 +319,7 @@ function ReferenciasPage() {
               if (count === 0) return null;
               return (
                 <button key={k} onClick={() => setFiltro(k)} style={{
-                  fontSize: 13, padding: '6px 14px', borderRadius: 999,
+                  fontSize: 14, padding: '6px 14px', borderRadius: 999,
                   border: '1px solid', cursor: 'pointer', fontFamily: 'var(--font-body)',
                   background: filtro === k ? `color-mix(in oklch, ${v.color} 14%, var(--bg-surface))` : 'var(--bg-surface)',
                   borderColor: filtro === k ? v.color : 'var(--border)',

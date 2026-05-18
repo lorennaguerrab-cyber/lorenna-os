@@ -37,7 +37,7 @@ function humorColor(v) {
 function FieldLabel({ children }) {
   return (
     <div style={{
-      fontSize: 11, fontWeight: 600, letterSpacing: '0.08em',
+      fontSize: 14, fontWeight: 600, letterSpacing: '0.08em',
       textTransform: 'uppercase', color: 'var(--gray)', marginBottom: 6,
     }}>
       {children}
@@ -153,7 +153,7 @@ function HojeView() {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontSize: 13, color: 'var(--gray)', textTransform: 'capitalize', letterSpacing: '0.04em' }}>
+        <div style={{ fontSize: 14, color: 'var(--gray)', textTransform: 'capitalize', letterSpacing: '0.04em' }}>
           {todayLabel}
         </div>
         <div className="row between" style={{ marginTop: 4 }}>
@@ -162,7 +162,7 @@ function HojeView() {
           </h2>
           {isEditing && (
             <Button variant="ghost" size="sm" onClick={handleNovaEntrada}
-              style={{ color: 'var(--pink-deep)', fontSize: 13 }}>
+              style={{ color: 'var(--pink-deep)', fontSize: 14 }}>
               + Nova entrada do dia
             </Button>
           )}
@@ -186,7 +186,7 @@ function HojeView() {
               onChange={e => setHumor(Number(e.target.value))}
               style={{ width: '100%', accentColor: humorColor(humor), cursor: 'pointer', height: 6 }}
             />
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--gray)', marginTop: 4 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: 'var(--gray)', marginTop: 4 }}>
               <span>1 — Muito difícil</span>
               <span>10 — Excelente</span>
             </div>
@@ -275,15 +275,15 @@ function EntryCard({ entry }) {
 
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-              <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)', textTransform: 'capitalize' }}>{dateLabel}</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', textTransform: 'capitalize' }}>{dateLabel}</span>
               {entry.hora && (
-                <span style={{ fontSize: 11, color: 'var(--gray)', background: 'var(--offwhite)', padding: '1px 7px', borderRadius: 999, border: '1px solid var(--border)' }}>
+                <span style={{ fontSize: 14, color: 'var(--gray)', background: 'var(--offwhite)', padding: '1px 7px', borderRadius: 999, border: '1px solid var(--border)' }}>
                   {entry.hora}
                 </span>
               )}
             </div>
             {preview && (
-              <div style={{ fontSize: 13, color: 'var(--ink-soft)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <div style={{ fontSize: 14, color: 'var(--ink-soft)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {preview}{(entry.pesou || entry.livre || '').length > 80 ? '…' : ''}
               </div>
             )}
@@ -413,7 +413,7 @@ function HistoricoView() {
           <div style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700, color: 'var(--ink)' }}>
             ✨ Gerar Relatório de Padrões
           </div>
-          <div style={{ fontSize: 13, color: 'var(--gray)', marginTop: 4 }}>
+          <div style={{ fontSize: 14, color: 'var(--gray)', marginTop: 4 }}>
             A IA analisa suas entradas e identifica padrões emocionais para levar à terapia
           </div>
         </CardHeader>
@@ -421,7 +421,7 @@ function HistoricoView() {
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
             {periodoBtns.map(b => (
               <button key={b.value} onClick={() => setPeriodo(b.value)} style={{
-                fontSize: 13, fontWeight: 600, padding: '6px 14px', borderRadius: 20,
+                fontSize: 14, fontWeight: 600, padding: '6px 14px', borderRadius: 20,
                 border: '1.5px solid', fontFamily: 'var(--font-body)',
                 borderColor: periodo === b.value ? 'var(--pink)' : 'var(--pink-soft)',
                 background: periodo === b.value ? 'var(--pink-tint)' : 'transparent',
@@ -431,7 +431,7 @@ function HistoricoView() {
             ))}
           </div>
 
-          <div style={{ fontSize: 13, color: 'var(--gray)', marginBottom: 12 }}>
+          <div style={{ fontSize: 14, color: 'var(--gray)', marginBottom: 12 }}>
             {filtered.length} entrada{filtered.length !== 1 ? 's' : ''} nesse período
           </div>
 
@@ -443,7 +443,7 @@ function HistoricoView() {
           </Button>
 
           {!window.hasClaudeKey?.() && (
-            <p style={{ fontSize: 12, color: 'var(--gray)', marginTop: 8, textAlign: 'center' }}>
+            <p style={{ fontSize: 14, color: 'var(--gray)', marginTop: 8, textAlign: 'center' }}>
               Configure sua chave Claude (botão ✨ no canto) para gerar relatórios
             </p>
           )}

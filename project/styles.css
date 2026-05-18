@@ -223,7 +223,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .brand-text .sub {
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--gray);
   margin-top: 1px;
@@ -240,7 +240,7 @@ h1, h2, h3, h4, h5, h6 {
 .energy-chip.collapsed { padding: var(--s-3); display: flex; justify-content: center; }
 .energy-chip .label {
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -292,7 +292,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Energy switcher (bottom of sidebar) */
 .energy-switch { padding: 0 var(--s-4) var(--s-3); }
 .energy-switch .title {
-  font-size: 10px;
+  font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--gray);
@@ -355,7 +355,7 @@ h1, h2, h3, h4, h5, h6 {
   .app { flex-direction: column; }
   .app-main { margin-left: 0 !important; }
   .nav { display: flex; flex-direction: row; overflow-x: auto; padding: var(--s-2); gap: 2px; }
-  .nav-item { flex-shrink: 0; padding: 8px 10px; font-size: 12px; }
+  .nav-item { flex-shrink: 0; padding: 8px 10px; font-size: 14px; }
   .sidebar-brand { padding: var(--s-3) var(--s-4); border-bottom: none; border-right: 1px solid var(--gray-light); flex-shrink: 0; }
   .energy-chip { display: none; }
   .energy-switch { display: none; }
@@ -426,7 +426,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--ink);
 }
 .btn.outline:hover { border-color: var(--pink); color: var(--pink-deep); }
-.btn.sm { padding: 7px 12px; font-size: 13px; }
+.btn.sm { padding: 7px 12px; font-size: 14px; }
 .btn.lg { padding: 14px 22px; font-size: 15px; }
 .btn.icon { padding: 8px; gap: 0; }
 
@@ -438,7 +438,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 4px 10px;
   border-radius: 999px;
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 500;
   background: var(--offwhite);
   color: var(--ink-soft);
@@ -476,7 +476,7 @@ h1, h2, h3, h4, h5, h6 {
 /* ── Section heads ── */
 .eyebrow {
   font-family: var(--font-body);
-  font-size: 10.5px;
+  font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--gray);
@@ -535,7 +535,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 12px 22px;
   border-radius: 999px;
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   z-index: 100;
   animation: fadeUp 0.3s var(--easing);
@@ -564,6 +564,6 @@ button:focus-visible, .input:focus-visible {
 .grow { flex: 1; min-width: 0; }
 .muted { color: var(--gray); }
 .secondary { color: var(--ink-soft); }
-.small { font-size: 13.5px; }
-.tiny { font-size: 12px; }
+.small { font-size: 14px; }
+.tiny { font-size: 14px; }
 .center { text-align: center; }

@@ -28,7 +28,7 @@ function ChannelTag({ channel }) {
   const color = CHANNEL_COLORS[channel] || 'var(--text-muted)';
   return (
     <span style={{
-      fontSize: 10, padding: '2px 7px', borderRadius: 999, fontWeight: 600,
+      fontSize: 14, padding: '2px 7px', borderRadius: 999, fontWeight: 600,
       background: `color-mix(in oklch, ${color} 16%, transparent)`,
       color, lineHeight: 1.4, flexShrink: 0,
     }}>{label}</span>
@@ -57,7 +57,7 @@ function ConteudoModal({ item, onClose }) {
               <div>
                 <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 20, fontWeight: 700 }}>{item.titulo}</h2>
                 <div className="row gap-2" style={{ marginTop: 6, flexWrap: 'wrap' }}>
-                  <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 12, fontWeight: 600, background: `color-mix(in oklch, ${cfg.color} 16%, transparent)`, color: cfg.color }}>{cfg.label}</span>
+                  <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 14, fontWeight: 600, background: `color-mix(in oklch, ${cfg.color} 16%, transparent)`, color: cfg.color }}>{cfg.label}</span>
                   {item.brand && <ChannelTag channel={item.brand}/>}
                   {item.data && <span className="tiny muted">{item.data}</span>}
                 </div>
@@ -70,10 +70,10 @@ function ConteudoModal({ item, onClose }) {
 
           <div className="col gap-4">
             <div className="col gap-2">
-              <label style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Plataformas</label>
+              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Plataformas</label>
               <div className="row gap-2" style={{ flexWrap: 'wrap' }}>
                 {item.plataformas.map(p => (
-                  <span key={p} style={{ padding: '4px 12px', borderRadius: 999, fontSize: 13, fontWeight: 500, background: `color-mix(in oklch, ${window.PLATFORM_COLORS[p]} 16%, transparent)`, color: window.PLATFORM_COLORS[p] }}>
+                  <span key={p} style={{ padding: '4px 12px', borderRadius: 999, fontSize: 14, fontWeight: 500, background: `color-mix(in oklch, ${window.PLATFORM_COLORS[p]} 16%, transparent)`, color: window.PLATFORM_COLORS[p] }}>
                     {window.PLATFORM_LABELS[p]}
                   </span>
                 ))}
@@ -81,7 +81,7 @@ function ConteudoModal({ item, onClose }) {
             </div>
 
             <div className="col gap-2">
-              <label style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Roteiro / Conteúdo</label>
+              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Roteiro / Conteúdo</label>
               <textarea
                 style={{
                   width: '100%', minHeight: 220, padding: '14px 16px',
@@ -151,7 +151,7 @@ function ConteudoPage() {
             borderRadius:'var(--r-md)', padding:'8px 12px', flex: 1, minWidth: 220, maxWidth: 320,
           }}>
             <Icon name="search" size={13} color="var(--text-muted)"/>
-            <input className="grow" style={{ background:'transparent', border:'none', fontSize: 13 }}
+            <input className="grow" style={{ background:'transparent', border:'none', fontSize: 14 }}
               placeholder="Buscar conteúdos..." value={search} onChange={e=>setSearch(e.target.value)}/>
           </div>
           <select className="select" style={{ width: 'auto', minWidth: 180 }}
@@ -200,7 +200,7 @@ function ConteudoPage() {
                         <CardBody tight className="col gap-2">
                           <div className="row gap-2" style={{ alignItems: 'flex-start' }}>
                             <span style={{ fontSize: 14, flexShrink: 0, marginTop: 1 }}>{window.TYPE_EMOJI[item.tipo]}</span>
-                            <p style={{ fontSize: 12, fontWeight: 500, lineHeight: 1.4, flex: 1 }}>{item.titulo}</p>
+                            <p style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.4, flex: 1 }}>{item.titulo}</p>
                           </div>
                           <div className="row gap-1" style={{ flexWrap: 'wrap' }}>
                             {item.brand && <ChannelTag channel={item.brand}/>}
@@ -208,7 +208,7 @@ function ConteudoPage() {
                               <span key={p} className="tiny" style={{
                                 padding: '1px 7px', borderRadius: 999,
                                 background: `color-mix(in oklch, ${window.PLATFORM_COLORS[p]} 16%, transparent)`,
-                                color: window.PLATFORM_COLORS[p], fontWeight: 500, fontSize: 10,
+                                color: window.PLATFORM_COLORS[p], fontWeight: 500, fontSize: 14,
                               }}>{window.PLATFORM_LABELS[p]}</span>
                             ))}
                           </div>
@@ -235,7 +235,7 @@ function ConteudoPage() {
                     <div className="row gap-3">
                       <span style={{ fontSize: 18, flexShrink: 0 }}>{window.TYPE_EMOJI[item.tipo]}</span>
                       <div className="grow">
-                        <p style={{ fontSize: 13.5, fontWeight: 500 }}>{item.titulo}</p>
+                        <p style={{ fontSize: 14.5, fontWeight: 500 }}>{item.titulo}</p>
                         <div className="row gap-1" style={{ marginTop: 4, flexWrap: 'wrap' }}>
                           <p className="tiny muted">{window.CATEGORY_LABELS[item.categoria]}</p>
                           {item.brand && <ChannelTag channel={item.brand}/>}
@@ -330,7 +330,7 @@ function PromptCard({ prompt }) {
                   position: 'relative',
                 }}>
                   <pre style={{
-                    fontSize: 12, fontFamily: 'ui-monospace, SF Mono, monospace',
+                    fontSize: 14, fontFamily: 'ui-monospace, SF Mono, monospace',
                     color: 'var(--text-secondary)', lineHeight: 1.55,
                     whiteSpace: 'pre-wrap', margin: 0,
                   }}>{prompt.texto}</pre>
@@ -352,7 +352,7 @@ function PromptCard({ prompt }) {
                   {prompt.checklist.map((item, i) => (
                     <div key={i} className="row gap-2">
                       <div style={{ width: 14, height: 14, borderRadius: 4, border: '1.5px solid var(--border-strong)', flexShrink: 0 }}/>
-                      <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{item}</span>
+                      <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>{item}</span>
                     </div>
                   ))}
                 </div>
@@ -407,7 +407,7 @@ ${respostas.formato ? `- Resultado no formato: ${respostas.formato}` : '- Result
           background: 'linear-gradient(135deg, color-mix(in oklch, var(--pink-deep) 14%, var(--bg-surface)), color-mix(in oklch, var(--pink) 8%, var(--bg-surface)))',
           border: '1px solid color-mix(in oklch, var(--pink-deep) 30%, var(--border))',
           borderRadius: 'var(--r-md)', padding: '8px 14px', cursor: 'pointer',
-          color: 'var(--pink-deep)', fontSize: 13, fontWeight: 600,
+          color: 'var(--pink-deep)', fontSize: 14, fontWeight: 600,
           fontFamily: 'var(--font-body)', display: 'flex', alignItems: 'center', gap: 6,
         }}
       >
@@ -423,32 +423,32 @@ ${respostas.formato ? `- Resultado no formato: ${respostas.formato}` : '- Result
       borderRadius: 'var(--r-md)', padding: 'var(--s-4)',
     }}>
       <div className="row between">
-        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--pink-deep)' }}>✨ Gerar prompt automaticamente</span>
+        <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--pink-deep)' }}>✨ Gerar prompt automaticamente</span>
         <button onClick={() => setStep(0)} className="btn icon" style={{ color: 'var(--text-muted)', padding: 4 }}>
           <Icon name="x" size={13}/>
         </button>
       </div>
       <div className="col gap-3">
         <div className="col gap-1">
-          <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>Para que serve esse prompt?</label>
+          <label style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-secondary)' }}>Para que serve esse prompt?</label>
           <input
-            className="input" style={{ fontSize: 13 }}
+            className="input" style={{ fontSize: 14 }}
             placeholder="Ex: criar roteiro de reel sobre branding, analisar concorrentes..."
             value={respostas.finalidade}
             onChange={e => setRespostas(r => ({ ...r, finalidade: e.target.value }))}
           />
         </div>
         <div className="col gap-1">
-          <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>Qual IA será usada?</label>
-          <select className="select" style={{ fontSize: 13 }}
+          <label style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-secondary)' }}>Qual IA será usada?</label>
+          <select className="select" style={{ fontSize: 14 }}
             value={respostas.ia} onChange={e => setRespostas(r => ({ ...r, ia: e.target.value }))}>
             {IA_OPTIONS.map(ia => <option key={ia} value={ia}>{ia}</option>)}
           </select>
         </div>
         <div className="col gap-1">
-          <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>Qual formato de resultado você quer?</label>
+          <label style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-secondary)' }}>Qual formato de resultado você quer?</label>
           <input
-            className="input" style={{ fontSize: 13 }}
+            className="input" style={{ fontSize: 14 }}
             placeholder="Ex: lista numerada, carrossel de 8 slides, texto corrido de 300 palavras..."
             value={respostas.formato}
             onChange={e => setRespostas(r => ({ ...r, formato: e.target.value }))}
@@ -507,33 +507,33 @@ function NovoPromptForm({ onSave, onCancel }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-3)' }}>
         <div className="col gap-1" style={{ gridColumn: '1 / -1' }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>Título <span style={{ color: 'var(--pink-deep)' }}>*</span></label>
+          <label style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-secondary)' }}>Título <span style={{ color: 'var(--pink-deep)' }}>*</span></label>
           <input
-            className="input" style={{ fontSize: 13 }}
+            className="input" style={{ fontSize: 14 }}
             placeholder="Nome do prompt..."
             value={newPrompt.titulo}
             onChange={e => setNewPrompt(p => ({ ...p, titulo: e.target.value }))}
           />
         </div>
         <div className="col gap-1" style={{ gridColumn: '1 / -1' }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>Descrição curta</label>
+          <label style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-secondary)' }}>Descrição curta</label>
           <input
-            className="input" style={{ fontSize: 13 }}
+            className="input" style={{ fontSize: 14 }}
             placeholder="O que esse prompt faz..."
             value={newPrompt.desc}
             onChange={e => setNewPrompt(p => ({ ...p, desc: e.target.value }))}
           />
         </div>
         <div className="col gap-1">
-          <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>IA recomendada</label>
-          <select className="select" style={{ fontSize: 13 }}
+          <label style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-secondary)' }}>IA recomendada</label>
+          <select className="select" style={{ fontSize: 14 }}
             value={newPrompt.ia} onChange={e => setNewPrompt(p => ({ ...p, ia: e.target.value }))}>
             {IA_OPTIONS.map(ia => <option key={ia} value={ia}>{ia}</option>)}
           </select>
         </div>
         <div className="col gap-1">
-          <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>Categoria</label>
-          <select className="select" style={{ fontSize: 13 }}
+          <label style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-secondary)' }}>Categoria</label>
+          <select className="select" style={{ fontSize: 14 }}
             value={newPrompt.cat} onChange={e => setNewPrompt(p => ({ ...p, cat: e.target.value }))}>
             {Object.entries(window.PROMPT_CATS).map(([v, l]) => (
               <option key={v} value={v}>{l}</option>
@@ -541,9 +541,9 @@ function NovoPromptForm({ onSave, onCancel }) {
           </select>
         </div>
         <div className="col gap-1" style={{ gridColumn: '1 / -1' }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>Texto do prompt</label>
+          <label style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-secondary)' }}>Texto do prompt</label>
           <textarea
-            className="input" style={{ fontSize: 13, minHeight: 180, resize: 'vertical', lineHeight: 1.55, fontFamily: 'ui-monospace, SF Mono, monospace' }}
+            className="input" style={{ fontSize: 14, minHeight: 180, resize: 'vertical', lineHeight: 1.55, fontFamily: 'ui-monospace, SF Mono, monospace' }}
             placeholder="Cole ou escreva o prompt aqui..."
             value={newPrompt.texto}
             onChange={e => setNewPrompt(p => ({ ...p, texto: e.target.value }))}
@@ -605,7 +605,7 @@ function PromptsPage() {
             borderRadius:'var(--r-md)', padding:'8px 12px', flex: 1, minWidth: 220, maxWidth: 320,
           }}>
             <Icon name="search" size={13} color="var(--text-muted)"/>
-            <input className="grow" style={{ background:'transparent', border:'none', fontSize: 13 }}
+            <input className="grow" style={{ background:'transparent', border:'none', fontSize: 14 }}
               placeholder="Buscar prompts..." value={search} onChange={e=>setSearch(e.target.value)}/>
           </div>
           <select className="select" style={{ width: 'auto', minWidth: 180 }}

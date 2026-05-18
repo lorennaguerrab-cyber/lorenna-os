@@ -100,7 +100,7 @@ function MateriaisPage() {
                 borderBottom: tab === t.id ? '2px solid var(--pink)' : '2px solid transparent',
                 color: tab === t.id ? 'var(--pink-deep)' : 'var(--text-muted)',
                 fontWeight: tab === t.id ? 600 : 500,
-                fontSize: 13,
+                fontSize: 14,
                 fontFamily: 'var(--font-body)',
                 cursor: 'pointer',
                 marginBottom: -1,
@@ -133,7 +133,7 @@ function MateriaisPage() {
                         <Icon name={TYPE_ICON[item.tipo] || 'doc'} size={24} color="var(--text-muted)"/>
                       </div>
                       <div>
-                        <p style={{ fontSize: 13.5, fontWeight: 600, lineHeight: 1.3 }}>{item.nome}</p>
+                        <p style={{ fontSize: 14.5, fontWeight: 600, lineHeight: 1.3 }}>{item.nome}</p>
                         {item.dur && (
                           <span className="tiny muted" style={{ marginTop: 2, display: 'block' }}>{item.dur}</span>
                         )}
@@ -143,7 +143,7 @@ function MateriaisPage() {
                           <span key={tag} className="tiny" style={{
                             padding: '2px 9px', borderRadius: 999,
                             background: 'var(--pink-tint)', color: 'var(--pink-deep)',
-                            fontWeight: 500, fontSize: 11,
+                            fontWeight: 500, fontSize: 14,
                           }}>{tag}</span>
                         ))}
                       </div>
@@ -168,13 +168,13 @@ function MateriaisPage() {
                           <Icon name={TYPE_ICON[item.tipo] || 'doc'} size={17} color="var(--pink-deep)"/>
                         </div>
                         <div className="grow">
-                          <p style={{ fontSize: 13.5, fontWeight: 500 }}>{item.nome}</p>
+                          <p style={{ fontSize: 14.5, fontWeight: 500 }}>{item.nome}</p>
                           <div className="row gap-1" style={{ marginTop: 4, flexWrap: 'wrap' }}>
                             {item.tags.map(tag => (
                               <span key={tag} className="tiny" style={{
                                 padding: '1px 8px', borderRadius: 999,
                                 background: 'var(--bg-elevated)', border: '1px solid var(--border)',
-                                color: 'var(--text-muted)', fontSize: 11,
+                                color: 'var(--text-muted)', fontSize: 14,
                               }}>{tag}</span>
                             ))}
                           </div>
@@ -229,7 +229,7 @@ function MateriaisPage() {
             {showAddBroll && (
               <Card variant="accent">
                 <CardBody className="col gap-3">
-                  <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--pink-deep)' }}>Novo clipe para gravar</p>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--pink-deep)' }}>Novo clipe para gravar</p>
                   <textarea
                     className="textarea"
                     rows={2}
@@ -278,7 +278,7 @@ function MateriaisPage() {
 
                       <div className="grow">
                         <p style={{
-                          fontSize: 13.5,
+                          fontSize: 14.5,
                           fontWeight: 500,
                           textDecoration: item.gravado ? 'line-through' : 'none',
                           color: item.gravado ? 'var(--text-muted)' : 'var(--text-primary)',
@@ -291,7 +291,7 @@ function MateriaisPage() {
                                 padding: '1px 8px', borderRadius: 999,
                                 background: item.gravado ? 'var(--bg-elevated)' : 'var(--pink-tint)',
                                 color: item.gravado ? 'var(--text-muted)' : 'var(--pink-deep)',
-                                fontSize: 11, fontWeight: 500,
+                                fontSize: 14, fontWeight: 500,
                               }}>{tag}</span>
                             ))}
                           </div>
