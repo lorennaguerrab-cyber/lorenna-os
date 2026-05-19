@@ -503,58 +503,55 @@ function TarefasPage() {
 
   return (
     <div className="content">
-      <div className="col gap-5 fade-up">
-        <PageHeader
-          title="Tarefas"
-          subtitle="Gerencie suas entregas com clareza"
-          action={<Button variant="primary"><Icon name="plus" size={14} color="white"/> Nova tarefa</Button>}
-        />
+      <div className="col gap-6 fade-up">
 
-        {/* Stats strip — clickable */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--s-3)' }}>
+        {/* Header */}
+        <div className="row between" style={{ alignItems: 'flex-end' }}>
+          <div>
+            <h1 style={{ fontFamily: 'var(--font-title)', fontSize: 28, fontWeight: 700, color: '#201e1f', lineHeight: 1, margin: 0 }}>Tarefas</h1>
+            <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 6, marginBottom: 0 }}>Gerencie suas entregas com clareza</p>
+          </div>
+          <Button variant="primary"><Icon name="plus" size={14} color="white"/> Nova tarefa</Button>
+        </div>
+
+        {/* Stats — minimal numbers */}
+        <div className="row gap-8" style={{ paddingBottom: 20, borderBottom: '1px solid var(--gray-light)' }}>
           {STAT_CHIPS.map(s => (
-            <button key={s.label} onClick={() => setFilter(s.filterKey)} style={{
-              background: filter === s.filterKey ? '#201e1f' : s.color,
-              borderRadius: 'var(--r-lg)', padding: '14px 18px',
-              display: 'flex', alignItems: 'center', gap: 12,
-              border: 'none', cursor: 'pointer', textAlign: 'left',
-              transition: 'all .15s',
-              outline: filter === s.filterKey ? `3px solid ${s.color}` : 'none',
-            }}>
-              <div>
-                <div style={{ fontSize: 28, fontFamily: 'var(--font-title)', fontWeight: 800, color: filter === s.filterKey ? s.color : '#201e1f', lineHeight: 1 }}>{s.count}</div>
-                <div style={{ fontSize: 14, color: filter === s.filterKey ? '#fffcfa' : '#201e1f', marginTop: 3, fontWeight: 600 }}>{s.label}</div>
-              </div>
+            <button key={s.label} onClick={() => setFilter(s.filterKey)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <span style={{ fontSize: 34, fontFamily: 'var(--font-title)', fontWeight: 800, lineHeight: 1, color: filter === s.filterKey ? '#201e1f' : s.color }}>{s.count}</span>
+              <span style={{ fontSize: 13, color: filter === s.filterKey ? '#201e1f' : 'var(--text-muted)', fontWeight: filter === s.filterKey ? 600 : 400 }}>{s.label}</span>
             </button>
           ))}
         </div>
 
-        {/* Filter chips */}
+        {/* Filters */}
         <div className="col gap-2">
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {/* Status tabs — underline style */}
+          <div className="row gap-0" style={{ borderBottom: '1px solid var(--gray-light)', overflowX: 'auto' }}>
             {STATUS_FILTERS.map(({ key, label }) => (
               <button key={key} onClick={() => setFilter(key)} style={{
-                fontSize: 14, padding: '8px 18px', borderRadius: 999,
-                border: '1.5px solid',
-                background: filter === key ? '#201e1f' : 'var(--white)',
-                borderColor: filter === key ? '#201e1f' : 'var(--gray-light)',
-                color: filter === key ? '#fffcfa' : '#201e1f',
-                cursor: 'pointer', fontWeight: filter === key ? 700 : 500,
-                fontFamily: 'var(--font-body)', transition: 'all .15s',
+                fontSize: 14, padding: '7px 14px 11px',
+                border: 'none', background: 'none',
+                color: filter === key ? '#201e1f' : 'var(--text-muted)',
+                fontWeight: filter === key ? 600 : 400,
+                borderBottom: filter === key ? '2px solid #201e1f' : '2px solid transparent',
+                marginBottom: -1, cursor: 'pointer',
+                fontFamily: 'var(--font-body)', transition: 'color .15s',
+                whiteSpace: 'nowrap', flexShrink: 0,
               }}>{label}</button>
             ))}
           </div>
 
-          {/* Client chips */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          {/* Client filter — ghost pills */}
+          <div className="row gap-1" style={{ flexWrap: 'wrap' }}>
             {CLIENTES.map(({ key, label }) => (
               <button key={key} onClick={() => setClientFilter(key)} style={{
-                fontSize: 13, padding: '5px 13px', borderRadius: 999,
-                border: '1.5px solid',
-                background: clientFilter === key ? '#fe7dae' : 'var(--bg-surface)',
-                borderColor: clientFilter === key ? '#fe7dae' : 'var(--gray-light)',
-                color: '#201e1f',
-                cursor: 'pointer', fontWeight: clientFilter === key ? 700 : 400,
+                fontSize: 13, padding: '4px 10px', borderRadius: 999,
+                border: 'none',
+                background: clientFilter === key ? 'color-mix(in oklch, #fe7dae 18%, white)' : 'none',
+                color: clientFilter === key ? '#201e1f' : 'var(--text-muted)',
+                cursor: 'pointer', fontWeight: clientFilter === key ? 600 : 400,
                 fontFamily: 'var(--font-body)', transition: 'all .15s',
               }}>{label}</button>
             ))}
@@ -569,7 +566,7 @@ function TarefasPage() {
           </div>
         )}
 
-        {/* Compromissos fixos de hoje (clientes) — sempre no topo */}
+        {/* Compromissos de hoje — sem container pesado */}
         {(() => {
           const comp = all.filter(t =>
             t.cliente && t.diasDaSemana && t.diasDaSemana.includes(todayIdx) && t.status !== 'concluida'
@@ -577,38 +574,15 @@ function TarefasPage() {
           if (comp.length === 0) return null;
           return (
             <section className="col gap-3">
-              <div style={{
-                background: '#fe7dae', borderRadius: 'var(--r-md)',
-                padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              }}>
-                <div className="row gap-2" style={{ alignItems: 'center' }}>
-                  <span style={{ fontSize: 16 }}>📍</span>
-                  <span style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700, color: '#201e1f' }}>Compromissos de hoje</span>
-                  <span style={{ fontSize: 13, color: '#201e1f', opacity: 0.7 }}>· envolvem outras pessoas — inadiáveis</span>
-                </div>
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#201e1f', background: 'rgba(255,252,250,0.5)', padding: '3px 10px', borderRadius: 999 }}>
-                  {comp.length}
-                </span>
+              <div className="row gap-2" style={{ alignItems: 'center' }}>
+                <span style={{ fontSize: 14 }}>📍</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#201e1f', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Compromissos de hoje</span>
+                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>· envolvem outras pessoas</span>
+                <div style={{ flex: 1, height: 1, background: '#fe7dae', opacity: 0.35 }}/>
+                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{comp.length}</span>
               </div>
-              <div className="col gap-4" style={{ paddingLeft: 4 }}>
-                {comp.map(t => (
-                  <div key={t.id} className="col gap-1">
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, paddingLeft: 4, alignItems: 'center' }}>
-                      <span style={{ fontSize: 12, padding: '2px 8px', borderRadius: 999, background: '#fec9df', color: '#201e1f', fontWeight: 600 }}>
-                        👥 {t.cliente}
-                      </span>
-                      {(t.diasDaSemana || []).map(d => (
-                        <span key={d} style={{
-                          fontSize: 12, padding: '2px 8px', borderRadius: 999,
-                          background: d === todayIdx ? '#201e1f' : DIAS_COLORS[d],
-                          color: d === todayIdx ? '#fffcfa' : '#201e1f',
-                          fontWeight: d === todayIdx ? 700 : 500,
-                        }}>{d === todayIdx ? '● ' : ''}{DIAS_LABELS[d]}</span>
-                      ))}
-                    </div>
-                    <TaskRow task={t} onDelete={deleteTask} />
-                  </div>
-                ))}
+              <div className="col gap-2">
+                {comp.map(t => <TaskRow key={t.id} task={t} onDelete={deleteTask} showMeta />)}
               </div>
             </section>
           );
@@ -620,54 +594,17 @@ function TarefasPage() {
           if (items.length === 0) return null;
           return (
             <section key={g.key} className="col gap-3">
-              {/* Group header */}
-              <div style={{
-                background: `color-mix(in oklch, ${g.color} 40%, white)`,
-                borderRadius: 'var(--r-md)',
-                padding: '10px 16px',
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                borderLeft: `4px solid ${g.color}`,
-              }}>
-                <div className="row gap-2" style={{ alignItems: 'center' }}>
-                  <span style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700, color: '#201e1f' }}>{g.label}</span>
-                  <span style={{ fontSize: 13, color: '#201e1f', opacity: 0.6 }}>· {g.sub}</span>
-                </div>
-                <span style={{
-                  fontSize: 13, fontWeight: 700, color: '#201e1f',
-                  background: `color-mix(in oklch, ${g.color} 65%, white)`,
-                  padding: '3px 10px', borderRadius: 999,
-                }}>{items.length} tarefa{items.length !== 1 ? 's' : ''}</span>
+              {/* Group header — inline, sem container */}
+              <div className="row gap-3" style={{ alignItems: 'center' }}>
+                <div style={{ width: 8, height: 8, borderRadius: 999, background: g.color, flexShrink: 0 }}/>
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#201e1f', textTransform: 'uppercase', letterSpacing: '0.07em' }}>{g.label}</span>
+                <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 400 }}>{g.sub}</span>
+                <div style={{ flex: 1, height: 1, background: 'var(--gray-light)' }}/>
+                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{items.length}</span>
               </div>
 
-              {/* Task cards with metadata */}
-              <div className="col gap-4" style={{ paddingLeft: 4 }}>
-                {items.map(t => (
-                  <div key={t.id} className="col gap-1">
-                    {/* Metadata bar */}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, paddingLeft: 4, alignItems: 'center' }}>
-                      {t.diario && (
-                        <span style={{ fontSize: 12, padding: '2px 8px', borderRadius: 999, background: '#fec9df', color: '#201e1f', fontWeight: 600 }}>📅 Diário</span>
-                      )}
-                      {(t.diasDaSemana || []).map(d => (
-                        <span key={d} style={{
-                          fontSize: 12, padding: '2px 8px', borderRadius: 999,
-                          background: d === todayIdx ? '#201e1f' : DIAS_COLORS[d],
-                          color: d === todayIdx ? '#fffcfa' : '#201e1f',
-                          fontWeight: d === todayIdx ? 700 : 500,
-                        }}>{d === todayIdx ? '● ' : ''}{DIAS_LABELS[d]}</span>
-                      ))}
-                      {(t.energia || []).map(e => {
-                        const ec = window.ENERGY[e];
-                        return ec ? (
-                          <span key={e} style={{ fontSize: 12, padding: '2px 8px', borderRadius: 999, background: 'var(--bg-surface)', color: '#201e1f', border: '1px solid var(--border)' }}>
-                            {ec.emoji} {ec.label}
-                          </span>
-                        ) : null;
-                      })}
-                    </div>
-                    <TaskRow task={t} onDelete={deleteTask} />
-                  </div>
-                ))}
+              <div className="col gap-2">
+                {items.map(t => <TaskRow key={t.id} task={t} onDelete={deleteTask} showMeta />)}
               </div>
             </section>
           );
