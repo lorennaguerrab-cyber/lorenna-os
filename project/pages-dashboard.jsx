@@ -165,7 +165,7 @@ function NaoSeiAindaQuiz({ onClose, onResult }) {
         width: 'min(520px, 94vw)',
         background: 'var(--white)',
         borderRadius: 'var(--r-xl)',
-        border: '1px solid var(--gray-light)',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.10)',
         overflow: 'hidden',
       }}>
         <div style={{ height: 4, background: 'var(--pink)' }}/>
@@ -645,7 +645,6 @@ function RoutinesWidget() {
           return (
             <div key={r.id} style={{
               background: 'var(--offwhite)',
-              border: '1px solid var(--gray-light)',
               borderRadius: 15,
               overflow: 'hidden',
             }}>
@@ -664,7 +663,7 @@ function RoutinesWidget() {
                 <Icon name={isOpen ? 'chev-down' : 'chev-right'} size={14} color="var(--gray)"/>
               </button>
               {isOpen && (
-                <div className="col gap-2" style={{ padding: '0 14px 14px', borderTop: '1px solid var(--gray-light)' }}>
+                <div className="col gap-2" style={{ padding: '0 14px 14px' }}>
                   <div style={{ height: 12 }}/>
                   {r.passos.map(p => {
                     const isDone = !!done[`${r.id}-${p.id}`];
@@ -918,7 +917,7 @@ function MiniCalendarWidget() {
         })}
       </div>
       {todayEvents.length > 0 && (
-        <div style={{ marginTop: 'var(--s-3)', paddingTop: 'var(--s-2)', borderTop: '1px solid var(--border)' }}>
+        <div style={{ marginTop: 'var(--s-3)', paddingTop: 'var(--s-2)' }}>
           <div className="eyebrow" style={{ color: 'var(--pink-deep)', marginBottom: 6 }}>Hoje</div>
           <div className="col gap-1">
             {todayEvents.map(ev => (
@@ -990,7 +989,6 @@ function HolidayAlertBanner() {
           <div key={h.date} className="row gap-3" style={{
             padding: '12px 16px',
             background: '#fffcfa',
-            border: '1px solid #ffe1bd',
             borderRadius: 'var(--r-md)',
             alignItems: 'center',
           }}>
@@ -1223,7 +1221,6 @@ function ClientsWidget() {
             padding: '10px 12px',
             background: 'var(--bg-elevated)',
             borderRadius: 'var(--r-md)',
-            border: '1px solid var(--border)',
           }}>
             <div style={{
               width: 8, height: 8, borderRadius: 999, background: c.cor, flexShrink: 0,

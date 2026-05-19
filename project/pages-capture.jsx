@@ -246,7 +246,7 @@ function CapturaPage({ energy }) {
                       <li key={i} style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                         padding: '10px 14px', borderRadius: 'var(--r-md)',
-                        background: 'var(--bg-surface)', border: '1px solid var(--border)',
+                        background: 'var(--bg-surface)',
                       }}>
                         <div className="row gap-2">
                           <span style={{ color: 'var(--pink-deep)', fontSize: 14 }}>→</span>
@@ -274,7 +274,7 @@ function CapturaPage({ energy }) {
                     {resultado.monetizacao.map((m, i) => (
                       <div key={i} style={{
                         padding: '12px 14px', borderRadius: 'var(--r-md)',
-                        background: 'var(--bg-surface)', border: '1px solid var(--border)',
+                        background: 'var(--bg-surface)',
                       }} className="col gap-1">
                         <span style={{ fontSize: 14, fontWeight: 500 }}>{m.desc}</span>
                         <span style={{ fontSize: 14, color: 'var(--pink-deep)', fontWeight: 600 }}>{m.potencial}</span>
@@ -364,7 +364,7 @@ function IdeiasPage() {
         {/* Filters */}
         <div className="row gap-3" style={{ flexWrap: 'wrap' }}>
           <div className="row gap-2" style={{
-            background: 'var(--bg-surface)', border: '1px solid var(--border)',
+            background: 'var(--offwhite)',
             borderRadius: 'var(--r-md)', padding: '8px 12px',
             flex: 1, minWidth: 220, maxWidth: 320,
           }}>
