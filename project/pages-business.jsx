@@ -832,33 +832,40 @@ function ClientesPage({ setRoute }) {
   return (
     <div className="content">
       <div className="col gap-6 fade-up">
-        <PageHeader title="Clientes" subtitle="Agência Logue · receita ativa, entregas e onboarding em um lugar"/>
+        <PageHeader title="Clientes" subtitle="Agência Logue · receita ativa, entregas e onboarding em um lugar"
+          action={<Button variant="primary"><Icon name="plus" size={14} color="white"/> Novo cliente</Button>}
+        />
 
-        <Card>
-          <CardBody style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--s-5)' }}>
-            <div>
-              <div className="eyebrow">Receita mensal recorrente</div>
-              <div className="row gap-3" style={{ alignItems: 'baseline', marginTop: 6 }}>
-                <span style={{ fontFamily: 'var(--font-title)', fontSize: 34, fontWeight: 600, letterSpacing: '-0.025em' }}>R$ {total.toLocaleString('pt-BR')}</span>
-                <span className="tiny muted">de R$ {meta.toLocaleString('pt-BR')} · {Math.round((total/meta)*100)}%</span>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--s-4)' }}>
+          <Card>
+            <CardBody>
+              <div className="eyebrow" style={{ color: 'var(--text-muted)', marginBottom: 6 }}>Receita mensal</div>
+              <div className="row gap-2" style={{ alignItems: 'baseline', marginBottom: 8 }}>
+                <span style={{ fontFamily: 'var(--font-title)', fontSize: 26, fontWeight: 700, letterSpacing: '-0.025em' }}>R$ {total.toLocaleString('pt-BR')}</span>
               </div>
-              <div style={{ marginTop: 10, height: 6, background: 'var(--gray-light)', borderRadius: 999, overflow: 'hidden', width: 280 }}>
-                <div style={{ width: `${Math.min((total/meta)*100,100)}%`, height: '100%', background: 'var(--pink)' }}/>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 8 }}>
+                {Math.round((total/meta)*100)}% de R$ {meta.toLocaleString('pt-BR')}
               </div>
-            </div>
-            <div className="row gap-6">
-              <div>
-                <div className="eyebrow">Clientes</div>
-                <div style={{ fontFamily: 'var(--font-title)', fontSize: 26, fontWeight: 600, marginTop: 6 }}>{window.DEMO_CLIENTS.length}</div>
+              <div style={{ height: 4, background: 'var(--bg-elevated)', borderRadius: 999, overflow: 'hidden' }}>
+                <div style={{ width: `${Math.min((total/meta)*100,100)}%`, height: '100%', background: 'var(--pink)', borderRadius: 999 }}/>
               </div>
-              <div>
-                <div className="eyebrow">Entregas pendentes</div>
-                <div style={{ fontFamily: 'var(--font-title)', fontSize: 26, fontWeight: 600, marginTop: 6, color: 'var(--pink-deep)' }}>{pendentes}</div>
-              </div>
-            </div>
-            <Button variant="primary"><Icon name="plus" size={14} color="white"/> Novo cliente</Button>
-          </CardBody>
-        </Card>
+            </CardBody>
+          </Card>
+
+          <Card>
+            <CardBody style={{ textAlign: 'center' }}>
+              <div className="eyebrow" style={{ color: 'var(--text-muted)', marginBottom: 10 }}>Clientes ativos</div>
+              <div style={{ fontFamily: 'var(--font-title)', fontSize: 44, fontWeight: 700, lineHeight: 1, color: '#201e1f' }}>{window.DEMO_CLIENTS.length}</div>
+            </CardBody>
+          </Card>
+
+          <Card>
+            <CardBody style={{ textAlign: 'center' }}>
+              <div className="eyebrow" style={{ color: 'var(--pink-deep)', marginBottom: 10 }}>Entregas pendentes</div>
+              <div style={{ fontFamily: 'var(--font-title)', fontSize: 44, fontWeight: 700, lineHeight: 1, color: 'var(--pink-deep)' }}>{pendentes}</div>
+            </CardBody>
+          </Card>
+        </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: 'var(--s-4)' }}>
           {window.DEMO_CLIENTS.map(c => <ClientCard key={c.id} client={c} onOpen={() => setSelectedId(c.id)}/>)}

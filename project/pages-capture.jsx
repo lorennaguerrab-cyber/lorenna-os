@@ -451,7 +451,7 @@ function TarefasPage() {
   const all = window.DEMO_TASKS.filter(t => !deletedIds.includes(t.id));
 
   const TAB_COUNTS = {
-    hoje:       all.filter(t => t.status !== 'concluida' && (t.diario || (t.diasDaSemana && t.diasDaSemana.includes(todayIdx)))).length,
+    hoje:       all.filter(t => t.status !== 'concluida' && (t.diario || (t.diasDaSemana && t.diasDaSemana.includes(todayIdx)) || (!t.diasDaSemana && !t.diario))).length,
     urgente:    all.filter(t => t.prioridade === 'urgente' && t.status !== 'concluida').length,
     semana:     all.filter(t => (t.recorrente || (t.diasDaSemana && t.diasDaSemana.length > 0)) && t.status !== 'concluida').length,
     todas:      all.filter(t => t.status !== 'concluida').length,
@@ -462,7 +462,7 @@ function TarefasPage() {
 
   const filtered = all.filter(t => {
     let okFilter = true;
-    if      (filter === 'hoje')       okFilter = t.diario || (t.diasDaSemana && t.diasDaSemana.includes(todayIdx));
+    if      (filter === 'hoje')       okFilter = (t.diario || (t.diasDaSemana && t.diasDaSemana.includes(todayIdx)) || (!t.diasDaSemana && !t.diario)) && t.status !== 'concluida';
     else if (filter === 'urgente')    okFilter = t.prioridade === 'urgente' && t.status !== 'concluida';
     else if (filter === 'semana')     okFilter = (t.recorrente || (t.diasDaSemana && t.diasDaSemana.length > 0)) && t.status !== 'concluida';
     else if (filter === 'progresso')  okFilter = t.status === 'em_progresso';

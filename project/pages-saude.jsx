@@ -3,10 +3,11 @@
    ────────────────────────────────────────────── */
 
 const FAMILIA = [
-  { id: 'lorenna', nome: 'Lorenna', emoji: '👩‍🦰', cor: '#fe7dae', idade: null },
-  { id: 'mateus',  nome: 'Mateus',  emoji: '👦',   cor: '#bce1f6', idade: '10 anos' },
-  { id: 'murilo',  nome: 'Murilo',  emoji: '👦',   cor: '#f1e18d', idade: null },
-  { id: 'miguel',  nome: 'Miguel',  emoji: '👶',   cor: '#ffe1bd', idade: '1 ano e 10 meses' },
+  { id: 'lorenna',   nome: 'Lorenna',   emoji: '👩‍🦰', cor: '#fe7dae', idade: null },
+  { id: 'jefferson', nome: 'Jefferson', emoji: '👨',   cor: '#f0bff8', idade: '31 anos' },
+  { id: 'mateus',    nome: 'Mateus',    emoji: '👦',   cor: '#bce1f6', nascimento: '2018-09-08', idade: '7 anos' },
+  { id: 'murilo',    nome: 'Murilo',    emoji: '👦',   cor: '#f1e18d', nascimento: '2018-09-08', idade: '7 anos' },
+  { id: 'miguel',    nome: 'Miguel',    emoji: '👶',   cor: '#ffe1bd', nascimento: '2024-07-10', idade: '1 ano e 10 meses' },
 ];
 
 function loadMembro(membro, tipo) {
@@ -20,6 +21,12 @@ function loadChat(membro) {
 }
 function saveChat(membro, msgs) {
   localStorage.setItem(`lorenna_saude_${membro}_chat`, JSON.stringify(msgs));
+}
+function loadNotas(membro) {
+  try { return JSON.parse(localStorage.getItem(`lorenna_saude_${membro}_notas`) || '[]'); } catch { return []; }
+}
+function saveNotas(membro, notas) {
+  localStorage.setItem(`lorenna_saude_${membro}_notas`, JSON.stringify(notas));
 }
 
 async function compressPhoto(file) {
@@ -470,6 +477,15 @@ function RelatorioModal({ membro, onClose }) {
     }).join('\n\n') + '\n';
   }
 
+  function formatNotas() {
+    const ns = loadNotas(membro.id);
+    if (!ns.length) return '  Nenhuma anotação registrada.\n';
+    return ns.map(n => {
+      const ts = n.ts ? new Date(n.ts).toLocaleString('pt-BR') : '';
+      return `  [${ts}]\n  ${n.texto}`;
+    }).join('\n\n') + '\n';
+  }
+
   const relatorio = [
     `RELATÓRIO DE SAÚDE — ${membro.nome.toUpperCase()}${membro.idade ? ` (${membro.idade})` : ''}`,
     `Gerado em: ${dataGerado}`,
@@ -484,9 +500,9 @@ function RelatorioModal({ membro, onClose }) {
     'EXAMES',
     '─'.repeat(40),
     formatExames(),
-    'HISTÓRICO DE SINTOMAS (Assistente IA)',
+    'ANOTAÇÕES DE SAÚDE',
     '─'.repeat(40),
-    formatChat(),
+    formatNotas(),
     `${'─'.repeat(60)}`,
     `Fim do relatório`,
   ].join('\n');
@@ -546,201 +562,84 @@ function RelatorioModal({ membro, onClose }) {
   return ReactDOM.createPortal(content, document.body);
 }
 
-/* ── SAÚDE ASSISTENTE ─────────────────────── */
-function SaudeAssistente({ membro }) {
-  const [chat, setChat] = useState(() => loadChat(membro.id));
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [showRelatorio, setShowRelatorio] = useState(false);
-  const bottomRef = useRef(null);
-  const textareaRef = useRef(null);
+/* ── SAÚDE NOTAS ─────────────────────── */
+function SaudeNotas({ membro, onRelatorio }) {
+  const [notas, setNotas] = React.useState(() => loadNotas(membro.id));
+  const [input, setInput] = React.useState('');
 
-  useEffect(() => {
-    const msgs = loadChat(membro.id);
-    setChat(msgs);
+  React.useEffect(() => {
+    setNotas(loadNotas(membro.id));
   }, [membro.id]);
 
-  useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [chat, loading]);
-
-  const hasClaudeKey = typeof window.callClaude === 'function' && (
-    window.__claudeKey || window.CLAUDE_KEY || localStorage.getItem('claude_api_key')
-  );
-
-  async function enviar() {
-    const text = input.trim();
-    if (!text || loading) return;
-
-    const userMsg = { role: 'user', content: text, ts: Date.now() };
-    const newChat = [...chat, userMsg];
-    setChat(newChat);
-    saveChat(membro.id, newChat);
+  function salvar() {
+    if (!input.trim()) return;
+    const nota = { id: Date.now(), texto: input.trim(), ts: Date.now() };
+    const next = [nota, ...notas];
+    setNotas(next);
+    saveNotas(membro.id, next);
     setInput('');
-    setLoading(true);
-
-    try {
-      const systemPrompt = `Você é um assistente de saúde para ${membro.nome}${membro.idade ? ` (${membro.idade})` : ''}. Registre sintomas, acompanhe tratamentos, faça perguntas relevantes. Para sintomas graves, sempre recomende consultar um médico. Responda em português brasileiro, de forma clara e empática.`;
-      const apiMsgs = newChat.map(({ role, content }) => ({ role, content }));
-      const reply = await window.callClaude(apiMsgs, systemPrompt, 'claude-haiku-4-5-20251001', 1000);
-      const assistantMsg = { role: 'assistant', content: reply, ts: Date.now() };
-      const finalChat = [...newChat, assistantMsg];
-      setChat(finalChat);
-      saveChat(membro.id, finalChat);
-    } catch (err) {
-      const errMsg = { role: 'assistant', content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.', ts: Date.now() };
-      const finalChat = [...newChat, errMsg];
-      setChat(finalChat);
-      saveChat(membro.id, finalChat);
-    } finally {
-      setLoading(false);
-    }
+    showToast('Anotação salva!');
   }
 
-  function handleKeyDown(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      enviar();
-    }
-  }
-
-  if (!hasClaudeKey) {
-    return (
-      <Card>
-        <CardBody>
-          <div className="col gap-3" style={{ padding: 'var(--s-4) 0', alignItems: 'center', textAlign: 'center' }}>
-            <span style={{ fontSize: 36 }}>🔑</span>
-            <p style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 600 }}>Assistente IA indisponível</p>
-            <p className="small muted" style={{ maxWidth: 380 }}>
-              Configure a chave da API Claude para usar o assistente IA.
-              Use <code style={{ background: 'var(--bg-elevated)', padding: '1px 6px', borderRadius: 4, fontSize: 12 }}>window.setClaudeKey('sua-chave')</code> no console para configurar.
-            </p>
-          </div>
-        </CardBody>
-      </Card>
-    );
+  function deletar(id) {
+    const next = notas.filter(n => n.id !== id);
+    setNotas(next);
+    saveNotas(membro.id, next);
   }
 
   return (
-    <div className="col gap-0" style={{ height: 'calc(100vh - 280px)', minHeight: 400 }}>
-      {/* Chat header */}
-      <div className="row between" style={{
-        padding: '12px 16px', borderRadius: 'var(--r-lg) var(--r-lg) 0 0',
-        background: 'var(--bg-surface)', border: '1px solid var(--border)',
-        borderBottom: 'none', alignItems: 'center',
-      }}>
-        <div className="row gap-2" style={{ alignItems: 'center' }}>
-          <span style={{ fontSize: 20 }}>{membro.emoji}</span>
-          <div>
-            <p style={{ fontWeight: 600, fontSize: 14 }}>Assistente de Saúde — {membro.nome}</p>
-            <p className="tiny muted">Powered by Claude Haiku</p>
+    <div className="col gap-4">
+      <Card>
+        <CardBody className="col gap-3">
+          <div className="row between" style={{ alignItems: 'center' }}>
+            <div>
+              <div className="eyebrow" style={{ marginBottom: 2 }}>Nova anotação — {membro.emoji} {membro.nome}</div>
+              <p className="tiny muted">Sintomas, consultas, observações, medicação nova…</p>
+            </div>
+            <Button variant="ghost" size="sm" onClick={onRelatorio}>
+              <Icon name="file-text" size={13}/> Relatório
+            </Button>
           </div>
+          <textarea
+            className="textarea"
+            placeholder="Ex: Dor de cabeça há 2 dias, tomou dipirona 500mg…"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            rows={3}
+            onKeyDown={e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') salvar(); }}
+          />
+          <div className="row between">
+            <span className="tiny muted">⌘ + Enter para salvar</span>
+            <Button variant="primary" onClick={salvar} disabled={!input.trim()}>
+              <Icon name="check" size={13} color="white"/> Salvar
+            </Button>
+          </div>
+        </CardBody>
+      </Card>
+
+      {notas.length === 0 ? (
+        <div className="col gap-3" style={{ padding: 'var(--s-6) 0', alignItems: 'center', textAlign: 'center' }}>
+          <span style={{ fontSize: 36 }}>📝</span>
+          <p className="small muted">Nenhuma anotação registrada ainda para {membro.nome}.</p>
         </div>
-        <Button variant="ghost" size="sm" onClick={() => setShowRelatorio(true)}>
-          <Icon name="file-text" size={13}/> Gerar Relatório PDF
-        </Button>
-      </div>
-
-      {/* Messages area */}
-      <div style={{
-        flex: 1, overflowY: 'auto', padding: 'var(--s-4)',
-        background: 'var(--bg-elevated)', border: '1px solid var(--border)',
-        borderBottom: 'none', display: 'flex', flexDirection: 'column', gap: 'var(--s-3)',
-      }}>
-        {chat.length === 0 ? (
-          <div className="col gap-3" style={{ alignItems: 'center', justifyContent: 'center', flex: 1, textAlign: 'center', padding: 'var(--s-6) var(--s-4)' }}>
-            <span style={{ fontSize: 40 }}>{membro.emoji}</span>
-            <p style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>
-              Olá! Pode me contar sobre a saúde de {membro.nome}.
-            </p>
-            <p className="small muted" style={{ maxWidth: 360 }}>
-              Descreva sintomas, dúvidas, ou peça para registrar uma consulta.
-            </p>
-          </div>
-        ) : (
-          chat.map((msg, i) => (
-            <div key={i} style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start',
-            }}>
-              <div style={{
-                maxWidth: '78%',
-                padding: '10px 14px',
-                borderRadius: msg.role === 'user'
-                  ? '16px 16px 4px 16px'
-                  : '16px 16px 16px 4px',
-                background: msg.role === 'user'
-                  ? 'var(--pink)'
-                  : 'var(--white)',
-                color: msg.role === 'user' ? 'white' : 'var(--text-primary)',
-                border: msg.role === 'user' ? 'none' : '1px solid var(--border)',
-                fontSize: 14,
-                lineHeight: 1.55,
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-word',
-              }}>
-                {msg.content}
-              </div>
-              {msg.ts && (
-                <span className="tiny muted" style={{ marginTop: 3, marginLeft: 4, marginRight: 4 }}>
-                  {new Date(msg.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                  {' · '}
-                  {new Date(msg.ts).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
+      ) : (
+        <div className="col gap-2">
+          {notas.map(n => (
+            <Card key={n.id}>
+              <CardBody>
+                <div className="row between" style={{ alignItems: 'flex-start', gap: 12 }}>
+                  <p style={{ fontSize: 14, lineHeight: 1.6, flex: 1, color: 'var(--text-primary)' }}>{n.texto}</p>
+                  <button onClick={() => deletar(n.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 4, flexShrink: 0 }}>
+                    <Icon name="x" size={12}/>
+                  </button>
+                </div>
+                <span className="tiny muted" style={{ display: 'block', marginTop: 6 }}>
+                  {new Date(n.ts).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} · {new Date(n.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                 </span>
-              )}
-            </div>
-          ))
-        )}
-
-        {loading && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-            <div style={{
-              padding: '10px 16px',
-              borderRadius: '16px 16px 16px 4px',
-              background: 'var(--white)',
-              border: '1px solid var(--border)',
-              fontSize: 14, color: 'var(--text-muted)',
-              fontStyle: 'italic',
-            }}>
-              IA pensando...
-            </div>
-          </div>
-        )}
-
-        <div ref={bottomRef}/>
-      </div>
-
-      {/* Input area */}
-      <div style={{
-        padding: 'var(--s-3)', background: 'var(--bg-surface)',
-        border: '1px solid var(--border)', borderRadius: '0 0 var(--r-lg) var(--r-lg)',
-        display: 'flex', gap: 'var(--s-2)', alignItems: 'flex-end',
-      }}>
-        <textarea
-          ref={textareaRef}
-          className="textarea"
-          placeholder={`Mensagem para ${membro.nome}...`}
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          rows={2}
-          style={{ flex: 1, resize: 'none', minHeight: 44, maxHeight: 120 }}
-        />
-        <Button
-          variant="primary"
-          onClick={enviar}
-          disabled={!input.trim() || loading}
-          style={{ flexShrink: 0, alignSelf: 'flex-end' }}
-        >
-          <Icon name="send" size={14} color="white"/>
-        </Button>
-      </div>
-
-      {showRelatorio && (
-        <RelatorioModal membro={membro} onClose={() => setShowRelatorio(false)}/>
+              </CardBody>
+            </Card>
+          ))}
+        </div>
       )}
     </div>
   );
@@ -749,7 +648,7 @@ function SaudeAssistente({ membro }) {
 /* ── PAGE ─────────────────────── */
 function SaudePage() {
   const [membro, setMembro] = useState(FAMILIA[0]);
-  const [subTab, setSubTab] = useState('ia');
+  const [subTab, setSubTab] = useState('notas');
   const [consultas, setConsultas] = useState(() => loadMembro(FAMILIA[0].id, 'consultas'));
   const [remedios, setRemedios] = useState(() => loadMembro(FAMILIA[0].id, 'remedios'));
   const [exames, setExames] = useState(() => loadMembro(FAMILIA[0].id, 'exames'));
@@ -760,13 +659,14 @@ function SaudePage() {
   const [showNewConsulta, setShowNewConsulta] = useState(false);
   const [showNewRemedio, setShowNewRemedio] = useState(false);
   const [showNewExame, setShowNewExame] = useState(false);
+  const [showRelatorio, setShowRelatorio] = useState(false);
 
   function switchMembro(m) {
     setMembro(m);
     setConsultas(loadMembro(m.id, 'consultas'));
     setRemedios(loadMembro(m.id, 'remedios'));
     setExames(loadMembro(m.id, 'exames'));
-    setSubTab('ia');
+    setSubTab('notas');
   }
 
   function saveConsulta(c) {
@@ -825,7 +725,7 @@ function SaudePage() {
   const examesPendentes = exames.filter(e => e.status === 'pendente' || e.status === 'agendado');
 
   const SUB_TABS = [
-    { id: 'ia',        label: '💬 Assistente IA' },
+    { id: 'notas',     label: '📝 Anotações' },
     { id: 'resumo',    label: '🔔 Resumo' },
     { id: 'consultas', label: '🩺 Consultas' },
     { id: 'remedios',  label: '💊 Remédios' },
@@ -844,12 +744,13 @@ function SaudePage() {
               {subTab === 'remedios'  && <Button variant="primary" onClick={() => setShowNewRemedio(true)}><Icon name="plus" size={14} color="white"/> Novo remédio</Button>}
               {subTab === 'exames'    && <Button variant="primary" onClick={() => setShowNewExame(true)}><Icon name="plus" size={14} color="white"/> Novo exame</Button>}
               {subTab === 'resumo'    && <Button variant="primary" onClick={() => setShowNewRemedio(true)}><Icon name="plus" size={14} color="white"/> Adicionar</Button>}
+              {subTab === 'notas'     && <Button variant="ghost" onClick={() => setShowRelatorio(true)}><Icon name="file-text" size={14}/> Relatório</Button>}
             </div>
           }
         />
 
         {/* Family member picker */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 12 }}>
           {FAMILIA.map(m => {
             const ativo = membro.id === m.id;
             return (
@@ -903,9 +804,9 @@ function SaudePage() {
           ))}
         </div>
 
-        {/* ASSISTENTE IA */}
-        {subTab === 'ia' && (
-          <SaudeAssistente membro={membro}/>
+        {/* ANOTAÇÕES */}
+        {subTab === 'notas' && (
+          <SaudeNotas membro={membro} onRelatorio={() => setShowRelatorio(true)}/>
         )}
 
         {/* RESUMO */}
@@ -1121,6 +1022,7 @@ function SaudePage() {
       {editingRemedio   && <RemedioModal  item={editingRemedio}   onClose={() => setEditingRemedio(null)}   onSave={saveRemedio}/>}
       {showNewExame     && <ExameModal    item={null} onClose={() => setShowNewExame(false)}     onSave={saveExame}/>}
       {editingExame     && <ExameModal    item={editingExame}     onClose={() => setEditingExame(null)}     onSave={saveExame}/>}
+      {showRelatorio && <RelatorioModal membro={membro} onClose={() => setShowRelatorio(false)}/>}
     </div>
   );
 }

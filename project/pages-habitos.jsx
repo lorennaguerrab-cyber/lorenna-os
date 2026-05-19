@@ -114,64 +114,92 @@ function SemanaView({ data: currentDate, habitos }) {
   return (
     <Card>
       <CardBody>
-        <div className="eyebrow" style={{ marginBottom: 'var(--s-3)', color: 'var(--text-secondary)' }}>Semana — visão geral</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6 }}>
+        <div className="eyebrow" style={{ marginBottom: 'var(--s-3)', color: 'var(--text-secondary)' }}>Visão da semana</div>
+
+        {/* Legend */}
+        <div className="row gap-4" style={{ marginBottom: 'var(--s-4)', flexWrap: 'wrap' }}>
+          {[['#FF78B0', '💊 Remédios'], ['#5B9BD5', '💧 Água'], ['#7FB68C', '✅ Hábitos']].map(([c, l]) => (
+            <div key={l} className="row gap-1" style={{ alignItems: 'center' }}>
+              <div style={{ width: 10, height: 5, borderRadius: 2, background: c }}/>
+              <span className="tiny muted">{l}</span>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 8 }}>
           {dias.map((d, i) => {
             const dk = dateKey(d);
             const dia = loadDia(dk);
             const isFuture = d > hoje;
             const isToday = dk === dateKey(hoje);
 
-            const totalMed = MEDICAMENTOS_CONFIG.length;
-            const tomouMed = MEDICAMENTOS_CONFIG.filter(m => dia.medicamentos[m.id]).length;
-            const totalHab = habitos.length;
-            const fezHab = habitos.filter(h => dia.habitos[h.id]).length;
-            const agua = dia.agua_ml || 0;
+            const medPct = MEDICAMENTOS_CONFIG.length > 0
+              ? MEDICAMENTOS_CONFIG.filter(m => dia.medicamentos?.[m.id]).length / MEDICAMENTOS_CONFIG.length
+              : 0;
+            const habPct = habitos.length > 0
+              ? habitos.filter(h => dia.habitos?.[h.id]).length / habitos.length
+              : 0;
+            const aguaPct = Math.min(1, (dia.agua_ml || 0) / META_AGUA_ML);
 
-            const score = isFuture ? null : (
-              (totalMed > 0 ? tomouMed / totalMed : 1) * 0.4 +
-              (totalHab > 0 ? fezHab / totalHab : 1) * 0.4 +
-              Math.min(1, agua / META_AGUA_ML) * 0.2
-            );
-
-            const cor = score === null ? 'var(--border)' :
-              score >= 0.8 ? '#7FB68C' : score >= 0.5 ? '#E89B4C' : score > 0 ? '#FF78B0' : 'var(--bg-elevated)';
+            const hasData = !isFuture && (medPct > 0 || habPct > 0 || aguaPct > 0);
+            const score = !isFuture ? (medPct * 0.4 + habPct * 0.4 + aguaPct * 0.2) : null;
 
             return (
               <div key={i} style={{ textAlign: 'center' }}>
+                {/* Day name */}
                 <div style={{
-                  fontSize: 11, fontWeight: 600, textTransform: 'uppercase',
-                  letterSpacing: '0.06em', color: isToday ? 'var(--pink-deep)' : 'var(--text-muted)',
-                  marginBottom: 4,
+                  fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em',
+                  color: isToday ? '#fe7dae' : 'rgba(32,30,31,0.35)',
+                  marginBottom: 5,
                 }}>{diasNomes[i]}</div>
+
+                {/* Date */}
                 <div style={{
-                  width: '100%', aspectRatio: '1/1', maxWidth: 44, margin: '0 auto',
-                  borderRadius: 'var(--r-md)',
-                  background: isFuture ? 'var(--bg-elevated)' : `color-mix(in oklch, ${cor} 20%, var(--white))`,
-                  border: `${isToday ? '2px' : '1px'} solid ${isToday ? 'var(--pink)' : cor}`,
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 13, fontWeight: 700,
-                  color: isToday ? 'var(--pink-deep)' : 'var(--text-secondary)',
+                  width: 28, height: 28, borderRadius: 999, margin: '0 auto',
+                  background: isToday ? '#fe7dae' : 'transparent',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 12, fontWeight: isToday ? 700 : 500,
+                  color: isToday ? 'white' : 'rgba(32,30,31,0.6)',
+                  marginBottom: 10,
                 }}>
                   {d.getDate()}
-                  {!isFuture && score !== null && (
-                    <div style={{
-                      width: 6, height: 6, borderRadius: 999,
-                      background: cor, marginTop: 2,
-                    }}/>
-                  )}
                 </div>
+
+                {/* 3 mini progress bars */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                  {[
+                    { pct: medPct, color: '#FF78B0' },
+                    { pct: aguaPct, color: '#5B9BD5' },
+                    { pct: habPct, color: '#7FB68C' },
+                  ].map(({ pct, color }, j) => (
+                    <div key={j} style={{
+                      height: 5, borderRadius: 999,
+                      background: isFuture ? 'transparent' : 'rgba(32,30,31,0.07)',
+                      overflow: 'hidden',
+                    }}>
+                      {!isFuture && pct > 0 && (
+                        <div style={{
+                          width: `${pct * 100}%`, height: '100%',
+                          background: color, borderRadius: 999,
+                          transition: 'width .4s ease',
+                        }}/>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Score % */}
+                {hasData && score !== null && score > 0 && (
+                  <div style={{
+                    marginTop: 6, fontSize: 10, fontWeight: 600,
+                    color: score >= 0.8 ? '#3A8C50' : score >= 0.5 ? '#B06A20' : '#C44878',
+                  }}>
+                    {Math.round(score * 100)}%
+                  </div>
+                )}
               </div>
             );
           })}
-        </div>
-        <div className="row gap-3" style={{ marginTop: 'var(--s-3)', flexWrap: 'wrap' }}>
-          {[['#7FB68C', 'Ótimo (80%+)'], ['#E89B4C', 'Parcial (50%+)'], ['#FF78B0', 'Iniciou']].map(([c, l]) => (
-            <div key={l} className="row gap-1" style={{ alignItems: 'center' }}>
-              <div style={{ width: 8, height: 8, borderRadius: 999, background: c }}/>
-              <span className="tiny muted">{l}</span>
-            </div>
-          ))}
         </div>
       </CardBody>
     </Card>

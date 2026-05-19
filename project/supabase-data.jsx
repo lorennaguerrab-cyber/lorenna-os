@@ -12,8 +12,14 @@ create table if not exists tarefas (
   cliente text,
   area text,
   micro jsonb default '[]',
+  dias_semana jsonb default null,
+  diario boolean default false,
+  energia jsonb default '[]',
   created_at timestamptz default now()
 );
+-- alter table tarefas add column if not exists dias_semana jsonb default null;
+-- alter table tarefas add column if not exists diario boolean default false;
+-- alter table tarefas add column if not exists energia jsonb default '[]';
 create table if not exists ideias (
   id text primary key,
   titulo text not null,
@@ -64,8 +70,15 @@ window.SUPABASE_SQL = `create table if not exists tarefas (
   cliente text,
   area text,
   micro jsonb default '[]',
+  dias_semana jsonb default null,
+  diario boolean default false,
+  energia jsonb default '[]',
   created_at timestamptz default now()
 );
+-- Se a tabela já existir, rode também:
+-- alter table tarefas add column if not exists dias_semana jsonb default null;
+-- alter table tarefas add column if not exists diario boolean default false;
+-- alter table tarefas add column if not exists energia jsonb default '[]';
 create table if not exists ideias (
   id text primary key,
   titulo text not null,
