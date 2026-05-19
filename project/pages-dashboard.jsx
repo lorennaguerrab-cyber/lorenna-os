@@ -308,16 +308,19 @@ function TaskRow({ task, dense, large, onDelete, onUpdate, showMeta }) {
   const [tituloEdit, setTituloEdit] = useState(task.titulo);
 
   const prioMap = {
-    urgente: 'color-mix(in oklch, #fe7dae 22%, white)',
-    alta:    'color-mix(in oklch, #ffe1bd 30%, white)',
-    media:   'color-mix(in oklch, #bce1f6 28%, white)',
-    baixa:   'color-mix(in oklch, #f1e18d 30%, white)',
+    urgente: 'color-mix(in oklch, #fe7dae 18%, white)',
+    alta:    'color-mix(in oklch, #ffe1bd 26%, white)',
+    media:   'color-mix(in oklch, #bce1f6 24%, white)',
+    baixa:   'color-mix(in oklch, #f1e18d 22%, white)',
   };
   const accentMap = {
     urgente: '#fe7dae', alta: '#ffe1bd', media: '#bce1f6', baixa: '#f1e18d',
   };
-  const bg = prioMap[task.prioridade] || 'color-mix(in oklch, #fec9df 24%, white)';
+  const barWidths = { urgente: 4, alta: 3, media: 3, baixa: 2 };
+  const bg = prioMap[task.prioridade] || 'color-mix(in oklch, #fec9df 20%, white)';
   const accent = accentMap[task.prioridade] || '#fec9df';
+  const barWidth = barWidths[task.prioridade] || 3;
+  const hasShadow = task.prioridade === 'urgente' && !concluida;
   const D = 'rgba(32,30,31,';
 
   const DIAS_LABELS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
@@ -343,7 +346,8 @@ function TaskRow({ task, dense, large, onDelete, onUpdate, showMeta }) {
     <div style={{
       borderRadius: 'var(--r-md)',
       background: bg,
-      borderLeft: `3px solid ${accent}`,
+      borderLeft: `${barWidth}px solid ${accent}`,
+      boxShadow: hasShadow ? '0 1px 5px rgba(254,125,174,0.13)' : 'none',
       transition: 'all .15s var(--easing)',
     }}>
       <div className="row gap-3" style={{ padding: dense ? '8px 14px 8px 13px' : '11px 14px 11px 13px', alignItems: 'flex-start' }}>

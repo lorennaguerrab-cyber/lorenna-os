@@ -501,33 +501,44 @@ function TarefasPage() {
     { label: 'Em andamento', count: countProgresso, color: '#f1e18d', filterKey: 'progresso'},
   ];
 
+  const hoje = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+  const dateLabel = hoje.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+
   return (
     <div className="content">
-      <div className="col gap-6 fade-up">
+      <div className="col gap-8 fade-up">
 
-        {/* Header */}
-        <div className="row between" style={{ alignItems: 'flex-end' }}>
-          <div>
-            <h1 style={{ fontFamily: 'var(--font-title)', fontSize: 28, fontWeight: 700, color: '#201e1f', lineHeight: 1, margin: 0 }}>Tarefas</h1>
-            <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 6, marginBottom: 0 }}>Gerencie suas entregas com clareza</p>
+        {/* ── Topo: título + data + stats ── */}
+        <div style={{ paddingBottom: 28, borderBottom: '1px solid var(--gray-light)' }}>
+          <div className="row between" style={{ alignItems: 'flex-start', marginBottom: 28 }}>
+            <div>
+              <h1 style={{ fontFamily: 'var(--font-title)', fontSize: 30, fontWeight: 700, color: '#201e1f', lineHeight: 1, margin: 0 }}>Tarefas</h1>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 6, marginBottom: 0, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 500 }}>{dateLabel}</p>
+            </div>
+            <Button variant="primary"><Icon name="plus" size={14} color="white"/> Nova tarefa</Button>
           </div>
-          <Button variant="primary"><Icon name="plus" size={14} color="white"/> Nova tarefa</Button>
+
+          {/* Stats — accent bar + número editorial */}
+          <div className="row gap-10">
+            {STAT_CHIPS.map(s => (
+              <button key={s.label} onClick={() => setFilter(s.filterKey)} style={{
+                background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left',
+                display: 'flex', gap: 11, alignItems: 'center',
+                opacity: filter !== 'todas' && filter !== s.filterKey ? 0.28 : 1,
+                transition: 'opacity .2s',
+              }}>
+                <div style={{ width: 3, height: 42, borderRadius: 99, background: s.color, flexShrink: 0 }}/>
+                <div>
+                  <div style={{ fontSize: 34, fontFamily: 'var(--font-title)', fontWeight: 800, color: '#201e1f', lineHeight: 1 }}>{s.count}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>{s.label}</div>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Stats — minimal numbers */}
-        <div className="row gap-8" style={{ paddingBottom: 20, borderBottom: '1px solid var(--gray-light)' }}>
-          {STAT_CHIPS.map(s => (
-            <button key={s.label} onClick={() => setFilter(s.filterKey)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <span style={{ fontSize: 34, fontFamily: 'var(--font-title)', fontWeight: 800, lineHeight: 1, color: filter === s.filterKey ? '#201e1f' : s.color }}>{s.count}</span>
-              <span style={{ fontSize: 13, color: filter === s.filterKey ? '#201e1f' : 'var(--text-muted)', fontWeight: filter === s.filterKey ? 600 : 400 }}>{s.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Filters */}
-        <div className="col gap-2">
-          {/* Status tabs — underline style */}
+        {/* ── Filtros ── */}
+        <div className="col gap-2" style={{ marginTop: -20 }}>
           <div className="row gap-0" style={{ borderBottom: '1px solid var(--gray-light)', overflowX: 'auto' }}>
             {STATUS_FILTERS.map(({ key, label }) => (
               <button key={key} onClick={() => setFilter(key)} style={{
@@ -542,14 +553,12 @@ function TarefasPage() {
               }}>{label}</button>
             ))}
           </div>
-
-          {/* Client filter — ghost pills */}
           <div className="row gap-1" style={{ flexWrap: 'wrap' }}>
             {CLIENTES.map(({ key, label }) => (
               <button key={key} onClick={() => setClientFilter(key)} style={{
-                fontSize: 13, padding: '4px 10px', borderRadius: 999,
+                fontSize: 13, padding: '3px 10px', borderRadius: 999,
                 border: 'none',
-                background: clientFilter === key ? 'color-mix(in oklch, #fe7dae 18%, white)' : 'none',
+                background: clientFilter === key ? 'color-mix(in oklch, #fe7dae 15%, white)' : 'none',
                 color: clientFilter === key ? '#201e1f' : 'var(--text-muted)',
                 cursor: 'pointer', fontWeight: clientFilter === key ? 600 : 400,
                 fontFamily: 'var(--font-body)', transition: 'all .15s',
@@ -566,20 +575,23 @@ function TarefasPage() {
           </div>
         )}
 
-        {/* Compromissos de hoje — sem container pesado */}
+        {/* ── Compromissos de hoje ── */}
         {(() => {
           const comp = all.filter(t =>
             t.cliente && t.diasDaSemana && t.diasDaSemana.includes(todayIdx) && t.status !== 'concluida'
           );
           if (comp.length === 0) return null;
           return (
-            <section className="col gap-3">
-              <div className="row gap-2" style={{ alignItems: 'center' }}>
-                <span style={{ fontSize: 14 }}>📍</span>
-                <span style={{ fontSize: 12, fontWeight: 700, color: '#201e1f', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Compromissos de hoje</span>
-                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>· envolvem outras pessoas</span>
-                <div style={{ flex: 1, height: 1, background: '#fe7dae', opacity: 0.35 }}/>
-                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{comp.length}</span>
+            <section className="col gap-4">
+              <div>
+                <div style={{ height: 2, background: 'linear-gradient(90deg, #fe7dae 40%, transparent)', borderRadius: 1, marginBottom: 10 }}/>
+                <div className="row between" style={{ alignItems: 'baseline' }}>
+                  <div className="row gap-3" style={{ alignItems: 'baseline' }}>
+                    <span style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 800, color: '#fe7dae', letterSpacing: '-0.02em', lineHeight: 1 }}>Hoje</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>· compromissos com outras pessoas — inadiáveis</span>
+                  </div>
+                  <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>{comp.length}</span>
+                </div>
               </div>
               <div className="col gap-2">
                 {comp.map(t => <TaskRow key={t.id} task={t} onDelete={deleteTask} showMeta />)}
@@ -588,27 +600,30 @@ function TarefasPage() {
           );
         })()}
 
-        {/* Priority groups */}
+        {/* ── Grupos por prioridade ── */}
         {GROUPS.map(g => {
           const items = filtered.filter(t => t.prioridade === g.key);
           if (items.length === 0) return null;
           return (
-            <section key={g.key} className="col gap-3">
-              {/* Group header — inline, sem container */}
-              <div className="row gap-3" style={{ alignItems: 'center' }}>
-                <div style={{ width: 8, height: 8, borderRadius: 999, background: g.color, flexShrink: 0 }}/>
-                <span style={{ fontSize: 12, fontWeight: 700, color: '#201e1f', textTransform: 'uppercase', letterSpacing: '0.07em' }}>{g.label}</span>
-                <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 400 }}>{g.sub}</span>
-                <div style={{ flex: 1, height: 1, background: 'var(--gray-light)' }}/>
-                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{items.length}</span>
+            <section key={g.key} className="col gap-4">
+              {/* Editorial section header */}
+              <div>
+                <div style={{ height: 1.5, background: `color-mix(in oklch, ${g.color} 55%, white)`, borderRadius: 1, marginBottom: 10 }}/>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+                    <span style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 800, color: g.color, letterSpacing: '-0.02em', lineHeight: 1 }}>{g.label}</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{g.sub}</span>
+                  </div>
+                  <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>{items.length}</span>
+                </div>
               </div>
-
               <div className="col gap-2">
                 {items.map(t => <TaskRow key={t.id} task={t} onDelete={deleteTask} showMeta />)}
               </div>
             </section>
           );
         })}
+
       </div>
     </div>
   );
