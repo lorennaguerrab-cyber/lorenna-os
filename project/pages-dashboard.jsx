@@ -308,13 +308,17 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
   const [tituloEdit, setTituloEdit] = useState(task.titulo);
 
   const prioMap = {
-    urgente: '#fe7dae',
-    alta:    '#ffe1bd',
-    media:   '#bce1f6',
-    baixa:   '#f1e18d',
+    urgente: 'color-mix(in oklch, #fe7dae 22%, white)',
+    alta:    'color-mix(in oklch, #ffe1bd 30%, white)',
+    media:   'color-mix(in oklch, #bce1f6 28%, white)',
+    baixa:   'color-mix(in oklch, #f1e18d 30%, white)',
   };
-  const bg = prioMap[task.prioridade] || '#fec9df';
-  const W = 'rgba(255,252,250,'; // white alpha helper
+  const accentMap = {
+    urgente: '#fe7dae', alta: '#ffe1bd', media: '#bce1f6', baixa: '#f1e18d',
+  };
+  const bg = prioMap[task.prioridade] || 'color-mix(in oklch, #fec9df 24%, white)';
+  const accent = accentMap[task.prioridade] || '#fec9df';
+  const D = 'rgba(32,30,31,'; // dark alpha helper
 
   function salvarEdicao() {
     if (tituloEdit.trim() && tituloEdit.trim() !== task.titulo) {
@@ -329,7 +333,7 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
     <div style={{
       borderRadius: 'var(--r-md)',
       background: bg,
-      border: 'none',
+      border: `1px solid ${accent}`,
       transition: 'all .15s var(--easing)',
     }}>
       <div className="row gap-3" style={{ padding: dense ? '10px 14px' : '14px 16px', alignItems: 'flex-start' }}>
@@ -341,8 +345,8 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
           showToast(concluida ? 'Tarefa reaberta' : 'Tarefa concluída! ✓');
         }} style={{
           width: 22, height: 22, borderRadius: 999,
-          border: `2px solid ${W}0.55)`,
-          background: concluida ? `${W}0.6)` : 'transparent',
+          border: `2px solid ${D}0.3)`,
+          background: concluida ? `${D}0.12)` : 'transparent',
           marginTop: 1, flexShrink: 0,
           cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -359,52 +363,52 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
                   onChange={e => setTituloEdit(e.target.value)}
                   onBlur={salvarEdicao}
                   onKeyDown={e => { if (e.key === 'Enter') salvarEdicao(); if (e.key === 'Escape') setEditando(false); }}
-                  style={{ fontSize: 15, fontWeight: 700, background: `${W}0.15)`, color: '#fffcfa', border: `1.5px solid ${W}0.35)`, borderRadius: 6, padding: '4px 8px' }}
+                  style={{ fontSize: 15, fontWeight: 700, background: `${D}0.05)`, color: '#201e1f', border: `1.5px solid ${D}0.2)`, borderRadius: 6, padding: '4px 8px' }}
                 />
               ) : (
                 <div style={{
                   fontSize: 15, fontWeight: 700, lineHeight: 1.35,
-                  color: concluida ? `${W}0.45)` : '#fffcfa',
+                  color: concluida ? `${D}0.3)` : '#201e1f',
                   textDecoration: concluida ? 'line-through' : 'none',
                 }}>
-                  {task.hora && <span style={{ fontSize: 13, fontWeight: 500, opacity: 0.75, marginRight: 6 }}>{task.hora}</span>}
+                  {task.hora && <span style={{ fontSize: 13, fontWeight: 500, opacity: 0.6, marginRight: 6 }}>{task.hora}</span>}
                   {task.titulo}
                 </div>
               )}
               {task.cliente && (
-                <div style={{ fontSize: 13, color: `${W}0.7)`, marginTop: 3 }}>
-                  Para <strong style={{ color: '#fffcfa' }}>{task.cliente}</strong>
+                <div style={{ fontSize: 13, color: `${D}0.55)`, marginTop: 3 }}>
+                  Para <strong style={{ color: '#201e1f' }}>{task.cliente}</strong>
                 </div>
               )}
               {task.fonte && (
-                <div style={{ fontSize: 13, color: `${W}0.65)`, marginTop: 2 }}>{task.fonte}</div>
+                <div style={{ fontSize: 13, color: `${D}0.5)`, marginTop: 2 }}>{task.fonte}</div>
               )}
             </div>
             <div className="row gap-1" style={{ flexShrink: 0, alignItems: 'center', marginLeft: 8 }}>
               {total > 0 && (
                 <span style={{
                   fontSize: 13, fontWeight: 700, padding: '2px 9px', borderRadius: 999,
-                  background: done === total ? `${W}0.3)` : `${W}0.15)`,
-                  color: '#fffcfa',
-                  border: `1px solid ${W}0.3)`,
+                  background: done === total ? `${D}0.12)` : `${D}0.07)`,
+                  color: '#201e1f',
+                  border: `1px solid ${D}0.15)`,
                 }}>{done}/{total}</span>
               )}
               <button onClick={() => { setTituloEdit(task.titulo); setEditando(true); }}
-                style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: `1px solid ${W}0.25)`, background: `${W}0.12)`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: `1px solid ${D}0.14)`, background: `${D}0.05)`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 title="Editar tarefa">
-                <Icon name="edit" size={13} color="#fffcfa"/>
+                <Icon name="edit" size={13} color="#201e1f"/>
               </button>
               {total > 0 && (
                 <button onClick={() => setOpen(!open)}
-                  style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: `1px solid ${W}0.25)`, background: `${W}0.12)`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Icon name={open ? 'chev-down' : 'chev-right'} size={14} color="#fffcfa"/>
+                  style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: `1px solid ${D}0.14)`, background: `${D}0.05)`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Icon name={open ? 'chev-down' : 'chev-right'} size={14} color="#201e1f"/>
                 </button>
               )}
               {onDelete && (
                 <button onClick={ev => { ev.stopPropagation(); onDelete(task.id); }}
-                  style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: `1px solid ${W}0.25)`, background: `${W}0.12)`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.7 }}
+                  style={{ width: 28, height: 28, borderRadius: 'var(--r-md)', border: `1px solid ${D}0.14)`, background: `${D}0.05)`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.6 }}
                   title="Remover">
-                  <Icon name="x" size={13} color="#fffcfa"/>
+                  <Icon name="x" size={13} color="#201e1f"/>
                 </button>
               )}
             </div>
@@ -412,8 +416,8 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
 
           {/* Progress bar */}
           {total > 0 && (
-            <div style={{ marginTop: 8, height: 4, borderRadius: 999, background: `${W}0.2)`, overflow: 'hidden' }}>
-              <div style={{ width: `${(done/total)*100}%`, height: '100%', background: `${W}0.65)`, borderRadius: 999, transition: 'width .3s' }}/>
+            <div style={{ marginTop: 8, height: 4, borderRadius: 999, background: `${D}0.1)`, overflow: 'hidden' }}>
+              <div style={{ width: `${(done/total)*100}%`, height: '100%', background: accent, borderRadius: 999, transition: 'width .3s' }}/>
             </div>
           )}
 
@@ -423,11 +427,11 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
               {(task.micro || []).map((m) => (
                 <div key={m.id} className="row gap-3"
                   onClick={() => setMicroDone(prev => ({ ...prev, [m.id]: !prev[m.id] }))}
-                  style={{ padding: '8px 10px', background: microDone[m.id] ? `${W}0.08)` : `${W}0.14)`, borderRadius: 'var(--r-sm)', cursor: 'pointer' }}>
+                  style={{ padding: '8px 10px', background: microDone[m.id] ? `${D}0.05)` : `${D}0.04)`, borderRadius: 'var(--r-sm)', cursor: 'pointer', border: `1px solid ${D}0.08)` }}>
                   <div style={{
                     width: 16, height: 16, borderRadius: 999,
-                    border: `1.5px solid ${microDone[m.id] ? `${W}0.8)` : `${W}0.4)`}`,
-                    background: microDone[m.id] ? `${W}0.7)` : 'transparent',
+                    border: `1.5px solid ${microDone[m.id] ? `${D}0.5)` : `${D}0.25)`}`,
+                    background: microDone[m.id] ? `${D}0.12)` : 'transparent',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     flexShrink: 0, transition: 'all .15s',
                   }}>
@@ -435,14 +439,14 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
                   </div>
                   <span style={{
                     fontSize: 14, flex: 1,
-                    color: microDone[m.id] ? `${W}0.45)` : '#fffcfa',
+                    color: microDone[m.id] ? `${D}0.3)` : '#201e1f',
                     textDecoration: microDone[m.id] ? 'line-through' : 'none',
                   }}>{m.desc}</span>
-                  {m.min && <span style={{ fontSize: 13, color: `${W}0.6)`, flexShrink: 0 }}>{m.min}min</span>}
+                  {m.min && <span style={{ fontSize: 13, color: `${D}0.45)`, flexShrink: 0 }}>{m.min}min</span>}
                 </div>
               ))}
               {totalMin > 0 && (
-                <div style={{ fontSize: 13, color: `${W}0.6)`, textAlign: 'right', marginTop: 2 }}>
+                <div style={{ fontSize: 13, color: `${D}0.45)`, textAlign: 'right', marginTop: 2 }}>
                   Estimado: {totalMin} min
                 </div>
               )}
@@ -450,19 +454,19 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
               {task.ferramentasIA && task.ferramentasIA.length > 0 && (
                 <div style={{
                   marginTop: 4, padding: '10px 12px',
-                  background: `${W}0.12)`,
+                  background: `${D}0.04)`,
                   borderRadius: 'var(--r-sm)',
-                  borderLeft: `3px solid ${W}0.45)`,
+                  borderLeft: `3px solid ${accent}`,
                 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#fffcfa', marginBottom: 6 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#201e1f', marginBottom: 6 }}>
                     🤖 Travou? Ferramentas que podem ajudar:
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {task.ferramentasIA.map((f, i) => (
                       <span key={i} style={{
                         fontSize: 13, padding: '3px 10px',
-                        background: `${W}0.15)`, color: '#fffcfa',
-                        borderRadius: 999, border: `1px solid ${W}0.3)`,
+                        background: `${D}0.06)`, color: '#201e1f',
+                        borderRadius: 999, border: `1px solid ${D}0.14)`,
                       }}>{f}</span>
                     ))}
                   </div>
