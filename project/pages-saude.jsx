@@ -881,7 +881,6 @@ function SaudePage() {
                   color: '#201e1f',
                   display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
                   textAlign: 'center',
-                  boxShadow: ativo ? `0 4px 12px color-mix(in oklch, ${m.cor} 40%, transparent)` : 'none',
                 }}
               >
                 <span style={{ fontSize: 28, lineHeight: 1 }}>{m.emoji}</span>

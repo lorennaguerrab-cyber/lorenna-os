@@ -66,10 +66,8 @@ function AgendaEventCard({ ev }) {
   return (
     <div style={{
       background: cfg.bg,
-      border: `1px solid ${cfg.border}`,
-      borderLeft: `3px solid ${cfg.dot}`,
       borderRadius: 'var(--r-md)',
-      padding: '7px 10px 7px 8px',
+      padding: '7px 10px 7px 10px',
       marginBottom: 6,
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 4 }}>
@@ -280,14 +278,11 @@ function AgendaPage() {
                 style={{
                   minHeight: 64,
                   borderRadius: 'var(--r-md)',
-                  border: `1px solid ${isToday ? 'var(--pink)' : 'var(--gray-light)'}`,
-                  background: isToday ? 'var(--pink-tint)' : isWeekend ? 'var(--offwhite)' : 'var(--white)',
+                  outline: isToday ? '2px solid color-mix(in oklch, var(--pink) 40%, transparent)' : 'none',
+                  background: isToday ? 'color-mix(in oklch, var(--pink) 8%, var(--white))' : isWeekend ? 'var(--offwhite)' : 'var(--white)',
                   padding: '6px 8px',
                   cursor: 'pointer',
-                  transition: 'border-color 0.15s',
                 }}
-                onMouseEnter={e => { if (!isToday) e.currentTarget.style.borderColor = 'var(--pink-soft)'; }}
-                onMouseLeave={e => { if (!isToday) e.currentTarget.style.borderColor = 'var(--gray-light)'; }}
               >
                 <div style={{
                   fontFamily: 'var(--font-title)',
@@ -351,7 +346,7 @@ function AgendaPage() {
           </div>
         )}
         {/* Time slots */}
-        <div className="col gap-0" style={{ border: '1px solid var(--gray-light)', borderRadius: 'var(--r-lg)', overflow: 'hidden' }}>
+        <div className="col gap-0" style={{ background: 'var(--white)', borderRadius: 'var(--r-lg)', overflow: 'hidden' }}>
           {HOURS.map(h => {
             const hourStr = String(h).padStart(2, '0') + ':00';
             const hourEvs = events.filter(e => e.hora && parseInt(e.hora) === h);
@@ -359,16 +354,14 @@ function AgendaPage() {
               <div key={h} style={{
                 display: 'grid',
                 gridTemplateColumns: '52px 1fr',
-                borderBottom: '1px solid var(--gray-light)',
                 minHeight: 48,
-                background: hourEvs.length > 0 ? 'var(--offwhite-2)' : 'var(--white)',
+                background: hourEvs.length > 0 ? 'var(--offwhite)' : 'var(--white)',
               }}>
                 <div style={{
                   padding: '10px 8px 0',
                   fontSize: 14,
-                  fontWeight: 600,
-                  color: 'var(--gray)',
-                  borderRight: '1px solid var(--gray-light)',
+                  fontWeight: 500,
+                  color: 'var(--text-muted)',
                   fontFamily: 'var(--font-title)',
                 }}>
                   {hourStr}
@@ -418,27 +411,22 @@ function AgendaPage() {
         {/* View toggle + nav */}
         <div className="row between" style={{ flexWrap: 'wrap', gap: 8 }}>
           {/* View selector */}
-          <div className="row gap-1" style={{
-            background: 'var(--offwhite)',
-            border: '1px solid var(--gray-light)',
-            borderRadius: 'var(--r-md)',
-            padding: 4,
-          }}>
+          <div style={{ background: 'var(--bg-elevated)', borderRadius: 999, padding: 3, display: 'flex', gap: 2 }}>
             {[['mes', 'Mês'], ['semana', 'Semana'], ['dia', 'Dia']].map(([v, label]) => (
               <button
                 key={v}
                 onClick={() => setCurrentView(v)}
                 style={{
-                  padding: '6px 14px',
-                  borderRadius: 'var(--r-md)',
-                  background: currentView === v ? 'var(--white)' : 'transparent',
-                  border: currentView === v ? '1px solid var(--gray-light)' : '1px solid transparent',
-                  color: currentView === v ? 'var(--pink-deep)' : 'var(--gray)',
+                  padding: '7px 16px',
+                  borderRadius: 999,
+                  background: currentView === v ? '#201e1f' : 'transparent',
+                  border: 'none',
+                  color: currentView === v ? '#fffcfa' : 'var(--text-secondary)',
                   fontFamily: 'var(--font-body)',
-                  fontWeight: currentView === v ? 600 : 400,
+                  fontWeight: currentView === v ? 500 : 400,
                   fontSize: 14,
                   cursor: 'pointer',
-                  transition: 'all 0.15s var(--easing)',
+                  transition: 'all 0.15s',
                 }}
               >
                 {label}
@@ -469,7 +457,6 @@ function AgendaPage() {
               padding: '4px 12px',
               borderRadius: 'var(--r-pill)',
               background: cfg.bg,
-              border: `1px solid ${cfg.border}`,
             }}>
               <div style={{ width: 7, height: 7, borderRadius: 999, background: cfg.dot, flexShrink: 0 }} />
               <span style={{ fontSize: 14.5, color: cfg.text, fontWeight: 500, textTransform: 'capitalize' }}>

@@ -180,7 +180,7 @@ function CapturaBrainDump({ energy }) {
       {resultado.tarefa.length > 0 && <Card variant="elevated"><CardHeader><span>⚡ Tarefas sugeridas</span></CardHeader>
         <CardBody><ul style={{ margin: 0, padding: 0, listStyle: 'none' }} className="col gap-2">
           {resultado.tarefa.map((t, i) => (
-            <li key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderRadius: 'var(--r-md)', background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
+            <li key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderRadius: 'var(--r-md)', background: 'var(--offwhite)' }}>
               <div className="row gap-2"><span style={{ color: 'var(--pink-deep)', fontSize: 14 }}>→</span><span style={{ fontSize: 14 }}>{t.desc}</span></div>
               <Badge variant="pink">{t.min} min</Badge>
             </li>
@@ -191,7 +191,7 @@ function CapturaBrainDump({ energy }) {
       {resultado.monetizacao.length > 0 && <Card variant="elevated"><CardHeader><span>💰 Oportunidades</span></CardHeader>
         <CardBody><div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 'var(--s-3)' }}>
           {resultado.monetizacao.map((m, i) => (
-            <div key={i} style={{ padding: '12px 14px', borderRadius: 'var(--r-md)', background: 'color-mix(in oklch, #f1e18d 30%, white)', border: '1px solid #f1e18d' }} className="col gap-1">
+            <div key={i} style={{ padding: '12px 14px', borderRadius: 'var(--r-md)', background: 'color-mix(in oklch, #f1e18d 35%, white)' }} className="col gap-1">
               <span style={{ fontSize: 14, fontWeight: 500, color: '#201e1f' }}>{m.desc}</span>
               <span style={{ fontSize: 14, fontWeight: 700, color: '#201e1f' }}>{m.potencial}</span>
             </div>
@@ -533,7 +533,7 @@ function PromptCard({ prompt }) {
         </div>
 
         {open && (
-          <div className="col gap-4" style={{ paddingTop: 'var(--s-3)', borderTop: '1px solid var(--border)' }}>
+          <div className="col gap-4" style={{ paddingTop: 'var(--s-3)' }}>
             {prompt.desc && (
               <p className="small secondary">{prompt.desc}</p>
             )}

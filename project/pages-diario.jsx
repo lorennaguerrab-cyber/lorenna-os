@@ -552,10 +552,9 @@ function DiarioPage() {
           <button key={t.id} onClick={() => setTab(t.id)} style={{
             flex: 1, fontSize: 14, fontWeight: 600, padding: '8px 16px', borderRadius: 9,
             border: 'none', fontFamily: 'var(--font-body)',
-            background: tab === t.id ? 'var(--white)' : 'transparent',
-            color: tab === t.id ? 'var(--pink-deep)' : 'var(--gray)',
+            background: tab === t.id ? '#201e1f' : 'transparent',
+            color: tab === t.id ? '#fffcfa' : 'var(--text-secondary)',
             cursor: 'pointer',
-            boxShadow: tab === t.id ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
             transition: 'all .15s',
           }}>{t.label}</button>
         ))}

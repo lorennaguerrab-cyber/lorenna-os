@@ -1080,9 +1080,8 @@ function CRMPage() {
               return (
                 <button key={t.id} onClick={() => setActiveTab(t.id)} style={{
                   flex: 1, padding: '8px 12px', borderRadius: 10,
-                  background: active ? 'white' : 'transparent',
-                  boxShadow: active ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                  color: active ? '#201e1f' : 'rgba(32,30,31,0.42)',
+                  background: active ? '#201e1f' : 'transparent',
+                  color: active ? '#fffcfa' : 'rgba(32,30,31,0.42)',
                   fontWeight: active ? 500 : 400,
                   fontSize: 14, border: 'none', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,

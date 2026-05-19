@@ -165,7 +165,6 @@ function NaoSeiAindaQuiz({ onClose, onResult }) {
         width: 'min(520px, 94vw)',
         background: 'var(--white)',
         borderRadius: 'var(--r-xl)',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.10)',
         overflow: 'hidden',
       }}>
         <div style={{ height: 4, background: 'var(--pink)' }}/>

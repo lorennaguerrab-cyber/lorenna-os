@@ -327,8 +327,8 @@ function PromptsBancoTab() {
                 cursor: 'pointer', transition: 'all .15s',
                 borderTop: `4px solid ${cor}`,
               }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = cor; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,.08)'; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.borderTopColor = cor; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}>
+              onMouseEnter={e => { e.currentTarget.style.borderColor = cor; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.borderTopColor = cor; }}>
               <div className="row between" style={{ marginBottom: 10, alignItems: 'flex-start' }}>
                 <span style={{ fontSize: 13, fontWeight: 700, padding: '3px 10px', borderRadius: 999, background: cor, color: '#201e1f' }}>
                   {cats[p.cat] || p.cat}
@@ -485,11 +485,11 @@ function FerramentasIATab() {
                     : 'var(--bg-elevated)',
                   border: `1.5px solid ${t.destaque ? grupo.cor : 'var(--border)'}`,
                   cursor: 'pointer', height: '100%',
-                  transition: 'transform .12s, box-shadow .12s',
+                  transition: 'background .12s',
                   display: 'flex', flexDirection: 'column', gap: 8,
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 6px 18px color-mix(in oklch, ${grupo.cor} 30%, transparent)`; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}
+                  onMouseEnter={e => { e.currentTarget.style.background = `color-mix(in oklch, ${grupo.cor} 8%, var(--white))`; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'var(--white)'; }}
                 >
                   {/* Topo: emoji + badge */}
                   <div className="row between" style={{ alignItems: 'center' }}>

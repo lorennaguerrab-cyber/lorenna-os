@@ -553,10 +553,9 @@ function TarefasPage() {
                 <button key={key} onClick={() => setFilter(key)} style={{
                   padding: '7px 14px',
                   borderRadius: 10,
-                  background: active ? 'white' : 'transparent',
-                  boxShadow: active ? '0 1px 4px rgba(0,0,0,0.09), 0 0 0 0.5px rgba(0,0,0,0.06)' : 'none',
-                  color: active ? '#201e1f' : 'rgba(32,30,31,0.42)',
-                  fontWeight: active ? 600 : 400,
+                  background: active ? '#201e1f' : 'transparent',
+                  color: active ? '#fffcfa' : 'rgba(32,30,31,0.42)',
+                  fontWeight: active ? 500 : 400,
                   fontSize: 14,
                   border: 'none', cursor: 'pointer',
                   whiteSpace: 'nowrap', flexShrink: 0,
