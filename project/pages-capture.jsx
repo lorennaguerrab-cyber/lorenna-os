@@ -431,6 +431,12 @@ function TarefasPage() {
     try { return JSON.parse(localStorage.getItem('lorenna_deleted_tasks') || '[]'); } catch { return []; }
   });
 
+  useEffect(() => {
+    const main = document.querySelector('.app-main');
+    if (main) main.style.background = 'white';
+    return () => { if (main) main.style.background = ''; };
+  }, []);
+
   const todayIdx = window.todayBrasilia(); // 0=Seg…6=Dom
   const DIAS_LABELS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
   const DIAS_COLORS = ['#fec9df', '#f0bff8', '#bce1f6', '#f1e18d', '#ffe1bd', '#fe7dae', '#fec9df'];
@@ -496,7 +502,7 @@ function TarefasPage() {
   ];
 
   return (
-    <div className="content" style={{ background: 'white', minHeight: '100vh' }}>
+    <div className="content">
       <div className="col gap-5 fade-up">
         <PageHeader
           title="Tarefas"
