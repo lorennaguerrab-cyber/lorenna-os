@@ -349,10 +349,10 @@ function ConteudoPage({ energy }) {
   });
 
   const TABS = [
-    { key: 'kanban', label: '📋 Kanban'       },
-    { key: 'lista',  label: '📃 Lista'         },
-    { key: 'bau',    label: '✨ Baú de Ideias' },
-    { key: 'refs',   label: '🔖 Referências'   },
+    { key: 'kanban', label: 'Kanban'       },
+    { key: 'lista',  label: 'Lista'         },
+    { key: 'bau',    label: 'Baú de Ideias' },
+    { key: 'refs',   label: 'Referências'   },
   ];
 
   return (
@@ -375,8 +375,7 @@ function ConteudoPage({ energy }) {
                 borderRadius: 'var(--r-md)', padding: '10px 6px',
                 textAlign: 'center', cursor: 'pointer', border: 'none',
               }}>
-                <div style={{ fontSize: 15 }}>{d.emoji}</div>
-                <div style={{ fontSize: 20, fontWeight: 800, fontFamily: 'var(--font-title)', color: '#201e1f', lineHeight: 1.1 }}>{c}</div>
+                <div style={{ fontSize: 20, fontWeight: 500, fontFamily: 'var(--font-title)', color: '#201e1f', lineHeight: 1.1 }}>{c}</div>
                 <div style={{ fontSize: 12, color: '#201e1f', opacity: 0.7, marginTop: 2 }}>{d.label}</div>
               </button>
             );
@@ -384,14 +383,13 @@ function ConteudoPage({ energy }) {
         </div>
 
         {/* Tab bar */}
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <div style={{ background: 'var(--bg-elevated)', borderRadius: 999, padding: 3, display: 'flex', gap: 2, alignSelf: 'flex-start' }}>
           {TABS.map(({ key, label }) => (
             <button key={key} onClick={() => setTab(key)} style={{
-              fontSize: 14, padding: '8px 18px', borderRadius: 999, border: '1.5px solid',
-              background: tab === key ? '#201e1f' : 'var(--white)',
-              borderColor: tab === key ? '#201e1f' : 'var(--gray-light)',
-              color: tab === key ? '#fffcfa' : '#201e1f',
-              cursor: 'pointer', fontWeight: tab === key ? 700 : 500,
+              fontSize: 14, padding: '7px 18px', borderRadius: 999, border: 'none',
+              background: tab === key ? '#201e1f' : 'transparent',
+              color: tab === key ? '#fffcfa' : 'var(--text-secondary)',
+              cursor: 'pointer', fontWeight: tab === key ? 500 : 400,
               fontFamily: 'var(--font-body)', transition: 'all .15s',
             }}>{label}</button>
           ))}
@@ -400,7 +398,7 @@ function ConteudoPage({ energy }) {
         {/* Search + channel chips (kanban / lista only) */}
         {(tab === 'kanban' || tab === 'lista') && (
           <div className="col gap-2">
-            <div className="row gap-2" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: '8px 12px' }}>
+            <div className="row gap-2" style={{ background: 'var(--offwhite)', borderRadius: 'var(--r-md)', padding: '8px 12px' }}>
               <Icon name="search" size={13} color="var(--text-muted)"/>
               <input className="grow" style={{ background: 'transparent', border: 'none', fontSize: 14 }}
                 placeholder="Buscar conteúdos..." value={search} onChange={e => setSearch(e.target.value)}/>
@@ -408,10 +406,9 @@ function ConteudoPage({ energy }) {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {[['todos', 'Todos'], ...Object.entries(CHANNEL_LABELS)].map(([k, l]) => (
                 <button key={k} onClick={() => setChannel(k)} style={{
-                  fontSize: 13, padding: '5px 13px', borderRadius: 999, border: '1.5px solid',
-                  background: channel === k ? (CHANNEL_COLORS[k] || '#fe7dae') : 'var(--bg-surface)',
-                  borderColor: channel === k ? (CHANNEL_COLORS[k] || '#fe7dae') : 'var(--gray-light)',
-                  color: '#201e1f', cursor: 'pointer', fontWeight: channel === k ? 700 : 400,
+                  fontSize: 13, padding: '5px 13px', borderRadius: 999, border: 'none',
+                  background: channel === k ? (CHANNEL_COLORS[k] || '#fe7dae') : 'var(--bg-elevated)',
+                  color: '#201e1f', cursor: 'pointer', fontWeight: channel === k ? 500 : 400,
                   fontFamily: 'var(--font-body)', transition: 'all .15s',
                 }}>{l}</button>
               ))}
@@ -430,12 +427,12 @@ function ConteudoPage({ energy }) {
                   <div style={{
                     background: `color-mix(in oklch, ${d.color} 45%, white)`,
                     borderRadius: 'var(--r-md)', padding: '8px 12px',
-                    marginBottom: 'var(--s-3)', borderLeft: `3px solid ${d.color}`,
+                    marginBottom: 'var(--s-3)',
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   }}>
                     <div className="row gap-2">
                       <span style={{ fontSize: 14 }}>{d.emoji}</span>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: '#201e1f' }}>{d.label}</span>
+                      <span style={{ fontSize: 14, fontWeight: 500, color: '#201e1f' }}>{d.label}</span>
                     </div>
                     <span style={{ fontSize: 13, fontWeight: 700, color: '#201e1f', background: d.color, padding: '1px 8px', borderRadius: 999 }}>{items.length}</span>
                   </div>
@@ -443,15 +440,9 @@ function ConteudoPage({ energy }) {
                     {items.map(item => (
                       <Card key={item.id} hoverable onClick={() => setSelected(item)} style={{ cursor: 'pointer' }}>
                         <CardBody tight className="col gap-2">
-                          <div className="row gap-2" style={{ alignItems: 'flex-start' }}>
-                            <span style={{ fontSize: 14, flexShrink: 0, marginTop: 1 }}>{window.TYPE_EMOJI[item.tipo]}</span>
-                            <p style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.4, flex: 1, color: '#201e1f' }}>{item.titulo}</p>
-                          </div>
+                          <p style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.4, color: '#201e1f' }}>{item.titulo}</p>
                           <div className="row gap-1" style={{ flexWrap: 'wrap' }}>
                             {item.brand && <ChannelTag channel={item.brand}/>}
-                            {item.plataformas.slice(0, 2).map(p => (
-                              <span key={p} style={{ fontSize: 12, padding: '1px 7px', borderRadius: 999, background: 'var(--bg-elevated)', color: '#201e1f' }}>{window.PLATFORM_LABELS[p]}</span>
-                            ))}
                           </div>
                           {item.data && <div className="tiny muted row gap-1"><Icon name="calendar" size={10}/>{item.data}</div>}
                         </CardBody>
@@ -473,14 +464,10 @@ function ConteudoPage({ energy }) {
                 <Card key={item.id} hoverable onClick={() => setSelected(item)} style={{ cursor: 'pointer' }}>
                   <CardBody tight>
                     <div className="row gap-3">
-                      <span style={{ fontSize: 18, flexShrink: 0 }}>{window.TYPE_EMOJI[item.tipo]}</span>
                       <div className="grow">
                         <p style={{ fontSize: 14.5, fontWeight: 500, color: '#201e1f' }}>{item.titulo}</p>
                         <div className="row gap-1" style={{ marginTop: 4, flexWrap: 'wrap' }}>
                           {item.brand && <ChannelTag channel={item.brand}/>}
-                          {item.plataformas.slice(0, 2).map(p => (
-                            <span key={p} style={{ fontSize: 12, padding: '2px 7px', borderRadius: 999, background: 'var(--bg-elevated)', color: '#201e1f' }}>{window.PLATFORM_LABELS[p]}</span>
-                          ))}
                         </div>
                       </div>
                       <div className="row gap-2" style={{ alignItems: 'center' }}>

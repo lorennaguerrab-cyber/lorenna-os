@@ -645,6 +645,115 @@ function SaudeNotas({ membro, onRelatorio }) {
   );
 }
 
+/* ── CARDÁPIO SEMANAL ─────────────────────── */
+const DIAS_CARDAPIO = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+const REFEICOES = [
+  { id: 'cafe',   label: 'Café',    icon: '☕' },
+  { id: 'almoco', label: 'Almoço',  icon: '🍽' },
+  { id: 'lanche', label: 'Lanche',  icon: '🍎' },
+  { id: 'jantar', label: 'Jantar',  icon: '🌙' },
+];
+const DEFAULT_MEALS = {
+  cafe:   ['Tapioca com queijo', 'Pão + ovo mexido', 'Vitamina de banana', 'Iogurte + granola', 'Cuscuz + ovo', 'Panqueca simples', 'Bolo de cenoura'],
+  almoco: ['Arroz, feijão + frango grelhado', 'Macarrão ao molho', 'Arroz, feijão + carne moída', 'Arroz, feijão + peixe', 'Frango assado + batata', 'Omelete + arroz', 'Sopa de legumes'],
+  lanche: ['Fruta + iogurte', 'Biscoito + suco', 'Fruta da estação', 'Bolo caseiro', 'Torrada + geleia', 'Vitamina de frutas', 'Pipoca'],
+  jantar: ['Sopa de legumes', 'Omelete + salada', 'Macarrão simples', 'Panqueca de frango', 'Arroz + frango', 'Caldo de feijão', 'Torrada + ovo'],
+};
+
+function CardapioSemanal() {
+  const [refeicoes, setRefeicoes] = useState(() => {
+    try {
+      const saved = localStorage.getItem('lorenna_cardapio');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    const d = {};
+    REFEICOES.forEach(r => {
+      d[r.id] = DIAS_CARDAPIO.map((_, i) => DEFAULT_MEALS[r.id][i] || '');
+    });
+    return d;
+  });
+
+  function updateCell(refeicao, diaIdx, val) {
+    const next = { ...refeicoes, [refeicao]: refeicoes[refeicao].map((v, i) => i === diaIdx ? val : v) };
+    setRefeicoes(next);
+    localStorage.setItem('lorenna_cardapio', JSON.stringify(next));
+  }
+
+  function gerarPrompt() {
+    const notas = FAMILIA.map(m => {
+      try { const n = JSON.parse(localStorage.getItem(`lorenna_saude_${m.id}_notas`) || '[]'); return n.length > 0 ? `${m.nome}: ${n.slice(0,3).map(x=>x.texto).join('; ')}` : null; } catch { return null; }
+    }).filter(Boolean).join('\n');
+
+    const cardapioAtual = DIAS_CARDAPIO.map((dia, i) =>
+      `${dia}: ${REFEICOES.map(r => `${r.label}: ${refeicoes[r.id][i]}`).join(' | ')}`
+    ).join('\n');
+
+    const prompt = `Família: Lorenna (adulta), Jefferson (31 anos), Mateus e Murilo (gêmeos, 7 anos), Miguel (1 ano e 10 meses)
+
+Observações de saúde:
+${notas || 'Nenhuma observação registrada'}
+
+Cardápio atual:
+${cardapioAtual}
+
+Por favor, sugira um cardápio semanal completo (café da manhã, almoço, lanche e jantar) para toda a família.
+Considere:
+- Refeições rápidas e fáceis de preparar (até 30 min)
+- Custo acessível (ingredientes simples do cotidiano)
+- Adequadas para crianças de 7 anos e bebê de quase 2 anos
+- Variadas e nutritivas
+
+Retorne em formato de tabela com os 7 dias da semana e as 4 refeições.`;
+
+    navigator.clipboard.writeText(prompt).then(() => showToast('Prompt copiado! Cole no Claude.ai ou ChatGPT'));
+  }
+
+  return (
+    <div className="col gap-4">
+      <div className="row between" style={{ alignItems: 'center' }}>
+        <div>
+          <div style={{ fontSize: 15, fontWeight: 500, color: 'var(--ink)' }}>Cardápio da semana</div>
+          <div style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 2 }}>Edite diretamente nas células · salvo automaticamente</div>
+        </div>
+        <Button variant="ghost" onClick={gerarPrompt}><Icon name="copy" size={14}/> Gerar prompt para IA</Button>
+      </div>
+
+      <div style={{ overflowX: 'auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '70px repeat(7, 1fr)', gap: 6, minWidth: 600 }}>
+          {/* Header row */}
+          <div />
+          {DIAS_CARDAPIO.map(d => (
+            <div key={d} style={{ fontSize: 13, fontWeight: 500, textAlign: 'center', color: 'var(--text-muted)', paddingBottom: 4 }}>{d}</div>
+          ))}
+
+          {/* Meal rows */}
+          {REFEICOES.map(r => (
+            <React.Fragment key={r.id}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start', paddingTop: 8 }}>
+                <div style={{ fontSize: 16 }}>{r.icon}</div>
+                <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)', marginTop: 2 }}>{r.label}</div>
+              </div>
+              {DIAS_CARDAPIO.map((_, i) => (
+                <textarea
+                  key={i}
+                  value={refeicoes[r.id][i]}
+                  onChange={e => updateCell(r.id, i, e.target.value)}
+                  style={{
+                    fontSize: 13, minHeight: 68, padding: '7px 9px',
+                    background: 'var(--offwhite)', borderRadius: 8, border: 'none', outline: 'none',
+                    resize: 'none', width: '100%', fontFamily: 'var(--font-body)',
+                    color: 'var(--ink)', lineHeight: 1.5, boxSizing: 'border-box',
+                  }}
+                />
+              ))}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── PAGE ─────────────────────── */
 function SaudePage() {
   const [membro, setMembro] = useState(FAMILIA[0]);
@@ -725,11 +834,12 @@ function SaudePage() {
   const examesPendentes = exames.filter(e => e.status === 'pendente' || e.status === 'agendado');
 
   const SUB_TABS = [
-    { id: 'notas',     label: '📝 Anotações' },
-    { id: 'resumo',    label: '🔔 Resumo' },
-    { id: 'consultas', label: '🩺 Consultas' },
-    { id: 'remedios',  label: '💊 Remédios' },
-    { id: 'exames',    label: '🔬 Exames' },
+    { id: 'notas',     label: 'Anotações' },
+    { id: 'resumo',    label: 'Resumo' },
+    { id: 'consultas', label: 'Consultas' },
+    { id: 'remedios',  label: 'Remédios' },
+    { id: 'exames',    label: 'Exames' },
+    { id: 'cardapio',  label: 'Cardápio' },
   ];
 
   return (
@@ -745,6 +855,7 @@ function SaudePage() {
               {subTab === 'exames'    && <Button variant="primary" onClick={() => setShowNewExame(true)}><Icon name="plus" size={14} color="white"/> Novo exame</Button>}
               {subTab === 'resumo'    && <Button variant="primary" onClick={() => setShowNewRemedio(true)}><Icon name="plus" size={14} color="white"/> Adicionar</Button>}
               {subTab === 'notas'     && <Button variant="ghost" onClick={() => setShowRelatorio(true)}><Icon name="file-text" size={14}/> Relatório</Button>}
+              {subTab === 'cardapio'  && <Button variant="ghost" onClick={() => setSubTab('notas')}><Icon name="x" size={14}/> Fechar</Button>}
             </div>
           }
         />
@@ -1023,6 +1134,19 @@ function SaudePage() {
       {showNewExame     && <ExameModal    item={null} onClose={() => setShowNewExame(false)}     onSave={saveExame}/>}
       {editingExame     && <ExameModal    item={editingExame}     onClose={() => setEditingExame(null)}     onSave={saveExame}/>}
       {showRelatorio && <RelatorioModal membro={membro} onClose={() => setShowRelatorio(false)}/>}
+
+      {subTab === 'cardapio' && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(32,30,31,0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '60px 24px', overflowY: 'auto' }}
+          onClick={() => setSubTab('notas')}>
+          <div onClick={e => e.stopPropagation()} style={{ width: 'min(1100px, 96vw)', background: 'var(--white)', borderRadius: 20, padding: 28 }}>
+            <div className="row between" style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 17, fontWeight: 500, fontFamily: 'var(--font-title)' }}>Cardápio Semanal</div>
+              <button onClick={() => setSubTab('notas')} style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}><Icon name="x" size={16}/></button>
+            </div>
+            <CardapioSemanal />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

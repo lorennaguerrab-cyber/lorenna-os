@@ -912,6 +912,7 @@ function CRMStatusBadge({ status }) {
 const EMPTY_FORM = { nome: '', empresa: '', tipo: 'agencia', status: 'potencial', nota: '', phone: '' };
 
 function CRMPage() {
+  const [mainTab, setMainTab] = useState('prospeccao');
   const [contacts, setContacts] = useState(DEMO_CONTACTS_WITH_TIPO);
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('agencia');
@@ -968,14 +969,46 @@ function CRMPage() {
     return acc;
   }, {});
 
+  const subtitle = mainTab === 'clientes'
+    ? 'Clientes ativos e receita'
+    : 'Agência, UGC e rede — contatos por contexto';
+
   return (
     <div className="content">
       <div className="col gap-6 fade-up">
         <PageHeader
-          title="CRM"
-          subtitle="Agência, UGC e rede — contatos organizados por contexto"
-          action={<Button variant="primary" onClick={openNew}><Icon name="plus" size={14} color="white"/> Novo contato</Button>}
+          title="CRM Criativo"
+          subtitle={subtitle}
+          action={mainTab === 'prospeccao'
+            ? <Button variant="primary" onClick={openNew}><Icon name="plus" size={14} color="white"/> Novo contato</Button>
+            : <Button variant="primary"><Icon name="plus" size={14} color="white"/> Novo cliente</Button>
+          }
         />
+
+        {/* Main segmented control */}
+        <div style={{ background: 'var(--bg-elevated)', borderRadius: 999, padding: 3, display: 'inline-flex', gap: 2 }}>
+          {[{ id: 'clientes', label: 'Clientes' }, { id: 'prospeccao', label: 'Prospecção' }].map(seg => {
+            const active = mainTab === seg.id;
+            return (
+              <button key={seg.id} onClick={() => setMainTab(seg.id)} style={{
+                background: active ? '#201e1f' : 'transparent',
+                borderRadius: 999,
+                color: active ? '#fffcfa' : 'var(--text-secondary)',
+                fontWeight: active ? 500 : 400,
+                padding: '7px 20px',
+                fontSize: 14,
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: 'var(--font-body)',
+                transition: 'all .18s',
+              }}>{seg.label}</button>
+            );
+          })}
+        </div>
+
+        {mainTab === 'clientes' && <ClientesPage setRoute={() => {}}/>}
+
+        {mainTab === 'prospeccao' && (<>
 
         {/* Search bar */}
         <div className="row gap-2" style={{

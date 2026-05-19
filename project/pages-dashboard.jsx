@@ -341,10 +341,7 @@ function TaskRow({ task, dense, large, onDelete, onUpdate, showMeta }) {
     <div style={{
       background: bg,
       borderRadius: 12,
-      boxShadow: isUrgente && !concluida
-        ? '0 1px 8px rgba(254,125,174,0.13), 0 1px 2px rgba(0,0,0,0.04)'
-        : '0 1px 2px rgba(0,0,0,0.04)',
-      transition: 'box-shadow .2s',
+      outline: `1px solid color-mix(in oklch, ${accent} 22%, transparent)`,
       overflow: 'hidden',
     }}>
       {/* ── Collapsed row ── */}

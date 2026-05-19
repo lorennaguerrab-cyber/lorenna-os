@@ -182,17 +182,17 @@ function AgendaPage() {
             return (
               <div key={i} style={{
                 borderRadius: 'var(--r-lg)',
-                background: isWeekend ? 'var(--offwhite)' : 'var(--white)',
-                border: isToday ? '2px solid var(--pink)' : `1px solid var(--gray-light)`,
+                background: isToday
+                  ? 'color-mix(in oklch, var(--pink) 8%, var(--white))'
+                  : isWeekend ? 'var(--offwhite)' : 'var(--white)',
+                outline: isToday ? '2px solid color-mix(in oklch, var(--pink) 40%, transparent)' : 'none',
                 overflow: 'hidden',
                 minHeight: 120,
                 cursor: 'pointer',
-                boxShadow: isToday ? '0 0 0 3px color-mix(in oklch, var(--pink) 15%, transparent)' : 'none',
               }} onClick={() => switchToDay(ds)}>
                 <div style={{
                   padding: '10px 12px 8px',
-                  borderBottom: `1px solid ${isToday ? 'var(--pink-soft)' : 'var(--gray-light)'}`,
-                  background: isToday ? 'var(--pink-tint)' : 'transparent',
+                  background: 'transparent',
                 }}>
                   <div style={{ fontSize: 14.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: isToday ? 'var(--pink-deep)' : 'var(--gray)', marginBottom: 2 }}>
                     {WEEK_NAMES[i]}
@@ -584,6 +584,7 @@ function SummaryCard({ label, value, sub, color, highlight }) {
 }
 
 function FinanceiroPage() {
+  const [mainTab, setMainTab] = useState('financas');
   const [receitas, setReceitas] = useState([
     { id: 'r1', nome: 'Ótica Igor Giordano',     valor: 1200, status: 'pago', dia: 10, tipo: 'cliente' },
     { id: 'r2', nome: 'Pratique',                valor: 1200, status: 'pago', dia: 11, tipo: 'cliente' },
@@ -814,8 +815,23 @@ function FinanceiroPage() {
       <div className="col gap-5 fade-up">
         <PageHeader
           title="Financeiro"
-          subtitle="Maio 2026 · visão geral de entradas e saídas"
+          subtitle={mainTab === 'financas' ? 'Maio 2026 · visão geral de entradas e saídas' : 'Calcule orçamentos e preços de serviços'}
         />
+
+        {/* Tab control */}
+        <div style={{ background: 'var(--bg-elevated)', borderRadius: 999, padding: 3, display: 'inline-flex', gap: 2 }}>
+          {[{ id: 'financas', label: 'Finanças' }, { id: 'precificacao', label: 'Precificação' }].map(seg => (
+            <button key={seg.id} onClick={() => setMainTab(seg.id)} style={{
+              background: mainTab === seg.id ? '#201e1f' : 'transparent',
+              borderRadius: 999, color: mainTab === seg.id ? '#fffcfa' : 'var(--text-secondary)',
+              fontWeight: mainTab === seg.id ? 500 : 400, padding: '7px 20px',
+              fontSize: 14, border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)', transition: 'all .15s',
+            }}>{seg.label}</button>
+          ))}
+        </div>
+
+        {mainTab === 'precificacao' && <PrecificacaoPage />}
+        {mainTab === 'financas' && <>
 
         {/* Summary cards */}
         <div className="row gap-4" style={{ flexWrap: 'wrap' }}>
@@ -1045,6 +1061,7 @@ function FinanceiroPage() {
             }}>{cfg.label}</span>
           ))}
         </div>
+        </>}
       </div>
     </div>
   );
@@ -1856,6 +1873,7 @@ function SobreTabMembros() {
 }
 
 function SobrePage() {
+  const [mainTab, setMainTab] = useState('sobre');
   const [tab, setTab] = useState('lorenna');
 
   const tabContent = {
@@ -1874,32 +1892,41 @@ function SobrePage() {
       <div className="col gap-5 fade-up">
         <PageHeader
           title="Sobre"
-          subtitle="Lorenna, suas marcas e projetos"
+          subtitle={mainTab === 'sobre' ? 'Lorenna, suas marcas e projetos' : 'Materiais, templates e referências'}
         />
 
+        {/* Top segmented control */}
+        <div style={{ background: 'var(--bg-elevated)', borderRadius: 999, padding: 3, display: 'inline-flex', gap: 2 }}>
+          {[{ id: 'sobre', label: 'Sobre' }, { id: 'materiais', label: 'Materiais' }].map(seg => (
+            <button key={seg.id} onClick={() => setMainTab(seg.id)} style={{
+              background: mainTab === seg.id ? '#201e1f' : 'transparent',
+              borderRadius: 999, color: mainTab === seg.id ? '#fffcfa' : 'var(--text-secondary)',
+              fontWeight: mainTab === seg.id ? 500 : 400, padding: '7px 20px',
+              fontSize: 14, border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)', transition: 'all .15s',
+            }}>{seg.label}</button>
+          ))}
+        </div>
+
+        {mainTab === 'materiais' && <MateriaisPage />}
+
+        {mainTab === 'sobre' && <>
         {/* Tab bar */}
-        <div className="row gap-1" style={{
-          background: 'var(--offwhite)',
-          border: '1px solid var(--gray-light)',
-          borderRadius: 'var(--r-md)',
-          padding: 4,
-          width: 'fit-content',
-        }}>
+        <div style={{ background: 'var(--bg-elevated)', borderRadius: 999, padding: 3, display: 'flex', gap: 2, flexWrap: 'wrap', alignSelf: 'flex-start' }}>
           {SOBRE_TABS.map(t => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
               style={{
                 padding: '7px 16px',
-                borderRadius: 'var(--r-md)',
-                background: tab === t.id ? 'var(--white)' : 'transparent',
-                border: tab === t.id ? '1px solid var(--gray-light)' : '1px solid transparent',
-                color: tab === t.id ? 'var(--pink-deep)' : 'var(--gray)',
+                borderRadius: 999,
+                background: tab === t.id ? '#201e1f' : 'transparent',
+                border: 'none',
+                color: tab === t.id ? '#fffcfa' : 'var(--text-secondary)',
                 fontFamily: 'var(--font-body)',
-                fontWeight: tab === t.id ? 600 : 400,
+                fontWeight: tab === t.id ? 500 : 400,
                 fontSize: 14,
                 cursor: 'pointer',
-                transition: 'all 0.15s var(--easing)',
+                transition: 'all 0.15s',
               }}
             >
               {t.label}
@@ -1911,6 +1938,7 @@ function SobrePage() {
         <div>
           {tabContent[tab]}
         </div>
+        </>}
       </div>
     </div>
   );
