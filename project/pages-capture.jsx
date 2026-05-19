@@ -425,7 +425,7 @@ function IdeiasPage() {
 
 /* ─────────────────────── TAREFAS ─────────────────────── */
 function TarefasPage() {
-  const [filter, setFilter] = useState('todas');
+  const [filter, setFilter] = useState('hoje');
   const [clientFilter, setClientFilter] = useState('todos');
   const [deletedIds, setDeletedIds] = useState(() => {
     try { return JSON.parse(localStorage.getItem('lorenna_deleted_tasks') || '[]'); } catch { return []; }
@@ -437,9 +437,9 @@ function TarefasPage() {
     return () => { if (main) main.style.background = ''; };
   }, []);
 
-  const todayIdx = window.todayBrasilia(); // 0=Seg…6=Dom
+  const todayIdx = window.todayBrasilia();
   const DIAS_LABELS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
-  const DIAS_COLORS = ['#fec9df', '#f0bff8', '#bce1f6', '#f1e18d', '#ffe1bd', '#fe7dae', '#fec9df'];
+  const PRIO_ORDER = { urgente: 0, alta: 1, media: 2, baixa: 3 };
 
   function deleteTask(id) {
     const next = [...deletedIds, id];
@@ -450,33 +450,37 @@ function TarefasPage() {
 
   const all = window.DEMO_TASKS.filter(t => !deletedIds.includes(t.id));
 
-  const countUrgente  = all.filter(t => t.prioridade === 'urgente' && t.status !== 'concluida').length;
-  const countHoje     = all.filter(t => t.status !== 'concluida' && (t.diario || (t.diasDaSemana && t.diasDaSemana.includes(todayIdx)))).length;
-  const countProgresso = all.filter(t => t.status === 'em_progresso').length;
+  const TAB_COUNTS = {
+    hoje:       all.filter(t => t.status !== 'concluida' && (t.diario || (t.diasDaSemana && t.diasDaSemana.includes(todayIdx)))).length,
+    urgente:    all.filter(t => t.prioridade === 'urgente' && t.status !== 'concluida').length,
+    semana:     all.filter(t => (t.recorrente || (t.diasDaSemana && t.diasDaSemana.length > 0)) && t.status !== 'concluida').length,
+    todas:      all.filter(t => t.status !== 'concluida').length,
+    progresso:  all.filter(t => t.status === 'em_progresso').length,
+    concluidas: all.filter(t => t.status === 'concluida').length,
+  };
+
 
   const filtered = all.filter(t => {
     let okFilter = true;
-    if      (filter === 'hoje')      okFilter = t.diario || (t.diasDaSemana && t.diasDaSemana.includes(todayIdx));
-    else if (filter === 'urgente')   okFilter = t.prioridade === 'urgente' && t.status !== 'concluida';
-    else if (filter === 'semana')    okFilter = (t.recorrente || (t.diasDaSemana && t.diasDaSemana.length > 0)) && t.status !== 'concluida';
-    else if (filter === 'progresso') okFilter = t.status === 'em_progresso';
+    if      (filter === 'hoje')       okFilter = t.diario || (t.diasDaSemana && t.diasDaSemana.includes(todayIdx));
+    else if (filter === 'urgente')    okFilter = t.prioridade === 'urgente' && t.status !== 'concluida';
+    else if (filter === 'semana')     okFilter = (t.recorrente || (t.diasDaSemana && t.diasDaSemana.length > 0)) && t.status !== 'concluida';
+    else if (filter === 'progresso')  okFilter = t.status === 'em_progresso';
     else if (filter === 'concluidas') okFilter = t.status === 'concluida';
-    else                             okFilter = t.status !== 'concluida';
-
+    else                              okFilter = t.status !== 'concluida';
     let okCliente = true;
     if      (clientFilter === 'pessoal') okCliente = !t.cliente;
     else if (clientFilter !== 'todos')   okCliente = t.cliente === clientFilter;
-
     return okFilter && okCliente;
   });
 
   const STATUS_FILTERS = [
-    { key: 'todas',      label: 'Todas ativas'    },
-    { key: 'hoje',       label: '📅 Hoje'          },
-    { key: 'urgente',    label: '🔴 Urgente'       },
-    { key: 'semana',     label: 'Esta semana'     },
-    { key: 'progresso',  label: '⚡ Em andamento'  },
-    { key: 'concluidas', label: '✓ Concluídas'    },
+    { key: 'hoje',       label: 'Hoje'      },
+    { key: 'urgente',    label: 'Urgente'   },
+    { key: 'semana',     label: 'Semana'    },
+    { key: 'todas',      label: 'Todas'     },
+    { key: 'progresso',  label: 'Andamento' },
+    { key: 'concluidas', label: 'Feitas'    },
   ];
 
   const CLIENTES = [
@@ -489,77 +493,100 @@ function TarefasPage() {
   ];
 
   const GROUPS = [
-    { key: 'urgente', label: 'Urgente',          color: '#fe7dae', sub: 'Faz hoje, sem desculpa'  },
-    { key: 'alta',    label: 'Alta prioridade',  color: '#ffe1bd', sub: 'Importante esta semana'  },
-    { key: 'media',   label: 'Média',            color: '#bce1f6', sub: 'Quando der espaço'       },
-    { key: 'baixa',   label: 'Baixa',            color: '#f1e18d', sub: 'Sem pressa'              },
+    { key: 'urgente', label: 'Urgente',         color: '#fe7dae' },
+    { key: 'alta',    label: 'Alta prioridade', color: '#ffe1bd' },
+    { key: 'media',   label: 'Média',           color: '#bce1f6' },
+    { key: 'baixa',   label: 'Baixa',           color: '#f1e18d' },
   ];
 
-  const STAT_CHIPS = [
-    { label: 'Urgentes',     count: countUrgente,   color: '#fe7dae', filterKey: 'urgente'  },
-    { label: 'Hoje',         count: countHoje,      color: '#bce1f6', filterKey: 'hoje'     },
-    { label: 'Em andamento', count: countProgresso, color: '#f1e18d', filterKey: 'progresso'},
-  ];
+  const dateLabel = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }))
+    .toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
 
-  const hoje = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
-  const dateLabel = hoje.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  // Compromissos de hoje: client tasks scheduled today — always pinned
+  const compToday = all.filter(t =>
+    t.cliente && t.diasDaSemana && t.diasDaSemana.includes(todayIdx) && t.status !== 'concluida'
+    && (clientFilter === 'todos' || t.cliente === clientFilter)
+  );
+  const compIds = new Set(compToday.map(t => t.id));
+
+  // "Hoje" view: flat list by priority, excluding items already in compToday
+  const isHojeView = filter === 'hoje';
+  const hojeRest = isHojeView
+    ? [...filtered].filter(t => !compIds.has(t.id)).sort((a, b) => (PRIO_ORDER[a.prioridade] ?? 99) - (PRIO_ORDER[b.prioridade] ?? 99))
+    : null;
+
+  const MiniLabel = ({ color, children, count }) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
+      <div style={{ width: 5, height: 5, borderRadius: 999, background: color, flexShrink: 0 }}/>
+      <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(32,30,31,0.38)', textTransform: 'uppercase', letterSpacing: '0.09em' }}>{children}</span>
+      {count != null && <span style={{ fontSize: 11, color: 'rgba(32,30,31,0.25)' }}>{count}</span>}
+    </div>
+  );
 
   return (
     <div className="content">
-      <div className="col gap-8 fade-up">
+      <div className="col gap-6 fade-up">
 
-        {/* ── Topo: título + data + stats ── */}
-        <div style={{ paddingBottom: 28, borderBottom: '1px solid var(--gray-light)' }}>
-          <div className="row between" style={{ alignItems: 'flex-start', marginBottom: 28 }}>
-            <div>
-              <h1 style={{ fontFamily: 'var(--font-title)', fontSize: 30, fontWeight: 700, color: '#201e1f', lineHeight: 1, margin: 0 }}>Tarefas</h1>
-              <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 6, marginBottom: 0, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 500 }}>{dateLabel}</p>
-            </div>
-            <Button variant="primary"><Icon name="plus" size={14} color="white"/> Nova tarefa</Button>
+        {/* ── Header ── */}
+        <div className="row between" style={{ alignItems: 'flex-start' }}>
+          <div>
+            <h1 style={{ fontFamily: 'var(--font-title)', fontSize: 28, fontWeight: 700, color: '#201e1f', lineHeight: 1, margin: 0 }}>Tarefas</h1>
+            <p style={{ fontSize: 13, color: 'rgba(32,30,31,0.4)', marginTop: 5, marginBottom: 0 }}>{dateLabel}</p>
           </div>
-
-          {/* Stats — accent bar + número editorial */}
-          <div className="row gap-10">
-            {STAT_CHIPS.map(s => (
-              <button key={s.label} onClick={() => setFilter(s.filterKey)} style={{
-                background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left',
-                display: 'flex', gap: 11, alignItems: 'center',
-                opacity: filter !== 'todas' && filter !== s.filterKey ? 0.28 : 1,
-                transition: 'opacity .2s',
-              }}>
-                <div style={{ width: 3, height: 42, borderRadius: 99, background: s.color, flexShrink: 0 }}/>
-                <div>
-                  <div style={{ fontSize: 34, fontFamily: 'var(--font-title)', fontWeight: 800, color: '#201e1f', lineHeight: 1 }}>{s.count}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>{s.label}</div>
-                </div>
-              </button>
-            ))}
-          </div>
+          <Button variant="primary"><Icon name="plus" size={14} color="white"/> Nova tarefa</Button>
         </div>
 
-        {/* ── Filtros ── */}
-        <div className="col gap-2" style={{ marginTop: -20 }}>
-          <div className="row gap-0" style={{ borderBottom: '1px solid var(--gray-light)', overflowX: 'auto' }}>
-            {STATUS_FILTERS.map(({ key, label }) => (
-              <button key={key} onClick={() => setFilter(key)} style={{
-                fontSize: 14, padding: '7px 14px 11px',
-                border: 'none', background: 'none',
-                color: filter === key ? '#201e1f' : 'var(--text-muted)',
-                fontWeight: filter === key ? 600 : 400,
-                borderBottom: filter === key ? '2px solid #201e1f' : '2px solid transparent',
-                marginBottom: -1, cursor: 'pointer',
-                fontFamily: 'var(--font-body)', transition: 'color .15s',
-                whiteSpace: 'nowrap', flexShrink: 0,
-              }}>{label}</button>
-            ))}
+        {/* ── Tabs — Apple segmented control ── */}
+        <div className="col gap-2">
+          <div style={{
+            background: 'rgba(32,30,31,0.055)',
+            borderRadius: 13,
+            padding: 4,
+            display: 'flex',
+            gap: 2,
+            overflowX: 'auto',
+          }}>
+            {STATUS_FILTERS.map(({ key, label }) => {
+              const count = TAB_COUNTS[key];
+              const active = filter === key;
+              return (
+                <button key={key} onClick={() => setFilter(key)} style={{
+                  padding: '7px 14px',
+                  borderRadius: 10,
+                  background: active ? 'white' : 'transparent',
+                  boxShadow: active ? '0 1px 4px rgba(0,0,0,0.09), 0 0 0 0.5px rgba(0,0,0,0.06)' : 'none',
+                  color: active ? '#201e1f' : 'rgba(32,30,31,0.42)',
+                  fontWeight: active ? 600 : 400,
+                  fontSize: 14,
+                  border: 'none', cursor: 'pointer',
+                  whiteSpace: 'nowrap', flexShrink: 0,
+                  display: 'flex', gap: 5, alignItems: 'center',
+                  transition: 'all .18s',
+                  fontFamily: 'var(--font-body)',
+                }}>
+                  {label}
+                  {count > 0 && (
+                    <span style={{
+                      fontSize: 11, fontWeight: 700, lineHeight: 1,
+                      color: active ? 'rgba(32,30,31,0.5)' : 'rgba(32,30,31,0.28)',
+                      background: active ? 'rgba(32,30,31,0.07)' : 'transparent',
+                      padding: active ? '2px 5px' : '0',
+                      borderRadius: 99,
+                    }}>{count}</span>
+                  )}
+                </button>
+              );
+            })}
           </div>
-          <div className="row gap-1" style={{ flexWrap: 'wrap' }}>
+
+          {/* Client sub-filter */}
+          <div style={{ display: 'flex', gap: 1, flexWrap: 'wrap', paddingLeft: 2 }}>
             {CLIENTES.map(({ key, label }) => (
               <button key={key} onClick={() => setClientFilter(key)} style={{
                 fontSize: 13, padding: '3px 10px', borderRadius: 999,
                 border: 'none',
-                background: clientFilter === key ? 'color-mix(in oklch, #fe7dae 15%, white)' : 'none',
-                color: clientFilter === key ? '#201e1f' : 'var(--text-muted)',
+                background: clientFilter === key ? 'rgba(32,30,31,0.07)' : 'transparent',
+                color: clientFilter === key ? '#201e1f' : 'rgba(32,30,31,0.36)',
                 cursor: 'pointer', fontWeight: clientFilter === key ? 600 : 400,
                 fontFamily: 'var(--font-body)', transition: 'all .15s',
               }}>{label}</button>
@@ -567,62 +594,46 @@ function TarefasPage() {
           </div>
         </div>
 
-        {/* Empty state */}
-        {filtered.length === 0 && (
-          <div className="center col gap-2" style={{ padding: 'var(--s-7) 0' }}>
-            <div style={{ fontSize: 38 }}>🌸</div>
-            <p className="small muted">Nenhuma tarefa com esses filtros. Respira.</p>
+        {/* ── Empty state ── */}
+        {filtered.length === 0 && compToday.length === 0 && (
+          <div style={{ padding: '60px 0', textAlign: 'center' }}>
+            <div style={{ fontSize: 36, marginBottom: 10 }}>🌸</div>
+            <p style={{ fontSize: 14, color: 'rgba(32,30,31,0.38)' }}>Nenhuma tarefa aqui. Respira.</p>
           </div>
         )}
 
-        {/* ── Compromissos de hoje ── */}
-        {(() => {
-          const comp = all.filter(t =>
-            t.cliente && t.diasDaSemana && t.diasDaSemana.includes(todayIdx) && t.status !== 'concluida'
-          );
-          if (comp.length === 0) return null;
-          return (
-            <section className="col gap-4">
-              <div>
-                <div style={{ height: 2, background: 'linear-gradient(90deg, #fe7dae 40%, transparent)', borderRadius: 1, marginBottom: 10 }}/>
-                <div className="row between" style={{ alignItems: 'baseline' }}>
-                  <div className="row gap-3" style={{ alignItems: 'baseline' }}>
-                    <span style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 800, color: '#fe7dae', letterSpacing: '-0.02em', lineHeight: 1 }}>Hoje</span>
-                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>· compromissos com outras pessoas — inadiáveis</span>
-                  </div>
-                  <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>{comp.length}</span>
-                </div>
-              </div>
-              <div className="col gap-2">
-                {comp.map(t => <TaskRow key={t.id} task={t} onDelete={deleteTask} showMeta />)}
-              </div>
-            </section>
-          );
-        })()}
+        {/* ── Compromissos de hoje (pinned) ── */}
+        {compToday.length > 0 && (
+          <section className="col gap-2">
+            <MiniLabel color="#fe7dae" count={compToday.length}>Compromissos de hoje</MiniLabel>
+            {compToday.map(t => <TaskRow key={t.id} task={t} onDelete={deleteTask} showMeta />)}
+          </section>
+        )}
 
-        {/* ── Grupos por prioridade ── */}
-        {GROUPS.map(g => {
-          const items = filtered.filter(t => t.prioridade === g.key);
-          if (items.length === 0) return null;
-          return (
-            <section key={g.key} className="col gap-4">
-              {/* Editorial section header */}
-              <div>
-                <div style={{ height: 1.5, background: `color-mix(in oklch, ${g.color} 55%, white)`, borderRadius: 1, marginBottom: 10 }}/>
-                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-                    <span style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 800, color: g.color, letterSpacing: '-0.02em', lineHeight: 1 }}>{g.label}</span>
-                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{g.sub}</span>
-                  </div>
-                  <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>{items.length}</span>
-                </div>
-              </div>
-              <div className="col gap-2">
-                {items.map(t => <TaskRow key={t.id} task={t} onDelete={deleteTask} showMeta />)}
-              </div>
+        {/* ── Conteúdo principal ── */}
+        {isHojeView ? (
+          /* Hoje: lista plana, ordenada por prioridade */
+          hojeRest.length > 0 && (
+            <section className="col gap-2">
+              {compToday.length > 0 && <MiniLabel color="rgba(32,30,31,0.2)" count={hojeRest.length}>Demais tarefas</MiniLabel>}
+              {hojeRest.map(t => <TaskRow key={t.id} task={t} onDelete={deleteTask} showMeta />)}
             </section>
-          );
-        })}
+          )
+        ) : (
+          /* Outras views: agrupado por prioridade */
+          <div className="col gap-8">
+            {GROUPS.map(g => {
+              const items = filtered.filter(t => t.prioridade === g.key);
+              if (items.length === 0) return null;
+              return (
+                <section key={g.key} className="col gap-2">
+                  <MiniLabel color={g.color} count={items.length}>{g.label}</MiniLabel>
+                  {items.map(t => <TaskRow key={t.id} task={t} onDelete={deleteTask} showMeta />)}
+                </section>
+              );
+            })}
+          </div>
+        )}
 
       </div>
     </div>

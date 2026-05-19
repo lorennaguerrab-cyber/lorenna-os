@@ -298,33 +298,29 @@ function EnergySelector({ energy, setEnergy }) {
 }
 
 function TaskRow({ task, dense, large, onDelete, onUpdate, showMeta }) {
-  const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [concluida, setConcluida] = useState(task.status === 'concluida');
   const [microDone, setMicroDone] = useState(() => Object.fromEntries((task.micro || []).map(m => [m.id, m.done])));
+  const [editando, setEditando] = useState(false);
+  const [tituloEdit, setTituloEdit] = useState(task.titulo);
   const total = (task.micro || []).length;
   const done = Object.values(microDone).filter(Boolean).length;
   const totalMin = (task.micro || []).reduce((a, m) => a + (m.min || 0), 0);
-  const [editando, setEditando] = useState(false);
-  const [tituloEdit, setTituloEdit] = useState(task.titulo);
 
-  const prioMap = {
-    urgente: 'color-mix(in oklch, #fe7dae 18%, white)',
-    alta:    'color-mix(in oklch, #ffe1bd 26%, white)',
-    media:   'color-mix(in oklch, #bce1f6 24%, white)',
-    baixa:   'color-mix(in oklch, #f1e18d 22%, white)',
+  const accentMap = { urgente: '#fe7dae', alta: '#ffe1bd', media: '#bce1f6', baixa: '#f1e18d' };
+  const bgMap = {
+    urgente: 'color-mix(in oklch, #fe7dae 11%, white)',
+    alta:    'color-mix(in oklch, #ffe1bd 18%, white)',
+    media:   'color-mix(in oklch, #bce1f6 14%, white)',
+    baixa:   'color-mix(in oklch, #f1e18d 13%, white)',
   };
-  const accentMap = {
-    urgente: '#fe7dae', alta: '#ffe1bd', media: '#bce1f6', baixa: '#f1e18d',
-  };
-  const barWidths = { urgente: 4, alta: 3, media: 3, baixa: 2 };
-  const bg = prioMap[task.prioridade] || 'color-mix(in oklch, #fec9df 20%, white)';
   const accent = accentMap[task.prioridade] || '#fec9df';
-  const barWidth = barWidths[task.prioridade] || 3;
-  const hasShadow = task.prioridade === 'urgente' && !concluida;
+  const bg = bgMap[task.prioridade] || 'color-mix(in oklch, #fec9df 11%, white)';
   const D = 'rgba(32,30,31,';
-
   const DIAS_LABELS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
   const todayIdx = window.todayBrasilia();
+  const isUrgente = task.prioridade === 'urgente';
+  const hasExpandable = total > 0 || onDelete || (task.diasDaSemana || []).length > 0 || (task.energia || []).length > 0 || task.ferramentasIA;
 
   function salvarEdicao() {
     if (tituloEdit.trim() && tituloEdit.trim() !== task.titulo) {
@@ -335,148 +331,161 @@ function TaskRow({ task, dense, large, onDelete, onUpdate, showMeta }) {
     setEditando(false);
   }
 
-  const metaParts = [];
-  if (showMeta) {
-    if (task.diario) metaParts.push({ text: 'Diário', today: false });
-    (task.diasDaSemana || []).forEach(d => metaParts.push({ text: DIAS_LABELS[d], today: d === todayIdx }));
-    (task.energia || []).forEach(e => { const ec = window.ENERGY[e]; if (ec) metaParts.push({ text: `${ec.emoji} ${ec.label}`, today: false }); });
-  }
+  /* Subtitle: client · today/deadline */
+  const subtitleParts = [];
+  if (task.cliente) subtitleParts.push({ text: task.cliente, weight: 500, color: `${D}0.65)` });
+  if (showMeta && (task.diasDaSemana || []).includes(todayIdx)) subtitleParts.push({ text: 'hoje', weight: 600, color: accent });
+  else if (showMeta && task.diario) subtitleParts.push({ text: 'diário', weight: 400, color: `${D}0.45)` });
 
   return (
     <div style={{
-      borderRadius: 'var(--r-md)',
       background: bg,
-      borderLeft: `${barWidth}px solid ${accent}`,
-      boxShadow: hasShadow ? '0 1px 5px rgba(254,125,174,0.13)' : 'none',
-      transition: 'all .15s var(--easing)',
+      borderRadius: 12,
+      boxShadow: isUrgente && !concluida
+        ? '0 1px 8px rgba(254,125,174,0.13), 0 1px 2px rgba(0,0,0,0.04)'
+        : '0 1px 2px rgba(0,0,0,0.04)',
+      transition: 'box-shadow .2s',
+      overflow: 'hidden',
     }}>
-      <div className="row gap-3" style={{ padding: dense ? '8px 14px 8px 13px' : '11px 14px 11px 13px', alignItems: 'flex-start' }}>
-        {/* Checkbox */}
+      {/* ── Collapsed row ── */}
+      <div style={{ padding: dense ? '9px 12px' : '12px 14px', display: 'flex', gap: 11, alignItems: 'flex-start' }}>
+
+        {/* Checkbox — boxShadow instead of border */}
         <div onClick={() => {
           const next = !concluida;
           setConcluida(next);
           window.DB && window.DB.updateTarefaStatus && window.DB.updateTarefaStatus(task.id, next ? 'concluida' : 'pendente');
           showToast(concluida ? 'Tarefa reaberta' : 'Tarefa concluída! ✓');
         }} style={{
-          width: 20, height: 20, borderRadius: 999,
-          border: `1.5px solid ${concluida ? accent : D}0.25)`,
-          background: concluida ? accent : 'transparent',
-          marginTop: 2, flexShrink: 0, cursor: 'pointer',
+          width: 20, height: 20, borderRadius: 999, flexShrink: 0, marginTop: 1,
+          background: concluida ? accent : 'rgba(255,255,255,0.85)',
+          boxShadow: `inset 0 0 0 1.5px ${concluida ? accent : `${D}0.2)`}`,
+          cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           transition: 'all .15s',
         }}>
           {concluida && <Icon name="check" size={11} color="white"/>}
         </div>
 
-        <div className="grow" style={{ minWidth: 0 }}>
-          <div className="row between" style={{ alignItems: 'flex-start', gap: 8 }}>
-            <div className="grow" style={{ minWidth: 0 }}>
-              {/* Title */}
-              {editando ? (
-                <input className="input" autoFocus value={tituloEdit}
-                  onChange={e => setTituloEdit(e.target.value)}
-                  onBlur={salvarEdicao}
-                  onKeyDown={e => { if (e.key === 'Enter') salvarEdicao(); if (e.key === 'Escape') setEditando(false); }}
-                  style={{ fontSize: 15, fontWeight: 600, background: `${D}0.04)`, color: '#201e1f', border: `1px solid ${D}0.15)`, borderRadius: 6, padding: '3px 8px' }}
-                />
-              ) : (
-                <div style={{
-                  fontSize: 15, fontWeight: 600, lineHeight: 1.35,
-                  color: concluida ? `${D}0.3)` : '#201e1f',
-                  textDecoration: concluida ? 'line-through' : 'none',
-                }}>
-                  {task.hora && <span style={{ fontSize: 13, fontWeight: 400, color: `${D}0.45)`, marginRight: 6 }}>{task.hora}</span>}
-                  {task.titulo}
-                </div>
-              )}
-
-              {/* Secondary line: client + fonte + days + energia */}
-              {(task.cliente || task.fonte || metaParts.length > 0) && (
-                <div style={{ marginTop: 3, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '2px 0', fontSize: 13, color: `${D}0.5)`, lineHeight: 1.5 }}>
-                  {task.cliente && <span style={{ color: `${D}0.7)`, fontWeight: 500 }}>{task.cliente}</span>}
-                  {task.fonte && (
-                    <>{task.cliente && <span style={{ margin: '0 5px', opacity: 0.4 }}>·</span>}<span>{task.fonte}</span></>
-                  )}
-                  {metaParts.map((p, i) => (
-                    <React.Fragment key={i}>
-                      {(task.cliente || task.fonte || i > 0) && <span style={{ margin: '0 4px', opacity: 0.35 }}>·</span>}
-                      <span style={{ color: p.today ? '#fe7dae' : `${D}0.5)`, fontWeight: p.today ? 600 : 400 }}>{p.text}</span>
-                    </React.Fragment>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Actions */}
-            <div className="row gap-0" style={{ flexShrink: 0, alignItems: 'center' }}>
-              {total > 0 && (
-                <span style={{ fontSize: 13, color: `${D}0.4)`, fontWeight: 500, marginRight: 6 }}>{done}/{total}</span>
-              )}
-              <button onClick={() => { setTituloEdit(task.titulo); setEditando(true); }}
-                style={{ width: 26, height: 26, borderRadius: 8, border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.35 }}
-                title="Editar">
-                <Icon name="edit" size={13} color="#201e1f"/>
-              </button>
-              {total > 0 && (
-                <button onClick={() => setOpen(!open)}
-                  style={{ width: 26, height: 26, borderRadius: 8, border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.35 }}>
-                  <Icon name={open ? 'chev-down' : 'chev-right'} size={14} color="#201e1f"/>
-                </button>
-              )}
-              {onDelete && (
-                <button onClick={ev => { ev.stopPropagation(); onDelete(task.id); }}
-                  style={{ width: 26, height: 26, borderRadius: 8, border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.25 }}
-                  title="Remover">
-                  <Icon name="x" size={13} color="#201e1f"/>
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Progress bar */}
-          {total > 0 && (
-            <div style={{ marginTop: 8, height: 3, borderRadius: 999, background: `${D}0.08)`, overflow: 'hidden' }}>
-              <div style={{ width: `${(done/total)*100}%`, height: '100%', background: accent, borderRadius: 999, transition: 'width .3s' }}/>
+        {/* Content */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {editando ? (
+            <input className="input" autoFocus value={tituloEdit}
+              onChange={e => setTituloEdit(e.target.value)}
+              onBlur={salvarEdicao}
+              onKeyDown={e => { if (e.key === 'Enter') salvarEdicao(); if (e.key === 'Escape') setEditando(false); }}
+              style={{ fontSize: 15, fontWeight: 500, background: 'rgba(255,255,255,0.7)', color: '#201e1f', borderRadius: 7, padding: '3px 8px', width: '100%', boxShadow: `inset 0 0 0 1px ${D}0.12)` }}
+            />
+          ) : (
+            <div style={{
+              fontSize: 15, fontWeight: 500, lineHeight: 1.4,
+              color: concluida ? `${D}0.28)` : '#201e1f',
+              textDecoration: concluida ? 'line-through' : 'none',
+            }}>
+              {task.hora && <span style={{ fontSize: 13, fontWeight: 400, color: `${D}0.38)`, marginRight: 6 }}>{task.hora}</span>}
+              {task.titulo}
             </div>
           )}
 
-          {/* Expanded microsteps */}
-          {open && (
-            <div style={{ marginTop: 10 }} className="col gap-1">
-              {(task.micro || []).map((m) => (
-                <div key={m.id} className="row gap-3"
-                  onClick={() => setMicroDone(prev => ({ ...prev, [m.id]: !prev[m.id] }))}
-                  style={{ padding: '7px 10px', background: `${D}0.03)`, borderRadius: 8, cursor: 'pointer' }}>
-                  <div style={{
-                    width: 15, height: 15, borderRadius: 999,
-                    border: `1.5px solid ${microDone[m.id] ? `${D}0.4)` : `${D}0.2)`}`,
-                    background: microDone[m.id] ? `${D}0.1)` : 'transparent',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    flexShrink: 0, transition: 'all .15s',
-                  }}>
-                    {microDone[m.id] && <Icon name="check" size={9} color="#201e1f"/>}
-                  </div>
-                  <span style={{ fontSize: 14, flex: 1, color: microDone[m.id] ? `${D}0.3)` : '#201e1f', textDecoration: microDone[m.id] ? 'line-through' : 'none' }}>{m.desc}</span>
-                  {m.min && <span style={{ fontSize: 13, color: `${D}0.4)` }}>{m.min}min</span>}
-                </div>
+          {/* Subtitle */}
+          {subtitleParts.length > 0 && !editando && (
+            <div style={{ marginTop: 3, display: 'flex', flexWrap: 'wrap', gap: '0 3px', alignItems: 'center', lineHeight: 1.5 }}>
+              {subtitleParts.map((p, i) => (
+                <React.Fragment key={i}>
+                  {i > 0 && <span style={{ fontSize: 12, color: `${D}0.22)` }}>·</span>}
+                  <span style={{ fontSize: 13, fontWeight: p.weight, color: p.color }}>{p.text}</span>
+                </React.Fragment>
               ))}
-              {totalMin > 0 && (
-                <div style={{ fontSize: 13, color: `${D}0.4)`, textAlign: 'right', marginTop: 4 }}>Estimado: {totalMin} min</div>
-              )}
-              {task.ferramentasIA && task.ferramentasIA.length > 0 && (
-                <div style={{ marginTop: 6, padding: '8px 12px', background: `${D}0.03)`, borderRadius: 8, borderLeft: `2px solid ${accent}` }}>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: `${D}0.45)`, marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Ferramentas IA</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {task.ferramentasIA.map((f, i) => (
-                      <span key={i} style={{ fontSize: 13, color: '#201e1f' }}>{f}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
+            </div>
+          )}
+
+          {/* Progress bar — always visible if has microsteps */}
+          {total > 0 && (
+            <div style={{ marginTop: 8, height: 2, borderRadius: 999, background: `${D}0.08)`, overflow: 'hidden' }}>
+              <div style={{ width: `${(done / total) * 100}%`, height: '100%', background: accent, borderRadius: 999, transition: 'width .3s' }}/>
             </div>
           )}
         </div>
+
+        {/* Right controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 3, flexShrink: 0, marginTop: 1 }}>
+          {total > 0 && (
+            <span style={{ fontSize: 12, color: `${D}0.32)`, fontWeight: 500, marginRight: 2 }}>{done}/{total}</span>
+          )}
+          {hasExpandable && (
+            <button onClick={() => setExpanded(!expanded)} style={{
+              width: 24, height: 24, borderRadius: 6, background: 'none',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              opacity: 0.28, border: 'none', transition: 'opacity .15s',
+            }}>
+              <Icon name={expanded ? 'chev-down' : 'chev-right'} size={13} color="#201e1f"/>
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* ── Expanded section ── */}
+      {expanded && (
+        <div style={{ padding: '2px 14px 14px 45px', background: `${D}0.018)` }}>
+
+          {/* Days + energia */}
+          {showMeta && ((task.diasDaSemana || []).length > 0 || (task.energia || []).length > 0 || task.diario) && (
+            <div style={{ fontSize: 13, color: `${D}0.45)`, marginBottom: 10, display: 'flex', flexWrap: 'wrap', gap: '0 6px', alignItems: 'center' }}>
+              {task.diario && <span>Diário</span>}
+              {(task.diasDaSemana || []).map(d => (
+                <span key={d} style={{ fontWeight: d === todayIdx ? 700 : 400, color: d === todayIdx ? accent : `${D}0.45)` }}>{DIAS_LABELS[d]}</span>
+              ))}
+              {(task.energia || []).map(e => { const ec = window.ENERGY[e]; return ec ? <span key={e}>{ec.emoji} {ec.label}</span> : null; })}
+            </div>
+          )}
+
+          {/* Microsteps */}
+          {total > 0 && (
+            <div className="col gap-0" style={{ marginBottom: 8 }}>
+              {(task.micro || []).map(m => (
+                <div key={m.id} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', cursor: 'pointer', padding: '5px 0' }}
+                  onClick={() => setMicroDone(prev => ({ ...prev, [m.id]: !prev[m.id] }))}>
+                  <div style={{
+                    width: 15, height: 15, borderRadius: 999, flexShrink: 0, marginTop: 1,
+                    background: microDone[m.id] ? `${D}0.1)` : 'rgba(255,255,255,0.75)',
+                    boxShadow: `inset 0 0 0 1.5px ${microDone[m.id] ? `${D}0.35)` : `${D}0.17)`}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .15s',
+                  }}>
+                    {microDone[m.id] && <Icon name="check" size={9} color="#201e1f"/>}
+                  </div>
+                  <span style={{ fontSize: 14, flex: 1, color: microDone[m.id] ? `${D}0.28)` : '#201e1f', textDecoration: microDone[m.id] ? 'line-through' : 'none' }}>{m.desc}</span>
+                  {m.min && <span style={{ fontSize: 12, color: `${D}0.32)` }}>{m.min}min</span>}
+                </div>
+              ))}
+              {totalMin > 0 && <div style={{ fontSize: 12, color: `${D}0.3)`, paddingTop: 3 }}>Total estimado: {totalMin}min</div>}
+            </div>
+          )}
+
+          {/* AI tools */}
+          {task.ferramentasIA && task.ferramentasIA.length > 0 && (
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: `${D}0.3)`, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 5 }}>IA útil</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {task.ferramentasIA.map((f, i) => <span key={i} style={{ fontSize: 13, color: `${D}0.5)` }}>{f}</span>)}
+              </div>
+            </div>
+          )}
+
+          {/* Actions — text only */}
+          <div style={{ display: 'flex', gap: 14, marginTop: 6 }}>
+            <button onClick={() => { setTituloEdit(task.titulo); setEditando(true); setExpanded(false); }}
+              style={{ fontSize: 13, color: `${D}0.38)`, background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)' }}>
+              Editar
+            </button>
+            {onDelete && (
+              <button onClick={ev => { ev.stopPropagation(); onDelete(task.id); }}
+                style={{ fontSize: 13, color: `${D}0.3)`, background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)' }}>
+                Remover
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
