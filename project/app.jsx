@@ -251,7 +251,7 @@ function App() {
     '/captura':     () => <CapturaPage     energy={energy} />,
     '/ideias':      () => <IdeiasPage      />,
     '/tarefas':     () => <TarefasPage     />,
-    '/conteudo':    () => <ConteudoPage    />,
+    '/conteudo':    () => <ConteudoPage    energy={energy} />,
     '/prompts':     () => <PromptsPage     />,
     '/clientes':    () => <ClientesPage    setRoute={setRoute} />,
     '/crm':         () => <CRMPage         />,

@@ -69,26 +69,22 @@ function Sidebar({ route, setRoute, energy, setEnergy, collapsed, setCollapsed }
       {/* Color map by href */}
       {(() => {
         const NAV_COLORS = {
-          '/':             '#fe7dae',  // pink - dashboard
-          '/captura':      '#fe7dae',  // pink - captura
-          '/ideias':       '#f0bff8',  // lavender - ideias
-          '/tarefas':      '#fe7dae',  // pink - tarefas
-          '/conteudo':     '#f0bff8',  // lavender - conteúdo
-          '/prompts':      '#f0bff8',  // lavender
-          '/studio':       '#f1e18d',  // yellow - studio
-          '/clientes':     '#bce1f6',  // blue - clientes
-          '/crm':          '#bce1f6',  // blue
-          '/agenda':       '#bce1f6',  // light blue - agenda
-          '/monetizacao':  '#ffe1bd',  // warm - monetização
-          '/financeiro':   '#ffe1bd',  // warm
-          '/materiais':    '#f1e18d',  // yellow - materiais
-          '/precificacao': '#f1e18d',  // yellow
-          '/diario':       '#fec9df',  // soft pink - diário
-          '/saude':        '#ffe1bd',  // warm - saúde
-          '/habitos':      '#fec9df',  // soft pink - hábitos
-          '/blog':         '#f0bff8',  // lavender - blog
-          '/referencias':  '#bce1f6',  // light blue
-          '/sobre':        '#f0bff8',  // lavender
+          '/':             '#fe7dae',
+          '/tarefas':      '#fe7dae',
+          '/saude':        '#ffe1bd',
+          '/habitos':      '#fec9df',
+          '/studio':       '#f1e18d',
+          '/conteudo':     '#f0bff8',
+          '/ideias':       '#f0bff8',
+          '/diario':       '#fec9df',
+          '/agenda':       '#bce1f6',
+          '/clientes':     '#bce1f6',
+          '/crm':          '#bce1f6',
+          '/monetizacao':  '#ffe1bd',
+          '/financeiro':   '#ffe1bd',
+          '/materiais':    '#f1e18d',
+          '/precificacao': '#f1e18d',
+          '/sobre':        '#f0bff8',
         };
         return (
           <nav className="nav">

@@ -431,7 +431,7 @@ function TarefasPage() {
     try { return JSON.parse(localStorage.getItem('lorenna_deleted_tasks') || '[]'); } catch { return []; }
   });
 
-  const todayIdx = (new Date().getDay() + 6) % 7; // 0=Seg…6=Dom
+  const todayIdx = window.todayBrasilia(); // 0=Seg…6=Dom
   const DIAS_LABELS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
   const DIAS_COLORS = ['#fec9df', '#f0bff8', '#bce1f6', '#f1e18d', '#ffe1bd', '#fe7dae', '#fec9df'];
 
@@ -562,6 +562,51 @@ function TarefasPage() {
             <p className="small muted">Nenhuma tarefa com esses filtros. Respira.</p>
           </div>
         )}
+
+        {/* Compromissos fixos de hoje (clientes) — sempre no topo */}
+        {(() => {
+          const comp = all.filter(t =>
+            t.cliente && t.diasDaSemana && t.diasDaSemana.includes(todayIdx) && t.status !== 'concluida'
+          );
+          if (comp.length === 0) return null;
+          return (
+            <section className="col gap-3">
+              <div style={{
+                background: '#fe7dae', borderRadius: 'var(--r-md)',
+                padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              }}>
+                <div className="row gap-2" style={{ alignItems: 'center' }}>
+                  <span style={{ fontSize: 16 }}>📍</span>
+                  <span style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 700, color: '#201e1f' }}>Compromissos de hoje</span>
+                  <span style={{ fontSize: 13, color: '#201e1f', opacity: 0.7 }}>· envolvem outras pessoas — inadiáveis</span>
+                </div>
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#201e1f', background: 'rgba(255,252,250,0.5)', padding: '3px 10px', borderRadius: 999 }}>
+                  {comp.length}
+                </span>
+              </div>
+              <div className="col gap-4" style={{ paddingLeft: 4 }}>
+                {comp.map(t => (
+                  <div key={t.id} className="col gap-1">
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, paddingLeft: 4, alignItems: 'center' }}>
+                      <span style={{ fontSize: 12, padding: '2px 8px', borderRadius: 999, background: '#fec9df', color: '#201e1f', fontWeight: 600 }}>
+                        👥 {t.cliente}
+                      </span>
+                      {(t.diasDaSemana || []).map(d => (
+                        <span key={d} style={{
+                          fontSize: 12, padding: '2px 8px', borderRadius: 999,
+                          background: d === todayIdx ? '#201e1f' : DIAS_COLORS[d],
+                          color: d === todayIdx ? '#fffcfa' : '#201e1f',
+                          fontWeight: d === todayIdx ? 700 : 500,
+                        }}>{d === todayIdx ? '● ' : ''}{DIAS_LABELS[d]}</span>
+                      ))}
+                    </div>
+                    <TaskRow task={t} onDelete={deleteTask} />
+                  </div>
+                ))}
+              </div>
+            </section>
+          );
+        })()}
 
         {/* Priority groups */}
         {GROUPS.map(g => {

@@ -134,14 +134,15 @@ function ClientDetail({ client, onClose, setRoute }) {
   }, [onClose]);
 
   const TABS = [
-    { id: 'overview',   label: 'Visão geral'   },
-    { id: 'tarefas',    label: 'Tarefas'       },
-    { id: 'arquivos',   label: 'Arquivos'      },
-    { id: 'insights',   label: 'Insights'      },
-    { id: 'conteudo',   label: 'Conteúdos'     },
-    { id: 'pedido',     label: 'Pedir post'    },
-    { id: 'onboarding', label: 'Onboarding'    },
-    { id: 'voz',        label: '✨ Tom de Voz'  },
+    { id: 'overview',    label: 'Visão geral'       },
+    { id: 'tarefas',     label: 'Tarefas'           },
+    { id: 'arquivos',    label: 'Arquivos'           },
+    { id: 'insights',    label: 'Insights'          },
+    { id: 'conteudo',    label: 'Conteúdos'         },
+    { id: 'pedido',      label: 'Pedir post'        },
+    { id: 'onboarding',  label: 'Onboarding'        },
+    { id: 'voz',         label: '✨ Tom de Voz'      },
+    { id: 'identidade',  label: '🎨 Identidade Visual' },
   ];
 
   return (
@@ -217,6 +218,7 @@ function ClientDetail({ client, onClose, setRoute }) {
             {tab === 'pedido' && <FormPedidoPost client={client} onSent={onClose}/>}
             {tab === 'onboarding' && <FormOnboarding client={client} onSent={onClose}/>}
             {tab === 'voz'        && <ClientVozForm  client={client}/>}
+            {tab === 'identidade' && <ClientIdentidadeVisual client={client}/>}
           </div>
         </div>
       </div>
@@ -507,6 +509,167 @@ function FormPedidoPost({ client, onSent }) {
           <Button variant="ghost" onClick={onSent}>Cancelar</Button>
           <Button variant="primary" onClick={submit}><Icon name="send" size={13} color="white"/> Disparar brief</Button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function ClientIdentidadeVisual({ client }) {
+  const storageKey = `lorenna_identidade_${client.id}`;
+  const [dados, setDados] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch { return {}; }
+  });
+  const [salvo, setSalvo] = React.useState(false);
+
+  function update(field, val) { setDados(d => ({ ...d, [field]: val })); setSalvo(false); }
+  function updateCor(idx, val) {
+    const cores = [...(dados.cores || ['', '', '', '', ''])];
+    cores[idx] = val;
+    setDados(d => ({ ...d, cores }));
+    setSalvo(false);
+  }
+  function save() {
+    localStorage.setItem(storageKey, JSON.stringify(dados));
+    setSalvo(true);
+    showToast(`Identidade visual de ${client.nome} salva!`);
+  }
+
+  const cores = dados.cores || ['', '', '', '', ''];
+
+  return (
+    <div className="col gap-5">
+      <div>
+        <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 19, fontWeight: 600, marginBottom: 6 }}>
+          🎨 Identidade Visual — {client.nome}
+        </h3>
+        <p className="small muted">Paleta, tipografia, logo e diretrizes visuais do cliente.</p>
+      </div>
+
+      {/* Paleta de cores */}
+      <div>
+        <div className="eyebrow" style={{ marginBottom: 12 }}>Paleta de Cores</div>
+        <div className="row gap-3" style={{ flexWrap: 'wrap' }}>
+          {cores.map((cor, i) => (
+            <div key={i} className="col gap-2" style={{ alignItems: 'center' }}>
+              <div style={{
+                width: 56, height: 56, borderRadius: 12,
+                background: cor || '#e5e5e5',
+                border: '2px solid var(--gray-light)',
+                cursor: 'pointer',
+                position: 'relative',
+                overflow: 'hidden',
+              }}>
+                <input
+                  type="color"
+                  value={cor || '#e5e5e5'}
+                  onChange={e => updateCor(i, e.target.value)}
+                  style={{
+                    position: 'absolute', inset: 0, width: '100%', height: '100%',
+                    opacity: 0, cursor: 'pointer',
+                  }}
+                />
+              </div>
+              <input
+                type="text"
+                value={cor}
+                onChange={e => updateCor(i, e.target.value)}
+                placeholder="#000000"
+                style={{
+                  width: 70, textAlign: 'center', fontSize: 12,
+                  border: '1px solid var(--gray-light)', borderRadius: 6,
+                  padding: '3px 6px', fontFamily: 'monospace', background: 'var(--offwhite)',
+                  color: '#201e1f',
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Tipografia */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-4)' }}>
+        <div>
+          <label style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 6, color: '#201e1f' }}>
+            Fonte principal (títulos)
+          </label>
+          <input
+            className="input"
+            value={dados.fonte_titulo || ''}
+            onChange={e => update('fonte_titulo', e.target.value)}
+            placeholder="Ex: Playfair Display"
+          />
+        </div>
+        <div>
+          <label style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 6, color: '#201e1f' }}>
+            Fonte secundária (texto)
+          </label>
+          <input
+            className="input"
+            value={dados.fonte_corpo || ''}
+            onChange={e => update('fonte_corpo', e.target.value)}
+            placeholder="Ex: Lato, Open Sans"
+          />
+        </div>
+      </div>
+
+      {/* Tom visual */}
+      <div>
+        <label style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 6, color: '#201e1f' }}>
+          Tom visual / personalidade da marca
+        </label>
+        <input
+          className="input"
+          value={dados.tom || ''}
+          onChange={e => update('tom', e.target.value)}
+          placeholder="Ex: elegante, minimalista, colorido, jovem, corporativo..."
+        />
+      </div>
+
+      {/* Logo */}
+      <div>
+        <label style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 6, color: '#201e1f' }}>
+          Link do logo / pasta de assets
+        </label>
+        <input
+          className="input"
+          value={dados.logo_url || ''}
+          onChange={e => update('logo_url', e.target.value)}
+          placeholder="Google Drive, Canva, Dropbox..."
+        />
+      </div>
+
+      {/* Referências visuais */}
+      <div>
+        <label style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 6, color: '#201e1f' }}>
+          Referências visuais (moodboard, Pinterest, etc.)
+        </label>
+        <input
+          className="input"
+          value={dados.referencias || ''}
+          onChange={e => update('referencias', e.target.value)}
+          placeholder="Links de referências visuais ou descrição do estilo"
+        />
+      </div>
+
+      {/* Diretrizes */}
+      <div>
+        <label style={{ display: 'block', fontSize: 14, fontWeight: 500, marginBottom: 6, color: '#201e1f' }}>
+          Diretrizes e observações
+        </label>
+        <textarea
+          className="textarea"
+          rows={4}
+          value={dados.diretrizes || ''}
+          onChange={e => update('diretrizes', e.target.value)}
+          placeholder="O que pode e não pode usar, preferências de estilo, elementos obrigatórios, proibições..."
+          style={{ minHeight: 100 }}
+        />
+      </div>
+
+      <div>
+        <Button variant="primary" onClick={save}>
+          <Icon name="check" size={13} color="white"/> {salvo ? 'Salvo!' : 'Salvar identidade visual'}
+        </Button>
       </div>
     </div>
   );

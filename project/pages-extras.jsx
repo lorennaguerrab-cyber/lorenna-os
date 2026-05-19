@@ -1061,6 +1061,9 @@ const SOBRE_TABS = [
   { id: 'logue',        label: 'Agência Logue'  },
   { id: 'monetizacao',  label: 'Monetização'    },
   { id: 'redes',        label: 'Redes Sociais'  },
+  { id: 'sistema',      label: '🗂 O Sistema'    },
+  { id: 'app',          label: '🚀 Virar App'    },
+  { id: 'membros',      label: '👥 Área de Membros' },
 ];
 
 const REDES_LIST = [
@@ -1504,6 +1507,354 @@ function SobreTabRedes() {
   );
 }
 
+function SobreTabSistema() {
+  const FUNCIONALIDADES = [
+    { emoji: '🏠', nome: 'Dashboard', desc: 'Visão geral do dia: energia, rotina semanal, tarefas prioritárias, mini-hábitos e clima de produtividade.' },
+    { emoji: '✅', nome: 'Tarefas', desc: 'Gerenciamento completo com prioridades (urgente, alta, média, baixa), compromissos inadiáveis de clientes no topo, e agendamento por dias da semana.' },
+    { emoji: '💊', nome: 'Saúde', desc: 'Registro de medicamentos, sintomas, humor e rotina de autocuidado com histórico.' },
+    { emoji: '🔁', nome: 'Hábitos', desc: 'Rastreamento de hábitos diários com sequências e visualização semanal.' },
+    { emoji: '✨', nome: 'Studio IA', desc: 'Geração de conteúdo com IA (Claude), prompts especializados, tom de voz e gerenciamento de prompts salvos.' },
+    { emoji: '📋', nome: 'Conteúdos', desc: 'Kanban editorial com status (ideia → publicado), lista de conteúdos, Baú de Ideias com IA e aba de Referências integrada.' },
+    { emoji: '💡', nome: 'Banco de Ideias', desc: 'Captura rápida de ideias com classificação por energia criativa, canal e tipo.' },
+    { emoji: '🫶', nome: 'Diário da Terapia', desc: 'Espaço seguro para registros terapêuticos, emoções e reflexões com privacidade local.' },
+    { emoji: '📅', nome: 'Agenda', desc: 'Calendário de eventos com tipos (conteúdo, gravação, cliente, filhos, admin) e visualização mensal.' },
+    { emoji: '👥', nome: 'Clientes', desc: 'CRM completo: visão geral, tarefas, arquivos, insights, conteúdos, onboarding, tom de voz e identidade visual por cliente.' },
+    { emoji: '💫', nome: 'CRM Criativo', desc: 'Pipeline de oportunidades e gestão de relacionamento com funil visual.' },
+    { emoji: '💰', nome: 'Monetização', desc: 'Mapa de fontes de renda, estratégias e métricas de receita criativa.' },
+    { emoji: '🏦', nome: 'Financeiro', desc: 'Controle de receitas e despesas, DRE simplificado e projeções.' },
+    { emoji: '📦', nome: 'Materiais', desc: 'Biblioteca de materiais, links, ferramentas e recursos organizados.' },
+    { emoji: '🏷️', nome: 'Precificação', desc: 'Calculadora de preços para serviços, produtos e pacotes com análise de margem.' },
+    { emoji: '🌸', nome: 'Sobre', desc: 'Perfil completo: Lorenna, Papel da Lola, Agência Logue, redes sociais e este guia do sistema.' },
+  ];
+
+  const SUGESTOES = [
+    { emoji: '🧠', nome: 'Modo Foco (Pomodoro)', desc: 'Timer integrado com blocos de foco adaptado para TDAH. Sons, pausas guiadas e registro de produtividade.' },
+    { emoji: '📊', nome: 'Relatório Semanal Automático', desc: 'IA gera um resumo da semana: tarefas concluídas, humor médio, hábitos cumpridos e sugestões para a próxima semana.' },
+    { emoji: '🔔', nome: 'Lembretes por WhatsApp', desc: 'Integração com WhatsApp Business API ou Zap para receber lembretes de tarefas e compromissos.' },
+    { emoji: '🎯', nome: 'OKRs e Metas Trimestrais', desc: 'Definição de objetivos e resultados-chave com acompanhamento de progresso visual.' },
+    { emoji: '🤝', nome: 'Portal do Cliente', desc: 'Área separada onde clientes da Agência Logue acompanham entregas, aprovam posts e se comunicam.' },
+    { emoji: '📱', nome: 'App Mobile (PWA)', desc: 'Transformar em Progressive Web App para instalar no celular sem precisar de app store.' },
+    { emoji: '🎬', nome: 'Roteiro de Vídeo com IA', desc: 'Geração automática de roteiros, CTAs e legendas para reels e TikToks a partir de uma ideia.' },
+    { emoji: '📧', nome: 'Newsletter integrada', desc: 'Gerenciar lista de e-mails, criar campanhas e acompanhar métricas de abertura dentro do sistema.' },
+    { emoji: '🔗', nome: 'Link in Bio', desc: 'Criar e gerenciar a página de link in bio dos perfis diretamente pelo sistema.' },
+    { emoji: '📈', nome: 'Analytics de Redes', desc: 'Conectar APIs do Instagram e TikTok para visualizar alcance, engajamento e crescimento de seguidores.' },
+  ];
+
+  return (
+    <div className="col gap-6">
+      <div style={{
+        padding: 'var(--s-5)',
+        background: 'color-mix(in oklch, #f0bff8 15%, white)',
+        border: '1px solid #f0bff8',
+        borderRadius: 'var(--r-xl)',
+      }}>
+        <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 20, fontWeight: 700, color: '#201e1f', marginBottom: 8 }}>
+          🗂 Córtex Lola — O que já temos
+        </h3>
+        <p style={{ fontSize: 14, color: '#201e1f', lineHeight: 1.6 }}>
+          Este é o seu sistema operacional pessoal — construído especialmente para a sua mente criativa e neurodivergente.
+          Abaixo, tudo o que já existe e funciona hoje.
+        </p>
+      </div>
+
+      <div>
+        <div className="eyebrow" style={{ marginBottom: 16 }}>Funcionalidades ativas</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
+          {FUNCIONALIDADES.map(f => (
+            <div key={f.nome} style={{
+              padding: '14px 16px',
+              background: 'var(--offwhite)',
+              border: '1px solid var(--gray-light)',
+              borderRadius: 'var(--r-md)',
+              display: 'flex', gap: 12, alignItems: 'flex-start',
+            }}>
+              <span style={{ fontSize: 22, flexShrink: 0, lineHeight: 1 }}>{f.emoji}</span>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 600, color: '#201e1f', marginBottom: 4 }}>{f.nome}</p>
+                <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>{f.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <div className="eyebrow" style={{ marginBottom: 16 }}>Sugestões de novas funcionalidades</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
+          {SUGESTOES.map(s => (
+            <div key={s.nome} style={{
+              padding: '14px 16px',
+              background: 'color-mix(in oklch, #f1e18d 12%, white)',
+              border: '1px solid color-mix(in oklch, #f1e18d 40%, transparent)',
+              borderRadius: 'var(--r-md)',
+              display: 'flex', gap: 12, alignItems: 'flex-start',
+            }}>
+              <span style={{ fontSize: 22, flexShrink: 0, lineHeight: 1 }}>{s.emoji}</span>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 600, color: '#201e1f', marginBottom: 4 }}>{s.nome}</p>
+                <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>{s.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SobreTabApp() {
+  const OPCOES = [
+    {
+      titulo: 'PWA — Progressive Web App',
+      badge: 'Recomendado',
+      badgeColor: '#fe7dae',
+      desc: 'Transformar este site em um app instalável no celular (ícone na tela inicial, funciona offline). Sem precisar de App Store.',
+      passos: [
+        'Criar um arquivo manifest.json com nome, ícone e cor do app',
+        'Adicionar um Service Worker para cache offline',
+        'Hospedar em HTTPS (já está no GitHub Pages)',
+        'No celular: "Adicionar à tela inicial" no navegador',
+      ],
+      custo: '100% gratuito',
+      dificuldade: 'Baixa',
+    },
+    {
+      titulo: 'React Native (app nativo)',
+      badge: 'Mais poderoso',
+      badgeColor: '#bce1f6',
+      desc: 'Criar um app nativo para iOS e Android com notificações push, câmera, widgets. Requer reescrever o código.',
+      passos: [
+        'Reescrever os componentes em React Native',
+        'Publicar na App Store (Apple, U$ 99/ano) e Play Store (Google, U$ 25)',
+        'Usar Expo para simplificar o processo',
+        'Back-end: usar Supabase (já integrado aqui)',
+      ],
+      custo: 'U$ 99-124/ano + tempo de desenvolvimento',
+      dificuldade: 'Alta',
+    },
+    {
+      titulo: 'Vender como SaaS (Software as a Service)',
+      badge: 'Monetização',
+      badgeColor: '#f1e18d',
+      desc: 'Criar uma versão "branca" do Córtex Lola e vender para outros criadores de conteúdo ou agências.',
+      passos: [
+        'Criar back-end multiusuário (cada usuário tem seus próprios dados)',
+        'Implementar sistema de pagamento (Stripe, Hotmart, Kirvano)',
+        'Criar landing page explicando o produto',
+        'Definir planos: básico (R$29/mês), pro (R$79/mês), agência (R$197/mês)',
+        'Supabase já suporta autenticação por usuário — principal parte técnica pronta',
+      ],
+      custo: 'R$ 0 até a 1ª venda. Supabase free até 500MB',
+      dificuldade: 'Média',
+    },
+  ];
+
+  const ETAPAS_VENDA = [
+    { n: '1', titulo: 'Valide o produto', desc: 'Mostre para 5 criadores de conteúdo e peça feedback. Ofereça acesso gratuito em troca de depoimento.' },
+    { n: '2', titulo: 'Crie a landing page', desc: 'Uma página simples explicando: "Sistema operacional para criadores de conteúdo neurodivergentes". CTA: lista de espera.' },
+    { n: '3', titulo: 'Lance para a lista', desc: 'Preço de lançamento com desconto (early bird). Meta: 20 pagantes para cobrir custos.' },
+    { n: '4', titulo: 'Automatize o onboarding', desc: 'Quando alguém paga, recebe acesso automático ao sistema com seus dados isolados dos outros usuários.' },
+    { n: '5', titulo: 'Cresça com conteúdo', desc: 'Mostre nos stories como você usa o sistema. "Ferramenta que uso no dia a dia" → conversão natural.' },
+  ];
+
+  return (
+    <div className="col gap-6">
+      <div style={{
+        padding: 'var(--s-5)',
+        background: 'color-mix(in oklch, #bce1f6 15%, white)',
+        border: '1px solid #bce1f6',
+        borderRadius: 'var(--r-xl)',
+      }}>
+        <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 20, fontWeight: 700, color: '#201e1f', marginBottom: 8 }}>
+          🚀 Como transformar isso em um app vendável
+        </h3>
+        <p style={{ fontSize: 14, color: '#201e1f', lineHeight: 1.6 }}>
+          O Córtex Lola já é funcional e tem base tecnológica sólida. Veja os caminhos para torná-lo um produto.
+        </p>
+      </div>
+
+      <div className="col gap-4">
+        {OPCOES.map(op => (
+          <div key={op.titulo} style={{
+            padding: 'var(--s-5)',
+            background: 'var(--offwhite)',
+            border: '1px solid var(--gray-light)',
+            borderRadius: 'var(--r-xl)',
+          }}>
+            <div className="row between" style={{ marginBottom: 12, alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
+              <h4 style={{ fontFamily: 'var(--font-title)', fontSize: 17, fontWeight: 600, color: '#201e1f' }}>{op.titulo}</h4>
+              <span style={{
+                padding: '3px 10px', borderRadius: 999, fontSize: 12, fontWeight: 600,
+                background: `color-mix(in oklch, ${op.badgeColor} 25%, white)`,
+                color: '#201e1f',
+              }}>{op.badge}</span>
+            </div>
+            <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 14, lineHeight: 1.6 }}>{op.desc}</p>
+            <div className="col gap-2" style={{ marginBottom: 12 }}>
+              {op.passos.map((p, i) => (
+                <div key={i} className="row gap-2" style={{ alignItems: 'flex-start' }}>
+                  <span style={{ color: op.badgeColor, fontWeight: 700, flexShrink: 0, fontSize: 14 }}>{i + 1}.</span>
+                  <span style={{ fontSize: 14, color: '#201e1f', lineHeight: 1.5 }}>{p}</span>
+                </div>
+              ))}
+            </div>
+            <div className="row gap-4" style={{ flexWrap: 'wrap' }}>
+              <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>💰 <b>Custo:</b> {op.custo}</span>
+              <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>📊 <b>Dificuldade:</b> {op.dificuldade}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div>
+        <div className="eyebrow" style={{ marginBottom: 16 }}>Roteiro para a 1ª venda</div>
+        <div className="col gap-3">
+          {ETAPAS_VENDA.map(e => (
+            <div key={e.n} className="row gap-4" style={{ alignItems: 'flex-start' }}>
+              <div style={{
+                width: 32, height: 32, borderRadius: 999, flexShrink: 0,
+                background: 'color-mix(in oklch, #fe7dae 20%, white)',
+                border: '2px solid #fe7dae',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 700, fontSize: 14, color: '#201e1f',
+              }}>{e.n}</div>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 600, color: '#201e1f', marginBottom: 3 }}>{e.titulo}</p>
+                <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>{e.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SobreTabMembros() {
+  const FUNCOES = [
+    { emoji: '🔐', nome: 'Login por cliente', desc: 'Cada cliente tem usuário e senha próprios. Acessa apenas os dados dele.' },
+    { emoji: '📋', nome: 'Aprovação de posts', desc: 'Cliente vê os posts criados, aprova ou solicita alteração com comentário.' },
+    { emoji: '📊', nome: 'Relatórios de entrega', desc: 'Dashboard mostrando posts publicados, pendentes e performance do mês.' },
+    { emoji: '💬', nome: 'Chat com a agência', desc: 'Mensagens diretas entre cliente e Lorenna, centralizado na plataforma.' },
+    { emoji: '📁', nome: 'Arquivos compartilhados', desc: 'Logos, fotos, materiais do cliente disponíveis para ambos os lados.' },
+    { emoji: '📅', nome: 'Calendário editorial', desc: 'Cliente acompanha o planejamento de conteúdo do mês com datas e status.' },
+    { emoji: '🧾', nome: 'Boletos e faturas', desc: 'Acesso ao histórico financeiro, faturas e boletos do contrato.' },
+    { emoji: '📝', nome: 'Briefing online', desc: 'Formulário de briefing que o próprio cliente preenche no início do mês.' },
+  ];
+
+  const TECNOLOGIAS = [
+    { nome: 'Supabase Auth', desc: 'Já integrado aqui. Suporta múltiplos usuários com autenticação por e-mail/senha, Google, Magic Link.' },
+    { nome: 'Row Level Security (RLS)', desc: 'Funcionalidade do Supabase que garante que cada usuário só vê os dados dele. Sem código extra complicado.' },
+    { nome: 'Next.js ou React puro', desc: 'O portal do cliente pode ser uma versão simplificada deste sistema, rodando no mesmo servidor.' },
+    { nome: 'Vercel (hospedagem)', desc: 'Deploy automático, HTTPS gratuito, domínio personalizado (ex: clientes.agencialogue.com.br).' },
+    { nome: 'Plausible ou PostHog', desc: 'Analytics de uso — saber quais funcionalidades o cliente mais usa.' },
+  ];
+
+  const PASSOS_IMPL = [
+    { n: '1', titulo: 'Criar tabela de clientes no Supabase', desc: 'Vincular cada cliente a um user_id do Supabase Auth. Todas as outras tabelas (tarefas, conteúdos, etc.) ganham uma coluna client_id.' },
+    { n: '2', titulo: 'Ativar Row Level Security', desc: 'No painel do Supabase, habilitar RLS em cada tabela e criar política: "usuário só vê linhas onde client_id = seu ID".' },
+    { n: '3', titulo: 'Criar tela de login', desc: 'Formulário simples de e-mail + senha usando supabase.auth.signIn(). Redireciona para o portal do cliente.' },
+    { n: '4', titulo: 'Construir o portal (visão cliente)', desc: 'Versão simplificada com só as abas que o cliente precisa: aprovações, calendário, relatório, arquivos, chat.' },
+    { n: '5', titulo: 'Convite por e-mail', desc: 'Lorenna cadastra o e-mail do cliente no Supabase. Cliente recebe link mágico para criar senha e já entra.' },
+    { n: '6', titulo: 'Domínio personalizado', desc: 'Configurar clientes.agencialogue.com.br apontando para a Vercel. Profissional e de fácil acesso.' },
+  ];
+
+  return (
+    <div className="col gap-6">
+      <div style={{
+        padding: 'var(--s-5)',
+        background: 'color-mix(in oklch, #fec9df 15%, white)',
+        border: '1px solid #fec9df',
+        borderRadius: 'var(--r-xl)',
+      }}>
+        <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 20, fontWeight: 700, color: '#201e1f', marginBottom: 8 }}>
+          👥 Área de Membros para Clientes
+        </h3>
+        <p style={{ fontSize: 14, color: '#201e1f', lineHeight: 1.6 }}>
+          Um portal onde cada cliente da Agência Logue acessa informações do contrato, aprova conteúdos e acompanha entregas.
+          A base técnica já está aqui — precisamos construir a camada de multiusuário.
+        </p>
+      </div>
+
+      <div>
+        <div className="eyebrow" style={{ marginBottom: 16 }}>Funcionalidades do portal do cliente</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
+          {FUNCOES.map(f => (
+            <div key={f.nome} style={{
+              padding: '14px 16px',
+              background: 'var(--offwhite)',
+              border: '1px solid var(--gray-light)',
+              borderRadius: 'var(--r-md)',
+              display: 'flex', gap: 12, alignItems: 'flex-start',
+            }}>
+              <span style={{ fontSize: 20, flexShrink: 0 }}>{f.emoji}</span>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 600, color: '#201e1f', marginBottom: 3 }}>{f.nome}</p>
+                <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>{f.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <div className="eyebrow" style={{ marginBottom: 16 }}>Tecnologias necessárias</div>
+        <div className="col gap-3">
+          {TECNOLOGIAS.map(t => (
+            <div key={t.nome} style={{
+              padding: '12px 16px',
+              background: 'color-mix(in oklch, #bce1f6 12%, white)',
+              border: '1px solid color-mix(in oklch, #bce1f6 40%, transparent)',
+              borderRadius: 'var(--r-md)',
+              display: 'flex', gap: 12, alignItems: 'flex-start',
+            }}>
+              <div style={{ width: 7, height: 7, borderRadius: 999, background: '#bce1f6', flexShrink: 0, marginTop: 5 }}/>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 600, color: '#201e1f', marginBottom: 2 }}>{t.nome}</p>
+                <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>{t.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <div className="eyebrow" style={{ marginBottom: 16 }}>Como implementar — passo a passo</div>
+        <div className="col gap-3">
+          {PASSOS_IMPL.map(p => (
+            <div key={p.n} className="row gap-4" style={{ alignItems: 'flex-start' }}>
+              <div style={{
+                width: 32, height: 32, borderRadius: 999, flexShrink: 0,
+                background: 'color-mix(in oklch, #fec9df 30%, white)',
+                border: '2px solid #fec9df',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 700, fontSize: 14, color: '#201e1f',
+              }}>{p.n}</div>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 600, color: '#201e1f', marginBottom: 3 }}>{p.titulo}</p>
+                <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>{p.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{
+        padding: 'var(--s-4)',
+        background: 'color-mix(in oklch, #f1e18d 15%, white)',
+        border: '1px solid color-mix(in oklch, #f1e18d 50%, transparent)',
+        borderRadius: 'var(--r-md)',
+      }}>
+        <p style={{ fontSize: 14, color: '#201e1f', lineHeight: 1.6 }}>
+          <b>💡 Estimativa:</b> Com Claude Code (IA), toda a infraestrutura de autenticação e RLS pode ser configurada em 1-2 dias.
+          O portal do cliente leva de 3 a 5 dias para ter uma versão funcional.
+          Custo mensal: Supabase free até 500MB, Vercel free — <b>R$ 0</b> até crescer.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function SobrePage() {
   const [tab, setTab] = useState('lorenna');
 
@@ -1513,6 +1864,9 @@ function SobrePage() {
     logue:       <SobreTabLogue />,
     monetizacao: <SobreTabMonetizacao />,
     redes:       <SobreTabRedes />,
+    sistema:     <SobreTabSistema />,
+    app:         <SobreTabApp />,
+    membros:     <SobreTabMembros />,
   };
 
   return (

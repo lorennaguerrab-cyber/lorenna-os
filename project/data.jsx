@@ -14,26 +14,29 @@ const ENERGY = {
 
 const ENERGY_LIST = Object.values(ENERGY);
 
+/* ── Timezone helper — sempre Brasília (UTC-3, sem horário de verão) ── */
+window.todayBrasilia = function() {
+  const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+  return (d.getDay() + 6) % 7; // 0=Seg … 6=Dom
+};
+
+/* ── Navegação (ordem por importância) ── */
 const NAV = [
   { href: '/',             icon: 'home',     label: 'Dashboard'         },
-  { href: '/captura',      icon: 'zap',      label: 'Baú de Ideias'     },
-  { href: '/ideias',       icon: 'bulb',     label: 'Banco de Ideias'   },
   { href: '/tarefas',      icon: 'check',    label: 'Tarefas'           },
-  { href: '/conteudo',     icon: 'doc',      label: 'Conteúdos'         },
-  { href: '/prompts',      icon: 'book',     label: 'Prompts'           },
+  { href: '/saude',        icon: 'pill',     label: 'Saúde'             },
+  { href: '/habitos',      icon: 'check',    label: 'Hábitos'           },
   { href: '/studio',       icon: 'sparkle',  label: 'Studio IA'         },
+  { href: '/conteudo',     icon: 'doc',      label: 'Conteúdos'         },
+  { href: '/ideias',       icon: 'bulb',     label: 'Banco de Ideias'   },
+  { href: '/diario',       icon: 'heart',    label: 'Diário da Terapia' },
+  { href: '/agenda',       icon: 'calendar', label: 'Agenda'            },
   { href: '/clientes',     icon: 'users',    label: 'Clientes'          },
   { href: '/crm',          icon: 'sparkle',  label: 'CRM Criativo'      },
-  { href: '/agenda',       icon: 'calendar', label: 'Agenda'            },
   { href: '/monetizacao',  icon: 'tag',      label: 'Monetização'       },
   { href: '/financeiro',   icon: 'coin',     label: 'Financeiro'        },
   { href: '/materiais',    icon: 'archive',  label: 'Materiais'         },
   { href: '/precificacao', icon: 'tag',      label: 'Precificação'      },
-  { href: '/diario',       icon: 'heart',    label: 'Diário da Terapia' },
-  { href: '/saude',        icon: 'pill',     label: 'Saúde'             },
-  { href: '/habitos',      icon: 'check',    label: 'Hábitos'           },
-  { href: '/blog',         icon: 'pen',      label: 'Blog'              },
-  { href: '/referencias',  icon: 'bookmark', label: 'Referências'       },
   { href: '/sobre',        icon: 'flower',   label: 'Sobre'             },
 ];
 

@@ -512,7 +512,7 @@ const WEEK_ENERGY = ['criativa', 'operacional', 'foco', 'operacional', 'gravacao
 
 function WeekView() {
   const days = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
-  const today = (new Date().getDay() + 6) % 7;
+  const today = window.todayBrasilia();
 
   const taskCounts = days.map((_, i) =>
     (window.DEMO_TASKS || []).filter(t =>
@@ -793,7 +793,7 @@ const ROTINA_SEMANAL = [
 const ROTINA_PALETTE = ['#bce1f6', '#f0bff8', '#fe7dae', '#f1e18d', '#ffe1bd', '#fec9df', '#fffcfa'];
 
 function RotinaSemanalWidget() {
-  const today = (new Date().getDay() + 6) % 7;
+  const today = window.todayBrasilia();
   const [selected, setSelected] = React.useState(today);
   const r = ROTINA_SEMANAL[selected];
   const col = ROTINA_PALETTE[selected];
@@ -830,18 +830,19 @@ function RotinaSemanalWidget() {
 
         {/* Bloco do dia selecionado */}
         <div style={{
-          background: col,
+          background: `color-mix(in oklch, ${col} 30%, white)`,
           borderRadius: 'var(--r-md)',
           padding: 'var(--s-4)',
+          borderLeft: `4px solid ${col}`,
         }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: '#fffcfa', marginBottom: 10, opacity: .9 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: '#201e1f', marginBottom: 10 }}>
             {isToday ? 'Hoje' : r.dia} · {r.dia}
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {r.temas.map((t, j) => (
               <div key={j} style={{
-                fontSize: 14, color: '#fffcfa',
-                background: 'rgba(32,30,31,.18)',
+                fontSize: 14, color: '#201e1f',
+                background: `color-mix(in oklch, ${col} 45%, white)`,
                 padding: '5px 12px', borderRadius: 999,
                 fontWeight: 500,
               }}>{t}</div>
@@ -1279,7 +1280,7 @@ function LembretesHabitosWidget() {
   const aguaPct = Math.min(100, (aguaMl / 3000) * 100);
   const aguaCor = aguaPct >= 100 ? '#f1e18d' : aguaPct >= 60 ? '#bce1f6' : 'color-mix(in oklch, #bce1f6 50%, var(--bg-elevated))';
 
-  const todayDow = (new Date().getDay() + 6) % 7;
+  const todayDow = window.todayBrasilia();
   const done = window.RECURRENCES.filter(r => r.tipo !== 'agua' && (!r.diasDaSemana || r.diasDaSemana.includes(todayDow)) && checkedState(r)).length;
   const total = window.RECURRENCES.filter(r => r.tipo !== 'agua' && (!r.diasDaSemana || r.diasDaSemana.includes(todayDow))).length;
 
@@ -1336,7 +1337,7 @@ function LembretesHabitosWidget() {
         {window.RECURRENCES.filter(r => {
           if (r.tipo === 'agua') return false;
           if (r.diasDaSemana) {
-            const dow = (new Date().getDay() + 6) % 7;
+            const dow = window.todayBrasilia();
             return r.diasDaSemana.includes(dow);
           }
           return true;

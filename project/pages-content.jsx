@@ -15,22 +15,31 @@ const CHANNEL_LABELS = {
 };
 
 const CHANNEL_COLORS = {
-  lorenna:  'var(--pink-deep)',
-  papel:    'var(--pink)',
-  otica:    '#5A6F9C',
-  pratique: '#7FB68C',
-  jornal:   '#A89AC9',
-  espaco:   '#E89B4C',
+  lorenna:  '#fe7dae',
+  papel:    '#fec9df',
+  otica:    '#bce1f6',
+  pratique: '#f0bff8',
+  jornal:   '#ffe1bd',
+  espaco:   '#f1e18d',
+};
+
+const STATUS_DISPLAY = {
+  ideia:     { label: 'Ideia',      color: '#bce1f6', emoji: '💡' },
+  rascunho:  { label: 'Rascunho',   color: '#f1e18d', emoji: '✍️' },
+  filmando:  { label: 'Filmando',   color: '#fe7dae', emoji: '🎬' },
+  editando:  { label: 'Editando',   color: '#f0bff8', emoji: '✂️' },
+  revisao:   { label: 'Revisão',    color: '#ffe1bd', emoji: '👁' },
+  agendado:  { label: 'Agendado',   color: '#fec9df', emoji: '📅' },
+  publicado: { label: 'Publicado',  color: '#f1e18d', emoji: '✅' },
 };
 
 function ChannelTag({ channel }) {
   const label = CHANNEL_LABELS[channel] || channel;
-  const color = CHANNEL_COLORS[channel] || 'var(--text-muted)';
+  const color = CHANNEL_COLORS[channel] || '#fec9df';
   return (
     <span style={{
-      fontSize: 14, padding: '2px 7px', borderRadius: 999, fontWeight: 600,
-      background: `color-mix(in oklch, ${color} 16%, transparent)`,
-      color, lineHeight: 1.4, flexShrink: 0,
+      fontSize: 13, padding: '2px 9px', borderRadius: 999, fontWeight: 600,
+      background: color, color: '#201e1f',
     }}>{label}</span>
   );
 }
@@ -109,8 +118,226 @@ function ConteudoModal({ item, onClose }) {
   );
 }
 
-function ConteudoPage() {
-  const [view, setView] = useState('kanban');
+/* ── Inline brain-dump widget (Baú de Ideias) ── */
+function CapturaBrainDump({ energy }) {
+  const [text, setText] = useState('');
+  const [processando, setProcessando] = useState(false);
+  const [resultado, setResultado] = useState(null);
+  const e = window.ENERGY[energy] || window.ENERGY.criativa;
+
+  async function processar() {
+    if (!text.trim()) return;
+    setProcessando(true); setResultado(null);
+    if (window.hasClaudeKey && window.hasClaudeKey()) {
+      const resp = await window.callClaude([{ role: 'user', content: `Ideia capturada: "${text}"\n\nGere sugestões criativas em JSON exato:\n{"conteudo":[{"tipo":"Reel 30s","desc":"...","icon":"🎬"}],"tarefa":[{"desc":"...","min":15}],"monetizacao":[{"desc":"...","potencial":"R$ X-Y"}],"ideia":[{"desc":"..."}]}\n3-5 itens por array. Responda APENAS o JSON.` }],
+        'Assistente criativa para Lorenna: criadora de conteúdo e dona da Agência Logue.', 'claude-haiku-4-5-20251001');
+      if (resp) {
+        try { const j = resp.match(/\{[\s\S]*\}/)?.[0]; if (j) { setResultado(JSON.parse(j)); setProcessando(false); return; } } catch {}
+      }
+    }
+    setTimeout(() => {
+      setResultado({
+        conteudo: [
+          { tipo: 'Reel (30s)', desc: `Versão rápida da ideia`, icon: '🎬' },
+          { tipo: 'Carrossel', desc: `Passo a passo em slides`, icon: '🖼' },
+          { tipo: 'Story sequência', desc: `5-7 stories narrativos`, icon: '📱' },
+        ],
+        tarefa: [{ desc: 'Escrever roteiro', min: 20 }, { desc: 'Gravar', min: 45 }, { desc: 'Editar', min: 60 }],
+        monetizacao: [{ desc: 'Mini-curso sobre o tema', potencial: 'R$ 97-197' }],
+        ideia: [{ desc: 'Série de conteúdo sobre o tema' }, { desc: 'Fazer ao vivo' }],
+      });
+      setProcessando(false);
+    }, 700);
+  }
+
+  if (processando) return (
+    <div className="center col gap-2" style={{ padding: 'var(--s-7)' }}>
+      <div style={{ fontSize: 28 }}>✨</div>
+      <p className="small muted">Processando sua ideia...</p>
+    </div>
+  );
+
+  if (resultado) return (
+    <div className="col gap-4 fade-up">
+      <div className="row between">
+        <div className="row gap-2"><span style={{ fontSize: 18 }}>✨</span><h3 style={{ fontFamily: 'var(--font-title)', fontSize: 17, fontWeight: 600 }}>Sugestões geradas</h3></div>
+        <Button variant="ghost" size="sm" onClick={() => { setText(''); setResultado(null); }}>
+          <Icon name="plus" size={13}/> Nova ideia
+        </Button>
+      </div>
+      {/* Formatos */}
+      <Card variant="elevated"><CardHeader><span>🎬 Formatos de conteúdo</span></CardHeader>
+        <CardBody><div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {resultado.conteudo.map((c, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 'var(--r-md)', background: 'color-mix(in oklch, #fec9df 30%, white)', flex: '1 1 160px' }}>
+              <span style={{ fontSize: 16 }}>{c.icon}</span>
+              <div><div style={{ fontSize: 14, fontWeight: 600, color: '#201e1f' }}>{c.tipo}</div><div className="tiny muted">{c.desc}</div></div>
+            </div>
+          ))}
+        </div></CardBody>
+      </Card>
+      {/* Tarefas */}
+      {resultado.tarefa.length > 0 && <Card variant="elevated"><CardHeader><span>⚡ Tarefas sugeridas</span></CardHeader>
+        <CardBody><ul style={{ margin: 0, padding: 0, listStyle: 'none' }} className="col gap-2">
+          {resultado.tarefa.map((t, i) => (
+            <li key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderRadius: 'var(--r-md)', background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
+              <div className="row gap-2"><span style={{ color: 'var(--pink-deep)', fontSize: 14 }}>→</span><span style={{ fontSize: 14 }}>{t.desc}</span></div>
+              <Badge variant="pink">{t.min} min</Badge>
+            </li>
+          ))}
+        </ul></CardBody>
+      </Card>}
+      {/* Monetização */}
+      {resultado.monetizacao.length > 0 && <Card variant="elevated"><CardHeader><span>💰 Oportunidades</span></CardHeader>
+        <CardBody><div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 'var(--s-3)' }}>
+          {resultado.monetizacao.map((m, i) => (
+            <div key={i} style={{ padding: '12px 14px', borderRadius: 'var(--r-md)', background: 'color-mix(in oklch, #f1e18d 30%, white)', border: '1px solid #f1e18d' }} className="col gap-1">
+              <span style={{ fontSize: 14, fontWeight: 500, color: '#201e1f' }}>{m.desc}</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: '#201e1f' }}>{m.potencial}</span>
+            </div>
+          ))}
+        </div></CardBody>
+      </Card>}
+    </div>
+  );
+
+  return (
+    <div className="col gap-4">
+      <Card variant="elevated" style={{ overflow: 'hidden' }}>
+        <div style={{ height: 3, background: e.color }}/>
+        <CardBody className="col gap-3">
+          <div className="row gap-2">
+            <span style={{ fontSize: 15 }}>{e.emoji}</span>
+            <span className="small secondary">Modo {e.label} — {e.desc}</span>
+          </div>
+          <textarea className="textarea" value={text} onChange={ev => setText(ev.target.value)}
+            placeholder={`Joga tudo aqui — ideia solta, pensamento bagunçado, to-do, referência…\n\n"Preciso criar o roteiro do reel de branding, mas antes disso tenho que entregar os posts da academia..."`}
+            style={{ minHeight: 180 }}
+            onKeyDown={ev => { if ((ev.metaKey || ev.ctrlKey) && ev.key === 'Enter') processar(); }}
+          />
+          <div className="row between">
+            <span className="tiny muted">⌘ + Enter para processar</span>
+            <Button variant="primary" onClick={processar} disabled={!text.trim()}>
+              <Icon name="send" size={13} color="white"/> Processar com IA
+            </Button>
+          </div>
+        </CardBody>
+      </Card>
+    </div>
+  );
+}
+
+/* ── Inline refs tab ── */
+function RefsTab() {
+  const [refs, setRefs] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('lorenna_referencias') || '[]'); } catch { return []; }
+  });
+  const [form, setForm] = useState({ titulo: '', url: '', tipo: 'post', nota: '' });
+  const [adding, setAdding] = useState(false);
+
+  const REF_TIPOS_LOCAL = {
+    perfil: { label: 'Perfil', emoji: '👤', color: '#fe7dae' },
+    video:  { label: 'Vídeo',  emoji: '🎬', color: '#fec9df' },
+    post:   { label: 'Post',   emoji: '📱', color: '#f0bff8' },
+    blog:   { label: 'Blog',   emoji: '✍️', color: '#bce1f6' },
+    design: { label: 'Design', emoji: '🎨', color: '#f1e18d' },
+    marca:  { label: 'Marca',  emoji: '⭐', color: '#ffe1bd' },
+    outro:  { label: 'Outro',  emoji: '📌', color: '#fec9df' },
+  };
+
+  function salvar() {
+    if (!form.titulo.trim()) return;
+    const next = [{ ...form, id: Date.now() }, ...refs];
+    setRefs(next);
+    localStorage.setItem('lorenna_referencias', JSON.stringify(next));
+    setForm({ titulo: '', url: '', tipo: 'post', nota: '' });
+    setAdding(false);
+    showToast('Referência salva!');
+  }
+
+  function deletar(id) {
+    const next = refs.filter(r => r.id !== id);
+    setRefs(next);
+    localStorage.setItem('lorenna_referencias', JSON.stringify(next));
+  }
+
+  return (
+    <div className="col gap-4">
+      <div className="row between">
+        <p className="small muted">{refs.length} referências salvas</p>
+        <Button variant="primary" size="sm" onClick={() => setAdding(v => !v)}>
+          <Icon name="plus" size={13} color="white"/> Adicionar referência
+        </Button>
+      </div>
+
+      {adding && (
+        <Card variant="elevated"><CardBody className="col gap-3">
+          <h3 style={{ fontSize: 16, fontWeight: 600, fontFamily: 'var(--font-title)' }}>Nova referência</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-3)' }}>
+            <div className="col gap-1" style={{ gridColumn: '1/-1' }}>
+              <label style={{ fontSize: 14, fontWeight: 600, color: '#201e1f' }}>Nome / título</label>
+              <input className="input" value={form.titulo} onChange={e => setForm(p => ({ ...p, titulo: e.target.value }))} placeholder="Ex: Conta da Nubank, reel do NuBank..." />
+            </div>
+            <div className="col gap-1">
+              <label style={{ fontSize: 14, fontWeight: 600, color: '#201e1f' }}>Tipo</label>
+              <select className="select" value={form.tipo} onChange={e => setForm(p => ({ ...p, tipo: e.target.value }))}>
+                {Object.entries(REF_TIPOS_LOCAL).map(([k, v]) => <option key={k} value={k}>{v.emoji} {v.label}</option>)}
+              </select>
+            </div>
+            <div className="col gap-1">
+              <label style={{ fontSize: 14, fontWeight: 600, color: '#201e1f' }}>URL (opcional)</label>
+              <input className="input" value={form.url} onChange={e => setForm(p => ({ ...p, url: e.target.value }))} placeholder="https://..." />
+            </div>
+            <div className="col gap-1" style={{ gridColumn: '1/-1' }}>
+              <label style={{ fontSize: 14, fontWeight: 600, color: '#201e1f' }}>O que me atraiu?</label>
+              <textarea className="textarea" rows={2} value={form.nota} onChange={e => setForm(p => ({ ...p, nota: e.target.value }))} placeholder="O que você quer aprender ou adaptar..." />
+            </div>
+          </div>
+          <div className="row gap-2">
+            <Button variant="primary" onClick={salvar} disabled={!form.titulo.trim()}>Salvar</Button>
+            <Button variant="ghost" onClick={() => setAdding(false)}>Cancelar</Button>
+          </div>
+        </CardBody></Card>
+      )}
+
+      {refs.length === 0 && !adding && (
+        <div className="center col gap-2" style={{ padding: 'var(--s-7)' }}>
+          <div style={{ fontSize: 32 }}>🔖</div>
+          <p className="small muted">Nenhuma referência ainda. Adicione perfis, posts e marcas que te inspiram.</p>
+        </div>
+      )}
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--s-3)' }}>
+        {refs.map(r => {
+          const t = REF_TIPOS_LOCAL[r.tipo] || REF_TIPOS_LOCAL.outro;
+          return (
+            <Card key={r.id} hoverable>
+              <CardBody className="col gap-3">
+                <div className="row gap-3" style={{ alignItems: 'flex-start' }}>
+                  <div style={{ width: 42, height: 42, borderRadius: 'var(--r-md)', background: t.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>
+                    {t.emoji}
+                  </div>
+                  <div className="grow">
+                    <div style={{ fontSize: 14, fontWeight: 600, color: '#201e1f' }}>{r.titulo}</div>
+                    <div style={{ fontSize: 13, color: '#201e1f', opacity: 0.6, marginTop: 2 }}>{t.label}</div>
+                  </div>
+                  <button onClick={() => deletar(r.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', opacity: 0.4 }}>
+                    <Icon name="x" size={13} color="#201e1f"/>
+                  </button>
+                </div>
+                {r.nota && <p style={{ fontSize: 13, color: '#201e1f', opacity: 0.7, lineHeight: 1.5 }}>{r.nota}</p>}
+                {r.url && <a href={r.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: 'var(--pink-deep)', textDecoration: 'none', fontWeight: 500 }}>↗ Abrir link</a>}
+              </CardBody>
+            </Card>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ConteudoPage({ energy }) {
+  const [tab, setTab] = useState('kanban');
   const [search, setSearch] = useState('');
   const [channel, setChannel] = useState('todos');
   const [selected, setSelected] = useState(null);
@@ -121,102 +348,112 @@ function ConteudoPage() {
     return okS && okC;
   });
 
+  const TABS = [
+    { key: 'kanban', label: '📋 Kanban'       },
+    { key: 'lista',  label: '📃 Lista'         },
+    { key: 'bau',    label: '✨ Baú de Ideias' },
+    { key: 'refs',   label: '🔖 Referências'   },
+  ];
+
   return (
     <div className="content">
-      <div className="col gap-5 fade-up">
+      <div className="col gap-4 fade-up">
         <PageHeader
           title="Central de Conteúdo"
-          subtitle={`${data.length} conteúdos · ${data.filter(c => c.status==='publicado').length} publicados`}
-          action={
-            <div className="row gap-2">
-              <div className="row" style={{ background:'var(--bg-elevated)', borderRadius:'var(--r-md)', padding:3, gap:2 }}>
-                <button onClick={() => setView('kanban')} className="btn icon"
-                  style={{ padding:6, background: view==='kanban'?'var(--bg-surface)':'transparent', boxShadow: view==='kanban'?'var(--shadow-sm)':'none', color: view==='kanban'?'var(--pink-deep)':'var(--text-muted)' }}>
-                  <Icon name="grid" size={15}/>
-                </button>
-                <button onClick={() => setView('list')} className="btn icon"
-                  style={{ padding:6, background: view==='list'?'var(--bg-surface)':'transparent', boxShadow: view==='list'?'var(--shadow-sm)':'none', color: view==='list'?'var(--pink-deep)':'var(--text-muted)' }}>
-                  <Icon name="list" size={15}/>
-                </button>
-              </div>
-              <Button variant="primary"><Icon name="plus" size={14} color="white"/> Novo conteúdo</Button>
-            </div>
-          }
+          subtitle={`${data.length} conteúdos · pipeline e criação em um lugar`}
+          action={<Button variant="primary"><Icon name="plus" size={14} color="white"/> Novo conteúdo</Button>}
         />
 
-        {/* Search + Channel filter */}
-        <div className="row gap-2" style={{ flexWrap: 'wrap' }}>
-          <div className="row gap-2" style={{
-            background:'var(--bg-surface)', border:'1px solid var(--border)',
-            borderRadius:'var(--r-md)', padding:'8px 12px', flex: 1, minWidth: 220, maxWidth: 320,
-          }}>
-            <Icon name="search" size={13} color="var(--text-muted)"/>
-            <input className="grow" style={{ background:'transparent', border:'none', fontSize: 14 }}
-              placeholder="Buscar conteúdos..." value={search} onChange={e=>setSearch(e.target.value)}/>
-          </div>
-          <select className="select" style={{ width: 'auto', minWidth: 180 }}
-            value={channel} onChange={e => setChannel(e.target.value)}>
-            <option value="todos">Todos os canais</option>
-            {Object.entries(CHANNEL_LABELS).map(([k, l]) => (
-              <option key={k} value={k}>{l}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Stats */}
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(7, 1fr)', gap:'var(--s-2)' }}>
+        {/* Stats strip */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 'var(--s-2)' }}>
           {KANBAN_COLS.map(st => {
-            const cfg = window.STATUS_CONTEUDO[st];
+            const d = STATUS_DISPLAY[st];
             const c = data.filter(x => x.status === st).length;
             return (
-              <div key={st} className="center" style={{
-                padding: 'var(--s-3) var(--s-2)',
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border)',
-                borderRadius: 'var(--r-md)',
+              <button key={st} onClick={() => setTab('kanban')} style={{
+                background: `color-mix(in oklch, ${d.color} 50%, white)`,
+                borderRadius: 'var(--r-md)', padding: '10px 6px',
+                textAlign: 'center', cursor: 'pointer', border: 'none',
               }}>
-                <div style={{ fontFamily:'var(--font-title)', fontSize: 20, fontWeight: 600, color: cfg.color }}>{c}</div>
-                <div className="tiny muted" style={{ marginTop: 2 }}>{cfg.label}</div>
-              </div>
+                <div style={{ fontSize: 15 }}>{d.emoji}</div>
+                <div style={{ fontSize: 20, fontWeight: 800, fontFamily: 'var(--font-title)', color: '#201e1f', lineHeight: 1.1 }}>{c}</div>
+                <div style={{ fontSize: 12, color: '#201e1f', opacity: 0.7, marginTop: 2 }}>{d.label}</div>
+              </button>
             );
           })}
         </div>
 
-        {view === 'kanban' ? (
-          <div className="row gap-3" style={{ overflowX:'auto', paddingBottom: 'var(--s-3)', alignItems: 'flex-start' }}>
+        {/* Tab bar */}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {TABS.map(({ key, label }) => (
+            <button key={key} onClick={() => setTab(key)} style={{
+              fontSize: 14, padding: '8px 18px', borderRadius: 999, border: '1.5px solid',
+              background: tab === key ? '#201e1f' : 'var(--white)',
+              borderColor: tab === key ? '#201e1f' : 'var(--gray-light)',
+              color: tab === key ? '#fffcfa' : '#201e1f',
+              cursor: 'pointer', fontWeight: tab === key ? 700 : 500,
+              fontFamily: 'var(--font-body)', transition: 'all .15s',
+            }}>{label}</button>
+          ))}
+        </div>
+
+        {/* Search + channel chips (kanban / lista only) */}
+        {(tab === 'kanban' || tab === 'lista') && (
+          <div className="col gap-2">
+            <div className="row gap-2" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: '8px 12px' }}>
+              <Icon name="search" size={13} color="var(--text-muted)"/>
+              <input className="grow" style={{ background: 'transparent', border: 'none', fontSize: 14 }}
+                placeholder="Buscar conteúdos..." value={search} onChange={e => setSearch(e.target.value)}/>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {[['todos', 'Todos'], ...Object.entries(CHANNEL_LABELS)].map(([k, l]) => (
+                <button key={k} onClick={() => setChannel(k)} style={{
+                  fontSize: 13, padding: '5px 13px', borderRadius: 999, border: '1.5px solid',
+                  background: channel === k ? (CHANNEL_COLORS[k] || '#fe7dae') : 'var(--bg-surface)',
+                  borderColor: channel === k ? (CHANNEL_COLORS[k] || '#fe7dae') : 'var(--gray-light)',
+                  color: '#201e1f', cursor: 'pointer', fontWeight: channel === k ? 700 : 400,
+                  fontFamily: 'var(--font-body)', transition: 'all .15s',
+                }}>{l}</button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* KANBAN */}
+        {tab === 'kanban' && (
+          <div className="row gap-3" style={{ overflowX: 'auto', paddingBottom: 'var(--s-3)', alignItems: 'flex-start' }}>
             {KANBAN_COLS.map(st => {
-              const cfg = window.STATUS_CONTEUDO[st];
+              const d = STATUS_DISPLAY[st];
               const items = filtered.filter(c => c.status === st);
               return (
                 <div key={st} style={{ flexShrink: 0, width: 240 }}>
-                  <div className="row gap-2" style={{ marginBottom: 'var(--s-3)', padding: '0 2px' }}>
-                    <span style={{ width: 8, height: 8, borderRadius: 999, background: cfg.color }}/>
-                    <span className="eyebrow" style={{ color: cfg.color }}>{cfg.label}</span>
-                    <span className="tiny muted" style={{ marginLeft: 'auto' }}>{items.length}</span>
+                  <div style={{
+                    background: `color-mix(in oklch, ${d.color} 45%, white)`,
+                    borderRadius: 'var(--r-md)', padding: '8px 12px',
+                    marginBottom: 'var(--s-3)', borderLeft: `3px solid ${d.color}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  }}>
+                    <div className="row gap-2">
+                      <span style={{ fontSize: 14 }}>{d.emoji}</span>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: '#201e1f' }}>{d.label}</span>
+                    </div>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: '#201e1f', background: d.color, padding: '1px 8px', borderRadius: 999 }}>{items.length}</span>
                   </div>
-                  <div className="col gap-2" style={{ minHeight: 100 }}>
+                  <div className="col gap-2" style={{ minHeight: 80 }}>
                     {items.map(item => (
                       <Card key={item.id} hoverable onClick={() => setSelected(item)} style={{ cursor: 'pointer' }}>
                         <CardBody tight className="col gap-2">
                           <div className="row gap-2" style={{ alignItems: 'flex-start' }}>
                             <span style={{ fontSize: 14, flexShrink: 0, marginTop: 1 }}>{window.TYPE_EMOJI[item.tipo]}</span>
-                            <p style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.4, flex: 1 }}>{item.titulo}</p>
+                            <p style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.4, flex: 1, color: '#201e1f' }}>{item.titulo}</p>
                           </div>
                           <div className="row gap-1" style={{ flexWrap: 'wrap' }}>
                             {item.brand && <ChannelTag channel={item.brand}/>}
-                            {item.plataformas.slice(0,2).map(p => (
-                              <span key={p} className="tiny" style={{
-                                padding: '1px 7px', borderRadius: 999,
-                                background: `color-mix(in oklch, ${window.PLATFORM_COLORS[p]} 16%, transparent)`,
-                                color: window.PLATFORM_COLORS[p], fontWeight: 500, fontSize: 14,
-                              }}>{window.PLATFORM_LABELS[p]}</span>
+                            {item.plataformas.slice(0, 2).map(p => (
+                              <span key={p} style={{ fontSize: 12, padding: '1px 7px', borderRadius: 999, background: 'var(--bg-elevated)', color: '#201e1f' }}>{window.PLATFORM_LABELS[p]}</span>
                             ))}
                           </div>
-                          {item.data && (
-                            <div className="row gap-1 tiny muted">
-                              <Icon name="calendar" size={10}/>{item.data}
-                            </div>
-                          )}
+                          {item.data && <div className="tiny muted row gap-1"><Icon name="calendar" size={10}/>{item.data}</div>}
                         </CardBody>
                       </Card>
                     ))}
@@ -225,29 +462,32 @@ function ConteudoPage() {
               );
             })}
           </div>
-        ) : (
+        )}
+
+        {/* LISTA */}
+        {tab === 'lista' && (
           <div className="col gap-2">
             {filtered.map(item => {
-              const cfg = window.STATUS_CONTEUDO[item.status];
+              const d = STATUS_DISPLAY[item.status];
               return (
                 <Card key={item.id} hoverable onClick={() => setSelected(item)} style={{ cursor: 'pointer' }}>
                   <CardBody tight>
                     <div className="row gap-3">
                       <span style={{ fontSize: 18, flexShrink: 0 }}>{window.TYPE_EMOJI[item.tipo]}</span>
                       <div className="grow">
-                        <p style={{ fontSize: 14.5, fontWeight: 500 }}>{item.titulo}</p>
+                        <p style={{ fontSize: 14.5, fontWeight: 500, color: '#201e1f' }}>{item.titulo}</p>
                         <div className="row gap-1" style={{ marginTop: 4, flexWrap: 'wrap' }}>
-                          <p className="tiny muted">{window.CATEGORY_LABELS[item.categoria]}</p>
                           {item.brand && <ChannelTag channel={item.brand}/>}
+                          {item.plataformas.slice(0, 2).map(p => (
+                            <span key={p} style={{ fontSize: 12, padding: '2px 7px', borderRadius: 999, background: 'var(--bg-elevated)', color: '#201e1f' }}>{window.PLATFORM_LABELS[p]}</span>
+                          ))}
                         </div>
                       </div>
-                      <div className="row gap-3">
+                      <div className="row gap-2" style={{ alignItems: 'center' }}>
                         {item.data && <span className="tiny muted">{item.data}</span>}
-                        <span className="tiny" style={{
-                          padding: '3px 10px', borderRadius: 999,
-                          background: `color-mix(in oklch, ${cfg.color} 16%, transparent)`,
-                          color: cfg.color, fontWeight: 500,
-                        }}>{cfg.label}</span>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: '#201e1f', padding: '3px 10px', borderRadius: 999, background: d.color, whiteSpace: 'nowrap' }}>
+                          {d.emoji} {d.label}
+                        </span>
                       </div>
                     </div>
                   </CardBody>
@@ -256,6 +496,12 @@ function ConteudoPage() {
             })}
           </div>
         )}
+
+        {/* BAÚ DE IDEIAS */}
+        {tab === 'bau' && <CapturaBrainDump energy={energy || 'criativa'} />}
+
+        {/* REFERÊNCIAS */}
+        {tab === 'refs' && <RefsTab />}
 
         {selected && <ConteudoModal item={selected} onClose={() => setSelected(null)}/>}
       </div>
