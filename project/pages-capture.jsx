@@ -496,7 +496,7 @@ function TarefasPage() {
   ];
 
   return (
-    <div className="content">
+    <div className="content" style={{ background: 'white', minHeight: '100vh' }}>
       <div className="col gap-5 fade-up">
         <PageHeader
           title="Tarefas"
