@@ -58,7 +58,7 @@ function PhotoUpload({ foto, onFoto, label }) {
   }
   return (
     <div className="col gap-2">
-      <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>{label || 'Foto / Receita'}</label>
+      <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>{label || 'Foto / Receita'}</label>
       {foto ? (
         <div style={{ position: 'relative', width: '100%', maxWidth: 280 }}>
           <img src={foto} alt="receita" style={{ width: '100%', borderRadius: 'var(--r-md)', border: '1px solid var(--border)' }}/>
@@ -122,37 +122,37 @@ function ConsultaModal({ item, onClose, onSave }) {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-3)' }}>
             <div className="col gap-1" style={{ gridColumn: '1 / -1' }}>
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Título *</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Título *</label>
               <input className="input" placeholder="Ex: Neurologia — Dr. Silva" value={form.titulo} onChange={e => f({ titulo: e.target.value })}/>
             </div>
             <div className="col gap-1">
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Especialidade</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Especialidade</label>
               <input className="input" placeholder="Neurologia, Psiquiatria..." value={form.especialidade} onChange={e => f({ especialidade: e.target.value })}/>
             </div>
             <div className="col gap-1">
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Médico(a)</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Médico(a)</label>
               <input className="input" placeholder="Dr(a). Nome" value={form.medico} onChange={e => f({ medico: e.target.value })}/>
             </div>
             <div className="col gap-1">
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Data</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Data</label>
               <input className="input" type="date" value={form.data} onChange={e => f({ data: e.target.value })}/>
             </div>
             <div className="col gap-1">
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Horário</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Horário</label>
               <input className="input" type="time" value={form.hora} onChange={e => f({ hora: e.target.value })}/>
             </div>
             <div className="col gap-1">
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Local / Clínica</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Local / Clínica</label>
               <input className="input" placeholder="Endereço ou nome da clínica" value={form.local} onChange={e => f({ local: e.target.value })}/>
             </div>
             <div className="col gap-1">
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Status</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Status</label>
               <select className="select" value={form.status} onChange={e => f({ status: e.target.value })}>
                 {Object.entries(STATUS_CONSULTA).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
               </select>
             </div>
             <div className="col gap-1" style={{ gridColumn: '1 / -1' }}>
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Anotações da consulta</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Anotações da consulta</label>
               <textarea className="textarea" rows={4} placeholder="Diagnóstico, orientações do médico, próximos passos..."
                 value={form.notas} onChange={e => f({ notas: e.target.value })}/>
             </div>
@@ -207,7 +207,7 @@ function ConsultaCard({ item, onEdit, onDelete }) {
             <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 14, fontWeight: 600, background: `color-mix(in oklch, ${color} 14%, transparent)`, color }}>{labels[item.status]}</span>
           </div>
         </div>
-        {item.notas && <p className="small secondary" style={{ lineHeight: 1.5, borderLeft: `2px solid var(--border)`, paddingLeft: 10 }}>{item.notas.slice(0, 160)}{item.notas.length > 160 ? '...' : ''}</p>}
+        {item.notas && <p className="small secondary" style={{ lineHeight: 1.5, paddingLeft: 4 }}>{item.notas.slice(0, 160)}{item.notas.length > 160 ? '...' : ''}</p>}
         {item.foto && <img src={item.foto} alt="anexo" style={{ maxWidth: 200, borderRadius: 'var(--r-md)', border: '1px solid var(--border)' }}/>}
         <div className="row gap-2">
           <Button variant="ghost" size="sm" onClick={onEdit}><Icon name="pen" size={12}/> Editar</Button>
@@ -257,33 +257,33 @@ function RemedioModal({ item, onClose, onSave }) {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-3)' }}>
             <div className="col gap-1" style={{ gridColumn: '1 / -1' }}>
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Nome do remédio *</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Nome do remédio *</label>
               <input className="input" placeholder="Ex: Ritalina LA 30mg" value={form.nome} onChange={e => f({ nome: e.target.value })}/>
             </div>
             <div className="col gap-1">
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Dosagem</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Dosagem</label>
               <input className="input" placeholder="Ex: 30mg" value={form.dose} onChange={e => f({ dose: e.target.value })}/>
             </div>
             <div className="col gap-1">
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Frequência</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Frequência</label>
               <input className="input" placeholder="Ex: 1x ao dia - manhã" value={form.frequencia} onChange={e => f({ frequencia: e.target.value })}/>
             </div>
             <div className="col gap-1">
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Status</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Status</label>
               <select className="select" value={form.status} onChange={e => f({ status: e.target.value })}>
                 {Object.entries(STATUS_REMEDIO).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
               </select>
             </div>
             <div className="col gap-1">
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Estoque atual</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Estoque atual</label>
               <input className="input" placeholder="Ex: 7 comprimidos" value={form.estoque} onChange={e => f({ estoque: e.target.value })}/>
             </div>
             <div className="col gap-1">
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Validade da receita</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Validade da receita</label>
               <input className="input" type="date" value={form.validade_receita} onChange={e => f({ validade_receita: e.target.value })}/>
             </div>
             <div className="col gap-1" style={{ gridColumn: '1 / -1' }}>
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Observações</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Observações</label>
               <textarea className="textarea" rows={2} placeholder="Tomar com água, evitar com cafeína..."
                 value={form.notas} onChange={e => f({ notas: e.target.value })}/>
             </div>
@@ -313,7 +313,7 @@ function RemedioCard({ item, onEdit, onDelete, onStatus }) {
   const nextLabels = { preciso_comprar: '→ Comprei!', comprando: '→ Comecei a tomar', ativo: '→ Finalizado', finalizado: '→ Preciso comprar de novo' };
 
   return (
-    <Card hoverable style={{ borderLeft: `3px solid ${cfg.color}` }}>
+    <Card hoverable>
       <CardBody className="col gap-3">
         <div className="row between" style={{ alignItems: 'flex-start' }}>
           <div className="grow">
@@ -379,19 +379,19 @@ function ExameModal({ item, onClose, onSave }) {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-3)' }}>
             <div className="col gap-1" style={{ gridColumn: '1 / -1' }}>
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Nome do exame *</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Nome do exame *</label>
               <input className="input" placeholder="Ex: Hemograma completo" value={form.nome} onChange={e => f({ nome: e.target.value })}/>
             </div>
             <div className="col gap-1">
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Solicitado em</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Solicitado em</label>
               <input className="input" type="date" value={form.solicitado_em} onChange={e => f({ solicitado_em: e.target.value })}/>
             </div>
             <div className="col gap-1">
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Realizado em</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Realizado em</label>
               <input className="input" type="date" value={form.realizado_em} onChange={e => f({ realizado_em: e.target.value })}/>
             </div>
             <div className="col gap-1" style={{ gridColumn: '1 / -1' }}>
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Status</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Status</label>
               <select className="select" value={form.status} onChange={e => f({ status: e.target.value })}>
                 <option value="pendente">Pendente</option>
                 <option value="agendado">Agendado</option>
@@ -399,7 +399,7 @@ function ExameModal({ item, onClose, onSave }) {
               </select>
             </div>
             <div className="col gap-1" style={{ gridColumn: '1 / -1' }}>
-              <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Observações / Resultado</label>
+              <label style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Observações / Resultado</label>
               <textarea className="textarea" rows={3} placeholder="Resultado, valores de referência, observações do médico..."
                 value={form.notas} onChange={e => f({ notas: e.target.value })}/>
             </div>
@@ -824,7 +824,7 @@ function SaudePage() {
             ) : (
               <>
                 {precisoComprar.length > 0 && (
-                  <Card style={{ borderLeft: '3px solid #C44878' }}>
+                  <Card>
                     <CardBody>
                       <div className="row gap-2" style={{ marginBottom: 'var(--s-3)' }}>
                         <span style={{ fontSize: 18 }}>💊</span>
@@ -858,7 +858,7 @@ function SaudePage() {
                 )}
 
                 {proximasConsultas.length > 0 && (
-                  <Card style={{ borderLeft: '3px solid var(--pink)' }}>
+                  <Card>
                     <CardBody>
                       <div className="row gap-2" style={{ marginBottom: 'var(--s-3)' }}>
                         <span style={{ fontSize: 18 }}>🩺</span>
@@ -891,7 +891,7 @@ function SaudePage() {
                 )}
 
                 {examesPendentes.length > 0 && (
-                  <Card style={{ borderLeft: '3px solid #A89AC9' }}>
+                  <Card>
                     <CardBody>
                       <div className="row gap-2" style={{ marginBottom: 'var(--s-3)' }}>
                         <span style={{ fontSize: 18 }}>🔬</span>

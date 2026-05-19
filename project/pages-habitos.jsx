@@ -82,7 +82,7 @@ function AguaBar({ ml, meta }) {
   const pct = Math.min(100, (ml / meta) * 100);
   const cor = pct >= 100 ? '#7FB68C' : pct >= 60 ? '#5B9BD5' : '#A89AC9';
   return (
-    <div style={{ position: 'relative', height: 12, borderRadius: 999, background: 'var(--bg-elevated)', border: '1px solid var(--border)', overflow: 'hidden' }}>
+    <div style={{ position: 'relative', height: 12, borderRadius: 999, background: 'var(--bg-elevated)', overflow: 'hidden' }}>
       <div style={{
         position: 'absolute', left: 0, top: 0, bottom: 0,
         width: `${pct}%`, background: cor,
@@ -325,7 +325,6 @@ function HabitosPage() {
               padding: 'var(--s-3) var(--s-4)',
               borderRadius: 'var(--r-md)',
               background: `color-mix(in oklch, #FF78B0 10%, var(--white))`,
-              border: '1px solid color-mix(in oklch, #FF78B0 25%, transparent)',
               textAlign: 'center',
             }}>
               <div style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 700, color: '#E8538D' }}>
@@ -338,7 +337,6 @@ function HabitosPage() {
               padding: 'var(--s-3) var(--s-4)',
               borderRadius: 'var(--r-md)',
               background: `color-mix(in oklch, #5B9BD5 10%, var(--white))`,
-              border: '1px solid color-mix(in oklch, #5B9BD5 25%, transparent)',
               textAlign: 'center',
             }}>
               <div style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 700, color: '#3A7DC4' }}>
@@ -351,7 +349,6 @@ function HabitosPage() {
               padding: 'var(--s-3) var(--s-4)',
               borderRadius: 'var(--r-md)',
               background: `color-mix(in oklch, #7FB68C 10%, var(--white))`,
-              border: '1px solid color-mix(in oklch, #7FB68C 25%, transparent)',
               textAlign: 'center',
             }}>
               <div style={{ fontFamily: 'var(--font-title)', fontSize: 22, fontWeight: 700, color: '#3A8C50' }}>
@@ -372,7 +369,7 @@ function HabitosPage() {
 
             {/* Manhã — Lorenna */}
             <div className="col gap-1">
-              <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#FF78B0', marginBottom: 4 }}>
+              <div style={{ fontSize: 12, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: '#FF78B0', marginBottom: 4 }}>
                 🌅 Manhã — Lorenna
               </div>
               {manhaMeds.map(m => {
@@ -383,12 +380,11 @@ function HabitosPage() {
                       display: 'flex', alignItems: 'center', gap: 12,
                       padding: '11px 14px', borderRadius: 'var(--r-md)', cursor: 'pointer',
                       background: checked ? 'color-mix(in oklch, #FF78B0 8%, var(--white))' : 'var(--bg-elevated)',
-                      border: `1px solid ${checked ? 'color-mix(in oklch, #FF78B0 30%, transparent)' : 'var(--border)'}`,
                       transition: 'all .15s',
                     }}>
                     <CheckRound checked={checked} onChange={() => toggleMed(m.id)} cor="#FF78B0"/>
                     <span style={{
-                      fontFamily: 'var(--font-title)', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em',
+                      fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 500, letterSpacing: '0.01em',
                       color: checked ? '#E8538D' : 'var(--text-primary)',
                       textDecoration: checked ? 'line-through' : 'none', opacity: checked ? 0.7 : 1,
                     }}>{m.nome}</span>
@@ -400,7 +396,7 @@ function HabitosPage() {
 
             {/* Noite — Mateus */}
             <div className="col gap-1">
-              <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#5B9BD5', marginBottom: 4 }}>
+              <div style={{ fontSize: 12, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: '#5B9BD5', marginBottom: 4 }}>
                 🌙 Noite — Mateus
               </div>
               {noiteMeds.map(m => {
@@ -411,12 +407,11 @@ function HabitosPage() {
                       display: 'flex', alignItems: 'center', gap: 12,
                       padding: '11px 14px', borderRadius: 'var(--r-md)', cursor: 'pointer',
                       background: checked ? 'color-mix(in oklch, #5B9BD5 8%, var(--white))' : 'var(--bg-elevated)',
-                      border: `1px solid ${checked ? 'color-mix(in oklch, #5B9BD5 30%, transparent)' : 'var(--border)'}`,
                       transition: 'all .15s',
                     }}>
                     <CheckRound checked={checked} onChange={() => toggleMed(m.id)} cor="#5B9BD5"/>
                     <span style={{
-                      fontFamily: 'var(--font-title)', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em',
+                      fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 500, letterSpacing: '0.01em',
                       color: checked ? '#3A7DC4' : 'var(--text-primary)',
                       textDecoration: checked ? 'line-through' : 'none', opacity: checked ? 0.7 : 1,
                     }}>{m.nome}</span>
@@ -455,7 +450,6 @@ function HabitosPage() {
                 <button key={ml} onClick={() => addAgua(ml)}
                   style={{
                     padding: '10px 20px', borderRadius: 'var(--r-md)',
-                    border: '1.5px solid #BFC9F5',
                     background: 'color-mix(in oklch, #5B9BD5 10%, var(--white))',
                     color: '#3A7DC4', fontWeight: 700, fontSize: 14,
                     cursor: 'pointer', fontFamily: 'var(--font-body)',
@@ -492,7 +486,6 @@ function HabitosPage() {
                     style={{
                       width: 28, height: 36, cursor: 'pointer',
                       borderRadius: '4px 4px 8px 8px',
-                      border: `2px solid ${cheio || parcial ? '#5B9BD5' : 'var(--border)'}`,
                       background: cheio ? '#5B9BD5' : parcial ? 'color-mix(in oklch, #5B9BD5 35%, var(--white))' : 'var(--white)',
                       transition: 'all .15s',
                       display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
@@ -523,7 +516,6 @@ function HabitosPage() {
                         flex: 1, display: 'flex', alignItems: 'center', gap: 12,
                         padding: '11px 14px', borderRadius: 'var(--r-md)', cursor: 'pointer',
                         background: checked ? 'color-mix(in oklch, #7FB68C 10%, var(--white))' : 'var(--bg-elevated)',
-                        border: `1px solid ${checked ? 'color-mix(in oklch, #7FB68C 35%, transparent)' : 'var(--border)'}`,
                         transition: 'all .15s',
                       }}>
                       <CheckRound checked={checked} onChange={() => toggleHabito(h.id)} cor="#7FB68C"/>

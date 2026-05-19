@@ -979,8 +979,7 @@ function CRMPage() {
 
         {/* Search bar */}
         <div className="row gap-2" style={{
-          background: 'var(--white)', border: '1px solid var(--gray-light)',
-          borderRadius: 15, padding: '10px 16px', maxWidth: 400,
+          background: 'var(--offwhite)', borderRadius: 15, padding: '10px 16px', maxWidth: 400,
         }}>
           <Icon name="search" size={14} color="var(--gray)"/>
           <input className="grow" style={{ background: 'transparent', fontSize: 14 }}
@@ -1029,7 +1028,7 @@ function CRMPage() {
                     value={form.nota} onChange={e => setForm({ ...form, nota: e.target.value })}/>
                 </Field>
               </div>
-              <div className="row gap-2" style={{ paddingTop: 'var(--s-2)', borderTop: '1px solid var(--gray-light)' }}>
+              <div className="row gap-2" style={{ paddingTop: 'var(--s-2)' }}>
                 <Button variant="primary" onClick={saveForm}><Icon name="check" size={13} color="white"/> Salvar</Button>
                 <Button variant="ghost" onClick={cancelForm}>Cancelar</Button>
               </div>
@@ -1039,31 +1038,61 @@ function CRMPage() {
 
         {/* Tabs */}
         <div>
-          <div className="row" style={{ borderBottom: '1px solid var(--gray-light)', gap: 4 }}>
-            {CRM_TABS.map(t => (
-              <button key={t.id} onClick={() => setActiveTab(t.id)}
-                style={{
-                  padding: '14px 18px',
-                  background: 'transparent', border: 'none',
-                  color: activeTab === t.id ? 'var(--pink-deep)' : 'var(--gray)',
-                  fontWeight: activeTab === t.id ? 600 : 500,
-                  fontSize: 14.5, fontFamily: 'var(--font-body)',
-                  cursor: 'pointer',
-                  borderBottom: activeTab === t.id ? '2px solid var(--pink)' : '2px solid transparent',
-                  marginBottom: -1, whiteSpace: 'nowrap',
+          <div style={{
+            background: 'rgba(32,30,31,0.055)', borderRadius: 13, padding: 4,
+            display: 'flex', gap: 2,
+          }}>
+            {CRM_TABS.map(t => {
+              const active = activeTab === t.id;
+              return (
+                <button key={t.id} onClick={() => setActiveTab(t.id)} style={{
+                  flex: 1, padding: '8px 12px', borderRadius: 10,
+                  background: active ? 'white' : 'transparent',
+                  boxShadow: active ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                  color: active ? '#201e1f' : 'rgba(32,30,31,0.42)',
+                  fontWeight: active ? 500 : 400,
+                  fontSize: 14, border: 'none', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  fontFamily: 'var(--font-body)', transition: 'all .18s',
                 }}>
-                {t.label}
-                <span style={{
-                  marginLeft: 8, fontSize: 14, fontWeight: 600,
-                  padding: '2px 7px', borderRadius: 999,
-                  background: activeTab === t.id ? 'var(--pink-soft)' : 'var(--gray-light)',
-                  color: activeTab === t.id ? 'var(--pink-deep)' : 'var(--gray)',
-                }}>{tabCounts[t.id]}</span>
-              </button>
-            ))}
+                  {t.label}
+                  <span style={{
+                    fontSize: 11, fontWeight: 500, lineHeight: 1,
+                    color: active ? 'rgba(32,30,31,0.5)' : 'rgba(32,30,31,0.28)',
+                    background: active ? 'rgba(32,30,31,0.07)' : 'transparent',
+                    padding: active ? '2px 5px' : '0', borderRadius: 99,
+                  }}>{tabCounts[t.id]}</span>
+                </button>
+              );
+            })}
           </div>
 
-          <div style={{ paddingTop: 'var(--s-5)' }}>
+          <div style={{ paddingTop: 'var(--s-4)' }}>
+            {/* Pipeline funnel */}
+            <div style={{
+              display: 'flex', gap: 8, marginBottom: 'var(--s-4)',
+              overflowX: 'auto', paddingBottom: 4,
+            }}>
+              {Object.entries(CRM_NEW_STATUS).map(([key, cfg]) => {
+                const count = filtered.filter(c => c.status === key).length;
+                const total = filtered.length || 1;
+                return (
+                  <div key={key} style={{
+                    flex: 1, minWidth: 90, padding: '10px 12px', borderRadius: 'var(--r-md)',
+                    background: count > 0 ? cfg.bg : 'var(--bg-elevated)',
+                    textAlign: 'center',
+                  }}>
+                    <div style={{ fontSize: 22, fontWeight: 500, color: cfg.color, lineHeight: 1, fontFamily: 'var(--font-title)' }}>{count}</div>
+                    <div style={{ fontSize: 11, color: cfg.color, marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 500, opacity: 0.8 }}>{cfg.label}</div>
+                    <div style={{
+                      marginTop: 6, height: 3, borderRadius: 999,
+                      background: cfg.color, opacity: count > 0 ? (count / total) * 0.8 + 0.2 : 0.1,
+                    }}/>
+                  </div>
+                );
+              })}
+            </div>
+
             {filtered.length === 0 ? (
               <Empty icon="users" text={search ? 'Nenhum contato encontrado para esta busca.' : 'Nenhum contato nesta categoria ainda.'}/>
             ) : (

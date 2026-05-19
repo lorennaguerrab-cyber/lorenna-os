@@ -608,7 +608,6 @@ function WeekView() {
             <div key={eId} className="row gap-2" style={{
               padding: '5px 14px', borderRadius: 999, fontSize: 14,
               background: `color-mix(in oklch, ${cfg.color} 10%, var(--bg-surface))`,
-              border: `1px solid color-mix(in oklch, ${cfg.color} 25%, transparent)`,
               color: 'var(--text-secondary)', fontWeight: 500,
             }}>
               <span>{cfg.emoji}</span> {cfg.label}
@@ -842,7 +841,6 @@ function RotinaSemanalWidget() {
           background: `color-mix(in oklch, ${col} 30%, white)`,
           borderRadius: 'var(--r-md)',
           padding: 'var(--s-4)',
-          borderLeft: `4px solid ${col}`,
         }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: '#201e1f', marginBottom: 10 }}>
             {isToday ? 'Hoje' : r.dia} · {r.dia}
@@ -1130,7 +1128,7 @@ function FullCalendarWidget() {
                       <div key={ev.id} style={{
                         fontSize: 13, lineHeight: 1.3, padding: '3px 6px',
                         background: cfg.bg, color: cfg.text,
-                        borderRadius: 4, borderLeft: `3px solid ${cfg.dot || cfg.bg}`,
+                        borderRadius: 4,
                         overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
                       }}>
                         {ev.hora && <span style={{ fontWeight: 700, marginRight: 3 }}>{ev.hora.split(':')[0]}h</span>}
@@ -1312,7 +1310,6 @@ function LembretesHabitosWidget() {
         <div style={{
           padding: '12px var(--s-3)', borderRadius: 'var(--r-md)',
           background: `color-mix(in oklch, #bce1f6 18%, var(--bg-surface))`,
-          borderLeft: '3px solid #bce1f6',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
             <span style={{ fontSize: 18, flexShrink: 0, width: 28, textAlign: 'center' }}>💧</span>
@@ -1358,7 +1355,6 @@ function LembretesHabitosWidget() {
                 background: checked
                   ? `color-mix(in oklch, ${r.cor} 35%, var(--bg-surface))`
                   : `color-mix(in oklch, ${r.cor} 18%, var(--bg-surface))`,
-                borderLeft: `3px solid ${r.cor}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 cursor: 'pointer', transition: 'background .15s',
                 gap: 8,
@@ -1506,7 +1502,6 @@ function SugestoesWidget({ setRoute }) {
                 padding: 'var(--s-4)',
                 borderRadius: 'var(--r-md)',
                 background: `color-mix(in oklch, ${cor} 28%, var(--bg-surface))`,
-                borderLeft: `3px solid ${cor}`,
                 display: 'flex', flexDirection: 'column', gap: 8,
               }}>
                 <div className="row gap-2" style={{ alignItems: 'center' }}>

@@ -37,7 +37,7 @@ function humorColor(v) {
 function FieldLabel({ children }) {
   return (
     <div style={{
-      fontSize: 14, fontWeight: 600, letterSpacing: '0.08em',
+      fontSize: 14, fontWeight: 500, letterSpacing: '0.06em',
       textTransform: 'uppercase', color: 'var(--gray)', marginBottom: 6,
     }}>
       {children}
@@ -176,7 +176,7 @@ function HojeView() {
             <FieldLabel>Humor do dia</FieldLabel>
             <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 12 }}>
               <div style={{
-                fontFamily: 'var(--font-title)', fontSize: 48, fontWeight: 800,
+                fontFamily: 'var(--font-title)', fontSize: 48, fontWeight: 500,
                 color: humorColor(humor), lineHeight: 1, minWidth: 56, textAlign: 'center',
                 transition: 'color .2s',
               }}>{humor}</div>
@@ -224,7 +224,7 @@ function HojeView() {
 
       {(insight || loadingInsight) && (
         <div style={{ marginTop: 16 }}>
-          <Card style={{ background: 'var(--pink-tint)', border: '1.5px solid var(--pink-soft)' }}>
+          <Card style={{ background: 'var(--pink-tint)' }}>
             <CardBody>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                 <span style={{ fontSize: 18 }}>✨</span>
@@ -264,8 +264,8 @@ function EntryCard({ entry }) {
           onClick={() => setExpanded(v => !v)}>
           <div style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center',
-            minWidth: 48, background: 'var(--offwhite)', borderRadius: 10,
-            padding: '6px 8px', border: '1.5px solid var(--pink-soft)', flexShrink: 0,
+            minWidth: 48, background: 'color-mix(in oklch, var(--pink) 8%, var(--white))', borderRadius: 10,
+            padding: '6px 8px', flexShrink: 0,
           }}>
             <span style={{ fontSize: 18 }}>{humorEmoji(entry.humor)}</span>
             <span style={{ fontFamily: 'var(--font-title)', fontSize: 14, fontWeight: 700, color: humorColor(entry.humor) }}>
@@ -277,7 +277,7 @@ function EntryCard({ entry }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
               <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', textTransform: 'capitalize' }}>{dateLabel}</span>
               {entry.hora && (
-                <span style={{ fontSize: 14, color: 'var(--gray)', background: 'var(--offwhite)', padding: '1px 7px', borderRadius: 999, border: '1px solid var(--border)' }}>
+                <span style={{ fontSize: 14, color: 'var(--gray)', background: 'var(--offwhite)', padding: '1px 7px', borderRadius: 999 }}>
                   {entry.hora}
                 </span>
               )}
@@ -293,7 +293,7 @@ function EntryCard({ entry }) {
         </div>
 
         {expanded && (
-          <div style={{ paddingTop: 12, borderTop: '1px solid var(--pink-soft)', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ paddingTop: 12, display: 'flex', flexDirection: 'column', gap: 12 }}>
             {[
               { label: 'O que pesou',        value: entry.pesou },
               { label: 'O que foi positivo', value: entry.bom },
@@ -340,11 +340,48 @@ function HistoricoView() {
     return entries.filter(e => e.data >= cutoffStr);
   }
 
+  function exportarEntradas() {
+    const list = filteredEntries();
+    if (list.length === 0) { showToast('Nenhuma entrada para esse período'); return; }
+
+    const byDay = {};
+    list.forEach(e => {
+      if (!byDay[e.data]) byDay[e.data] = [];
+      byDay[e.data].push(e);
+    });
+
+    const corpo = Object.entries(byDay)
+      .sort((a, b) => b[0].localeCompare(a[0]))
+      .map(([date, dayEntries]) => {
+        const dateLabel = new Date(date + 'T12:00:00').toLocaleDateString('pt-BR', {
+          weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+        });
+        const parts = dayEntries.map((e, i) => {
+          const lines = [`Humor: ${e.humor}/10`];
+          if (e.pesou)    lines.push(`Pesou: ${e.pesou}`);
+          if (e.bom)      lines.push(`Positivo: ${e.bom}`);
+          if (e.corpo)    lines.push(`Corpo: ${e.corpo}`);
+          if (e.relacoes) lines.push(`Relações: ${e.relacoes}`);
+          if (e.gatilho)  lines.push(`Gatilho: ${e.gatilho}`);
+          if (e.terapia)  lines.push(`Para terapia: ${e.terapia}`);
+          if (e.livre)    lines.push(`Livre: ${e.livre}`);
+          return (dayEntries.length > 1 ? `[Entrada ${i + 1}]\n` : '') + lines.join('\n');
+        }).join('\n\n');
+        return `📅 ${dateLabel}\n${parts}`;
+      }).join('\n\n──────────\n\n');
+
+    const texto = `DIÁRIO TERAPÊUTICO — LORENNA\n${list.length} entrada${list.length !== 1 ? 's' : ''} · ${new Date().toLocaleDateString('pt-BR')}\n\n${corpo}\n\n──────────\nCole este texto no Claude.ai, ChatGPT ou outro assistente IA para análise.`;
+
+    navigator.clipboard.writeText(texto).then(() => {
+      showToast('Entradas copiadas! Cole em qualquer IA para análise 🤖');
+    }).catch(() => showToast('Não foi possível copiar. Tente de novo.'));
+  }
+
   async function gerarRelatorio() {
     const filtered = filteredEntries();
     if (filtered.length === 0) { showToast('Nenhuma entrada para esse período'); return; }
     if (!window.hasClaudeKey || !window.hasClaudeKey()) {
-      showToast('Configure sua chave Claude primeiro (botão ✨ no canto inferior)');
+      exportarEntradas();
       return;
     }
 
@@ -435,18 +472,18 @@ function HistoricoView() {
             {filtered.length} entrada{filtered.length !== 1 ? 's' : ''} nesse período
           </div>
 
-          <Button variant="primary" style={{ width: '100%' }} onClick={gerarRelatorio} disabled={loadingRelatorio || filtered.length === 0}>
-            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-              <Icon name="sparkle" size={16} color="currentColor"/>
-              {loadingRelatorio ? 'Analisando entradas…' : `Gerar relatório (${filtered.length} entradas)`}
-            </span>
-          </Button>
-
-          {!window.hasClaudeKey?.() && (
-            <p style={{ fontSize: 14, color: 'var(--gray)', marginTop: 8, textAlign: 'center' }}>
-              Configure sua chave Claude (botão ✨ no canto) para gerar relatórios
-            </p>
-          )}
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Button variant="primary" style={{ flex: 1 }} onClick={gerarRelatorio} disabled={loadingRelatorio || filtered.length === 0}>
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                <Icon name="sparkle" size={16} color="currentColor"/>
+                {loadingRelatorio ? 'Analisando entradas…' : `Gerar relatório (${filtered.length} entradas)`}
+              </span>
+            </Button>
+            <Button variant="secondary" onClick={exportarEntradas} disabled={filtered.length === 0}
+              style={{ whiteSpace: 'nowrap' }}>
+              Copiar para IA
+            </Button>
+          </div>
 
           {(relatorio || loadingRelatorio) && (
             <div style={{ marginTop: 20 }}>

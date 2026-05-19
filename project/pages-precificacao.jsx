@@ -165,7 +165,7 @@ function PrecificacaoPage() {
           <div className="col gap-4">
             <Card>
               <CardBody className="col gap-4">
-                <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em' }}>
+                <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 500, letterSpacing: '-0.02em' }}>
                   Calculadora
                 </h2>
 
@@ -198,26 +198,22 @@ function PrecificacaoPage() {
                 {/* Complexidade */}
                 <div className="col gap-2">
                   <span className="tiny" style={{ fontWeight: 500, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Nível de complexidade</span>
-                  <div className="row gap-2" style={{ flexWrap: 'wrap' }}>
-                    {COMPLEXIDADE.map(c => (
-                      <label key={c.value} style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }}>
-                        <input
-                          type="radio"
-                          name="complexidade"
-                          value={c.value}
-                          checked={form.complexidade === c.value}
-                          onChange={() => setForm({ ...form, complexidade: c.value })}
-                          style={{ accentColor: 'var(--pink)', cursor: 'pointer' }}
-                        />
-                        <span style={{
-                          fontSize: 14, fontWeight: form.complexidade === c.value ? 600 : 400,
-                          color: form.complexidade === c.value ? 'var(--pink-deep)' : 'var(--text-secondary)',
-                        }}>
-                          {c.label}
-                          <span className="tiny muted" style={{ marginLeft: 4 }}>×{c.mult}</span>
-                        </span>
-                      </label>
-                    ))}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
+                    {COMPLEXIDADE.map(c => {
+                      const active = form.complexidade === c.value;
+                      return (
+                        <button key={c.value} onClick={() => setForm({ ...form, complexidade: c.value })}
+                          style={{
+                            padding: '10px 8px', borderRadius: 'var(--r-md)', cursor: 'pointer',
+                            background: active ? 'color-mix(in oklch, var(--pink) 12%, var(--white))' : 'var(--bg-elevated)',
+                            fontFamily: 'var(--font-body)', textAlign: 'center',
+                            border: 'none', transition: 'all .15s',
+                          }}>
+                          <div style={{ fontSize: 15, fontWeight: 500, color: active ? 'var(--pink-deep)' : 'var(--text-secondary)' }}>{c.label}</div>
+                          <div style={{ fontSize: 12, color: active ? 'var(--pink)' : 'var(--text-muted)', marginTop: 2 }}>×{c.mult}</div>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -262,23 +258,34 @@ function PrecificacaoPage() {
             {/* Price display */}
             <Card variant="accent">
               <CardBody className="col gap-3">
-                <div className="row between" style={{ alignItems: 'flex-start' }}>
-                  <div>
-                    <div className="eyebrow" style={{ marginBottom: 6 }}>Valor sugerido</div>
-                    <div style={{ fontFamily: 'var(--font-title)', fontSize: 38, fontWeight: 700, letterSpacing: '-0.03em', color: 'var(--pink-deep)', lineHeight: 1 }}>
-                      R$ {formatBRL(valorFinal)}
+                <div className="col gap-3">
+                  <div className="eyebrow" style={{ color: 'var(--text-muted)' }}>Valor sugerido</div>
+
+                  {/* Breakdown */}
+                  <div className="col gap-1" style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                    <div className="row between">
+                      <span>{form.horas}h × R$ {form.valorHora}/h</span>
+                      <span>R$ {formatBRL(base)}</span>
                     </div>
-                    <p className="tiny muted" style={{ marginTop: 8 }}>
-                      baseado em {form.horas}h × R$ {form.valorHora}/h × {complexMult} ({complexLabel}){urgLabel}
-                    </p>
+                    <div className="row between" style={{ color: complexMult > 1 ? 'var(--pink-deep)' : 'var(--text-secondary)' }}>
+                      <span>× {complexMult} ({complexLabel})</span>
+                      <span>R$ {formatBRL(base * complexMult)}</span>
+                    </div>
+                    {urgMult > 1 && (
+                      <div className="row between" style={{ color: '#B06A20' }}>
+                        <span>+ {Math.round((urgMult - 1) * 100)}% urgência</span>
+                        <span>R$ {formatBRL(base * complexMult * urgMult - base * complexMult)}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{
+                    fontFamily: 'var(--font-title)', fontSize: 38, fontWeight: 500,
+                    letterSpacing: '-0.03em', color: 'var(--pink-deep)', lineHeight: 1,
+                  }}>
+                    R$ {formatBRL(valorFinal)}
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  onClick={() => showToast('Configure Claude API para usar esta função — entre em contato com o desenvolvedor')}
-                  style={{ alignSelf: 'flex-start' }}>
-                  ✨ Ajustar com IA
-                </Button>
               </CardBody>
             </Card>
           </div>
@@ -288,7 +295,7 @@ function PrecificacaoPage() {
             <Card>
               <CardBody className="col gap-4">
                 <div className="row between">
-                  <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em' }}>
+                  <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 500, letterSpacing: '-0.02em' }}>
                     Orçamento gerado
                   </h2>
                   <div className="row gap-2">
@@ -304,7 +311,6 @@ function PrecificacaoPage() {
                 {/* Preview */}
                 <div style={{
                   background: 'var(--bg-elevated)',
-                  border: '1px solid var(--border)',
                   borderRadius: 'var(--r-md)',
                   padding: 'var(--s-4)',
                   position: 'relative',
@@ -322,7 +328,7 @@ function PrecificacaoPage() {
                     title="Copiar orçamento"
                     style={{
                       position: 'absolute', top: 10, right: 10,
-                      background: 'var(--bg-surface)', border: '1px solid var(--border)',
+                      background: 'var(--bg-surface)',
                       borderRadius: 6, padding: 5, cursor: 'pointer',
                       color: 'var(--text-muted)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -344,7 +350,7 @@ function PrecificacaoPage() {
                         <div className="row gap-3">
                           <div style={{
                             width: 38, height: 38, borderRadius: 'var(--r-sm)',
-                            background: 'var(--pink-tint)', border: '1px solid var(--pink-soft)',
+                            background: 'var(--pink-tint)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                           }}>
                             <Icon name="doc" size={16} color="var(--pink-deep)"/>
