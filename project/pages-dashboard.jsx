@@ -307,16 +307,10 @@ function TaskRow({ task, dense, large, onDelete, onUpdate }) {
   const [editando, setEditando] = useState(false);
   const [tituloEdit, setTituloEdit] = useState(task.titulo);
 
-  const prioMap = {
-    urgente: 'color-mix(in oklch, #fe7dae 22%, white)',
-    alta:    'color-mix(in oklch, #ffe1bd 30%, white)',
-    media:   'color-mix(in oklch, #bce1f6 28%, white)',
-    baixa:   'color-mix(in oklch, #f1e18d 30%, white)',
-  };
   const accentMap = {
     urgente: '#fe7dae', alta: '#ffe1bd', media: '#bce1f6', baixa: '#f1e18d',
   };
-  const bg = prioMap[task.prioridade] || 'color-mix(in oklch, #fec9df 24%, white)';
+  const bg = 'white';
   const accent = accentMap[task.prioridade] || '#fec9df';
   const D = 'rgba(32,30,31,'; // dark alpha helper
 
