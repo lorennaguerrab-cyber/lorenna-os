@@ -1468,6 +1468,81 @@ function gerarSugestoesLocais(offset) {
   return sugestoes;
 }
 
+function LogueDashWidget({ setRoute }) {
+  const logue = window.LOGUE_DATA || { projetos: [], pagamentos: [] };
+  const emAberto = logue.projetos.filter(p => p.status !== 'entregue');
+  const pagsPendentes = logue.pagamentos.filter(p => p.status === 'pendente');
+  const today = new Date().getDate();
+  const pagsProximos = pagsPendentes.filter(p => {
+    const diff = p.dia - today;
+    return diff >= 0 && diff <= 7;
+  });
+
+  if (emAberto.length === 0 && pagsPendentes.length === 0) return null;
+
+  const clientesCores = { otica: '#bce1f6', espaco: '#f1e18d', pratique: '#f0bff8', jornal: '#ffe1bd' };
+  const clientesNomes = { otica: 'Ótica Igor', espaco: 'Espaço Criar', pratique: 'Pratique', jornal: 'Jornal' };
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="row between">
+          <div>
+            <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 500 }}>Agência Logue</h2>
+            <p className="tiny muted" style={{ marginTop: 2 }}>{emAberto.length} vídeos em aberto</p>
+          </div>
+          <Button variant="ghost" size="sm" onClick={() => setRoute('/logue')}>
+            Ver tudo →
+          </Button>
+        </div>
+      </CardHeader>
+      <CardBody>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-3)' }}>
+          {/* Open projects */}
+          <div className="col gap-2">
+            <div style={{ fontSize: 12, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-muted)', marginBottom: 2 }}>Pendências</div>
+            {emAberto.slice(0, 5).map(p => {
+              const cor = clientesCores[p.cliente] || '#fec9df';
+              const nome = clientesNomes[p.cliente] || p.cliente;
+              return (
+                <div key={p.id} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <div style={{ width: 8, height: 8, borderRadius: 999, background: cor, flexShrink: 0 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13, color: '#201e1f', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.titulo}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{nome}</div>
+                  </div>
+                </div>
+              );
+            })}
+            {emAberto.length > 5 && (
+              <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>+ {emAberto.length - 5} outros</div>
+            )}
+          </div>
+
+          {/* Payments */}
+          <div className="col gap-2">
+            <div style={{ fontSize: 12, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-muted)', marginBottom: 2 }}>Equipe — pagamentos</div>
+            {pagsPendentes.map(p => (
+              <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                <div>
+                  <div style={{ fontSize: 13, color: '#201e1f' }}>{p.destinatario}</div>
+                  <div style={{ fontSize: 12, color: pagsProximos.some(x => x.id === p.id) ? '#C0392B' : 'var(--text-muted)' }}>
+                    Dia {p.dia} {pagsProximos.some(x => x.id === p.id) ? '· próximo!' : ''}
+                  </div>
+                </div>
+                <span style={{ fontFamily: 'var(--font-title)', fontSize: 15, fontWeight: 500, color: '#201e1f' }}>R$ {p.valor}</span>
+              </div>
+            ))}
+            {pagsPendentes.length === 0 && (
+              <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Todos pagos este mês</div>
+            )}
+          </div>
+        </div>
+      </CardBody>
+    </Card>
+  );
+}
+
 function SugestoesWidget({ setRoute }) {
   const [offset, setOffset] = useState(0);
   const [itens, setItens] = useState(() => gerarSugestoesLocais(0));
@@ -1681,6 +1756,9 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
             <WeekView />
           </CardBody>
         </Card>
+
+        {/* Agência Logue — resumo */}
+        <LogueDashWidget setRoute={setRoute} />
 
         {/* Sugestões de conteúdo — largura total */}
         <SugestoesWidget setRoute={setRoute} />

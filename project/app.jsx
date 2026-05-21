@@ -254,6 +254,7 @@ function App() {
     '/conteudo':    () => <ConteudoPage    energy={energy} />,
     '/prompts':     () => <PromptsPage     />,
     '/clientes':    () => <ClientesPage    setRoute={setRoute} />,
+    '/logue':       () => <LoguePage       />,
     '/crm':         () => <CRMPage         />,
     '/agenda':      () => <AgendaPage      />,
     '/financeiro':  () => <FinanceiroPage  />,

@@ -47,6 +47,11 @@ const AGENDA_EVENTS = [
   { id: 31, date: '2026-05-28', hora: '14:00', titulo: 'Entrega relatório clientes', tipo: 'admin',    recorrente: false },
   { id: 32, date: '2026-05-29', hora: '09:00', titulo: 'Reunião planejamento junho', tipo: 'admin',    recorrente: false },
   { id: 33, date: '2026-05-26', hora: '09:00', titulo: 'Botox capilar + Gravações Sheila Reis (UGC por permuta)', tipo: 'gravacao', recorrente: false },
+  // Pagamentos equipe Logue — dia 10 (gerado automaticamente)
+  { id: 'pg-ingred-0526', date: '2026-05-10', hora: null, titulo: 'Pagar Ingred — R$ 200 (editora de vídeos)', tipo: 'admin', recorrente: true },
+  { id: 'pg-kamile-0526', date: '2026-05-10', hora: null, titulo: 'Pagar Kamile — R$ 50 (auxiliar de captação)', tipo: 'admin', recorrente: true },
+  { id: 'pg-ingred-0626', date: '2026-06-10', hora: null, titulo: 'Pagar Ingred — R$ 200 (editora de vídeos)', tipo: 'admin', recorrente: true },
+  { id: 'pg-kamile-0626', date: '2026-06-10', hora: null, titulo: 'Pagar Kamile — R$ 50 (auxiliar de captação)', tipo: 'admin', recorrente: true },
 ];
 
 const AGENDA_TYPE_COLORS = {
@@ -1032,6 +1037,46 @@ function FinanceiroPage() {
             </CardBody>
           </Card>
         </div>
+
+        {/* Agência Logue — pagamentos da equipe */}
+        {(() => {
+          const logue = window.LOGUE_DATA;
+          if (!logue || !logue.pagamentos || logue.pagamentos.length === 0) return null;
+          const totalLogue = logue.pagamentos.reduce((s, p) => s + p.valor, 0);
+          return (
+            <Card>
+              <CardHeader>
+                <div className="row between">
+                  <div>
+                    <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 16, fontWeight: 500 }}>Equipe Agência Logue</h2>
+                    <p className="tiny muted" style={{ marginTop: 2 }}>Colaboradores — pagamentos mensais</p>
+                  </div>
+                  <span style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 500, color: '#C0392B' }}>
+                    − R$ {totalLogue}
+                  </span>
+                </div>
+              </CardHeader>
+              <CardBody>
+                <div className="col gap-2">
+                  {logue.pagamentos.map(p => (
+                    <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'var(--offwhite)', borderRadius: 10 }}>
+                      <div>
+                        <div style={{ fontSize: 14, fontWeight: 500, color: '#201e1f' }}>{p.descricao}</div>
+                        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Dia {p.dia} · {p.recorrente ? 'mensal' : 'avulso'}</div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <span style={{ fontSize: 14, fontWeight: 500, color: p.status === 'pago' ? '#3A8C50' : '#C0392B' }}>
+                          {p.status === 'pago' ? 'Pago' : 'Pendente'}
+                        </span>
+                        <span style={{ fontFamily: 'var(--font-title)', fontSize: 15, fontWeight: 500, color: '#201e1f' }}>R$ {p.valor}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardBody>
+            </Card>
+          );
+        })()}
 
         {/* Status legend */}
         <div className="row gap-3" style={{ flexWrap: 'wrap' }}>

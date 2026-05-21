@@ -24,6 +24,7 @@ window.todayBrasilia = function() {
 const NAV = [
   { href: '/',            icon: 'home',     label: 'Dashboard'         },
   { href: '/tarefas',     icon: 'check',    label: 'Tarefas'           },
+  { href: '/logue',       icon: 'play',     label: 'Agência Logue'     },
   { href: '/saude',       icon: 'pill',     label: 'Saúde'             },
   { href: '/habitos',     icon: 'check',    label: 'Hábitos'           },
   { href: '/studio',      icon: 'sparkle',  label: 'Studio IA'         },
