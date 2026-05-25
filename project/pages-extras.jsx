@@ -20,11 +20,6 @@ const AGENDA_EVENTS = [
   { id: 6,  date: '2026-05-22', hora: '08:20', titulo: 'Futebol Mateus e Murilo', tipo: 'filho',    recorrente: true  },
   { id: 7,  date: '2026-05-27', hora: '08:20', titulo: 'Futebol Mateus e Murilo', tipo: 'filho',    recorrente: true  },
   { id: 8,  date: '2026-05-29', hora: '08:20', titulo: 'Futebol Mateus e Murilo', tipo: 'filho',    recorrente: true  },
-  // Divulgar serviços — toda SEGUNDA-FEIRA
-  { id: 9,  date: '2026-05-04', hora: '10:00', titulo: '📣 Divulgar serviços (stories + feed)', tipo: 'conteudo', recorrente: true },
-  { id: 10, date: '2026-05-11', hora: '10:00', titulo: '📣 Divulgar serviços (stories + feed)', tipo: 'conteudo', recorrente: true },
-  { id: 11, date: '2026-05-18', hora: '10:00', titulo: '📣 Divulgar serviços (stories + feed)', tipo: 'conteudo', recorrente: true },
-  { id: 12, date: '2026-05-25', hora: '10:00', titulo: '📣 Divulgar serviços (stories + feed)', tipo: 'conteudo', recorrente: true },
   // Outros eventos
   { id: 13, date: '2026-05-01', hora: '09:00', titulo: 'Reunião início do mês — Logue', tipo: 'admin',    recorrente: false },
   { id: 14, date: '2026-05-05', hora: '14:00', titulo: 'Entrega posts Espaço Criar', tipo: 'conteudo', recorrente: false },
@@ -42,7 +37,9 @@ const AGENDA_EVENTS = [
   { id: 26, date: '2026-05-22', hora: '15:00', titulo: 'Gravação vídeo Jornal Cidades Minerais', tipo: 'gravacao', recorrente: false },
   { id: 27, date: '2026-05-23', hora: '16:00', titulo: 'Planejamento semana editorial', tipo: 'admin',    recorrente: false },
   { id: 28, date: '2026-05-24', hora: null,    titulo: 'Família — tempo com os meninos', tipo: 'filho',    recorrente: false },
-  { id: 29, date: '2026-05-25', hora: null,    titulo: 'Revisão semana e planejamento próxima', tipo: 'admin',    recorrente: false },
+  { id: 29,  date: '2026-05-25', hora: null,    titulo: 'Revisão semana e planejamento próxima', tipo: 'admin',    recorrente: false },
+  { id: 34,  date: '2026-05-25', hora: '14:00', titulo: 'Captação Espaço Criar',                  tipo: 'gravacao', recorrente: false },
+  { id: 35,  date: '2026-05-25', hora: '16:00', titulo: 'Captação Igor Giordano',                 tipo: 'gravacao', recorrente: false },
   { id: 30, date: '2026-05-27', hora: '10:00', titulo: 'Gravação conteúdo UGC', tipo: 'gravacao', recorrente: false },
   { id: 31, date: '2026-05-28', hora: '14:00', titulo: 'Entrega relatório clientes', tipo: 'admin',    recorrente: false },
   { id: 32, date: '2026-05-29', hora: '09:00', titulo: 'Reunião planejamento junho', tipo: 'admin',    recorrente: false },

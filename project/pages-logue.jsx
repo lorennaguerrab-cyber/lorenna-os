@@ -365,11 +365,40 @@ function LoguePage() {
   return (
     <div className="content">
       <div className="col gap-5 fade-up">
-        <PageHeader
-          title="Agência Logue"
-          subtitle="Projetos, entregas e equipe em um lugar"
-          action={tab === 'pagamentos' && <Button variant="primary" onClick={() => setShowNewPag(true)}><Icon name="plus" size={14} color="white"/> Novo pagamento</Button>}
-        />
+        {/* Header com logo da Logue */}
+        <div style={{
+          background: '#201e1f',
+          borderRadius: 'var(--r-xl)',
+          padding: 'var(--s-5) var(--s-6)',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          position: 'relative', overflow: 'hidden',
+        }}>
+          <span style={{
+            position: 'absolute', right: -40, top: -40,
+            width: 180, height: 180, borderRadius: 999,
+            background: 'radial-gradient(circle, rgba(254,125,174,0.15) 0%, transparent 70%)',
+            pointerEvents: 'none',
+          }}/>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 0, marginBottom: 6 }}>
+              <span style={{
+                fontFamily: 'Syne, sans-serif', fontSize: 42, fontWeight: 800,
+                color: '#fffcfa', letterSpacing: '-0.03em', lineHeight: 1,
+              }}>logue</span>
+              <span style={{
+                width: 13, height: 13, borderRadius: 999, flexShrink: 0,
+                background: 'radial-gradient(circle at 35% 30%, #fec9df, #d966aa)',
+                display: 'inline-block', marginBottom: 6, marginLeft: 2,
+              }}/>
+            </div>
+            <p style={{ fontSize: 14, color: 'rgba(255,252,250,0.5)', fontStyle: 'italic', margin: 0, letterSpacing: '0.01em' }}>agência digital · projetos, entregas e equipe</p>
+          </div>
+          {tab === 'pagamentos' && (
+            <Button variant="primary" onClick={() => setShowNewPag(true)}>
+              <Icon name="plus" size={14} color="white"/> Novo pagamento
+            </Button>
+          )}
+        </div>
 
         {/* Summary cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--s-3)' }}>

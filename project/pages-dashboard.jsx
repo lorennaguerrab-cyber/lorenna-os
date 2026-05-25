@@ -13,6 +13,16 @@ function DayFocusCard({ energy }) {
   const h = today.getHours();
   const greet = h < 12 ? 'Bom dia, Lorenna' : h < 18 ? 'Boa tarde, Lorenna' : 'Boa noite, Lorenna';
 
+  // Real counts
+  const todayIdx_dc = (today.getDay() + 6) % 7;
+  const todayStr_dc = today.toLocaleDateString('en-CA'); // YYYY-MM-DD
+  const priorityCount = (window.DEMO_TASKS || []).filter(t =>
+    t.status !== 'concluida' &&
+    (t.prioridade === 'urgente' || t.prioridade === 'alta') &&
+    (t.diario || (t.diasDaSemana && t.diasDaSemana.includes(todayIdx_dc)))
+  ).length;
+  const eventCount = (window.AGENDA_EVENTS || []).filter(ev => ev.date === todayStr_dc).length;
+
   return (
     <Card className="day-focus" style={{
       background: `var(--pink-tint)`,
@@ -51,23 +61,28 @@ function DayFocusCard({ energy }) {
             <span style={{ fontSize: 14, fontWeight: 500 }}>{e.label}</span>
           </div>
 
-          <div className="row gap-2" style={{
-            padding: '6px 12px',
-            background: 'var(--bg-surface)',
-            borderRadius: 999, border: '1px solid var(--border)',
-          }}>
-            <span style={{ width: 8, height: 8, borderRadius: 999, background: 'var(--pink)' }}/>
-            <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>3 prioridades pra hoje</span>
-          </div>
+          {priorityCount > 0 && (
+            <div className="row gap-2" style={{
+              padding: '6px 12px',
+              background: 'var(--bg-surface)',
+              borderRadius: 999, border: '1px solid var(--border)',
+            }}>
+              <span style={{ width: 8, height: 8, borderRadius: 999, background: 'var(--pink)', flexShrink: 0 }}/>
+              <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>{priorityCount} {priorityCount === 1 ? 'prioridade' : 'prioridades'} hoje</span>
+            </div>
+          )}
 
-          <div className="row gap-2" style={{
-            padding: '6px 12px',
-            background: 'var(--bg-surface)',
-            borderRadius: 999, border: '1px solid var(--border)',
-          }}>
-            <Icon name="calendar" size={12} color="var(--text-muted)" />
-            <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>5 lembretes fixos</span>
-          </div>
+          {eventCount > 0 && (
+            <div className="row gap-2" style={{
+              padding: '6px 12px',
+              background: 'var(--bg-surface)',
+              borderRadius: 999, border: '1px solid var(--border)',
+            }}>
+              <Icon name="calendar" size={12} color="var(--text-muted)" />
+              <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>{eventCount} {eventCount === 1 ? 'compromisso' : 'compromissos'} hoje</span>
+            </div>
+          )}
+
         </div>
       </CardBody>
     </Card>
@@ -1651,9 +1666,49 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
   return (
     <div className="content">
       <div className="col gap-5 fade-up-stagger">
-        {/* Saudação + Energia lado a lado */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-4)' }} className="dash-top-grid">
+        {/* Saudação + Logue atalho + Energia lado a lado */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 0.7fr 0.9fr', gap: 'var(--s-4)' }} className="dash-top-grid">
           <DayFocusCard energy={energy} />
+          <button onClick={() => setRoute('/logue')} style={{
+            background: '#201e1f',
+            borderRadius: 'var(--r-xl)',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 'var(--s-5)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            textAlign: 'left',
+            position: 'relative',
+            overflow: 'hidden',
+            minHeight: 160,
+          }}>
+            {/* Glow circle decoration */}
+            <span style={{
+              position: 'absolute', right: -32, top: -32,
+              width: 120, height: 120, borderRadius: 999,
+              background: 'radial-gradient(circle, rgba(254,125,174,0.18) 0%, transparent 70%)',
+            }}/>
+            <div>
+              {/* logue. logo */}
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 0, marginBottom: 8 }}>
+                <span style={{
+                  fontFamily: 'Syne, sans-serif', fontSize: 30, fontWeight: 800,
+                  color: '#fffcfa', letterSpacing: '-0.03em', lineHeight: 1,
+                }}>logue</span>
+                <span style={{
+                  width: 9, height: 9, borderRadius: 999, flexShrink: 0,
+                  background: 'radial-gradient(circle at 35% 30%, #fec9df, #d966aa)',
+                  display: 'inline-block', marginBottom: 4, marginLeft: 1,
+                }}/>
+              </div>
+              <p style={{ fontSize: 12, color: 'rgba(255,252,250,0.45)', fontStyle: 'italic', marginBottom: 0, letterSpacing: '0.01em' }}>agência digital</p>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, position: 'relative', zIndex: 1 }}>
+              <span style={{ fontSize: 14, color: 'rgba(255,252,250,0.55)' }}>Ver projetos</span>
+              <Icon name="arrow" size={13} color="#fe7dae"/>
+            </div>
+          </button>
           <Card>
             <CardBody>
               <EnergySelector energy={energy} setEnergy={setEnergy} />

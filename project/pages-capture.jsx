@@ -423,10 +423,163 @@ function IdeiasPage() {
   );
 }
 
+/* ─────────────────────── NOVA TAREFA MODAL ─────────────────────── */
+const DIAS_SEMANA = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+const PRIO_OPTS = [
+  { value: 'urgente', label: 'Urgente', color: '#fe7dae' },
+  { value: 'alta',    label: 'Alta',    color: '#ffe1bd' },
+  { value: 'media',   label: 'Média',   color: '#bce1f6' },
+  { value: 'baixa',   label: 'Baixa',   color: '#f1e18d' },
+];
+const CAT_OPTS = ['admin', 'conteudo', 'cliente', 'gravacao', 'marketing', 'pessoal'];
+const CLI_OPTS = ['', 'Pratique', 'Jornal Cidades Minerais', 'Ótica Igor Giordano', 'Espaço Criar', 'Agência Logue'];
+
+function NovaTarefaModal({ onClose, onSave }) {
+  const [titulo, setTitulo] = useState('');
+  const [prio, setPrio] = useState('media');
+  const [tipo, setTipo] = useState('hoje'); // 'hoje' | 'diario' | 'dias'
+  const [dias, setDias] = useState([]);
+  const [cliente, setCliente] = useState('');
+  const [cat, setCat] = useState('admin');
+
+  const todayIdx = window.todayBrasilia();
+
+  function toggleDia(i) {
+    setDias(prev => prev.includes(i) ? prev.filter(d => d !== i) : [...prev, i]);
+  }
+
+  function handleSave() {
+    if (!titulo.trim()) return;
+    const id = 'u-' + Date.now();
+    const task = {
+      id, titulo: titulo.trim(),
+      status: 'pendente', prioridade: prio,
+      energia: [], categoria: cat,
+      recorrente: tipo !== 'hoje',
+      diario: tipo === 'diario',
+      diasDaSemana: tipo === 'hoje' ? [todayIdx] : tipo === 'dias' ? dias : undefined,
+      micro: [],
+      ...(cliente ? { cliente } : {}),
+    };
+    window.addUserTask(task);
+    onSave(task);
+    onClose();
+  }
+
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed', inset: 0,
+      background: 'rgba(32,30,31,0.4)',
+      backdropFilter: 'blur(4px)',
+      zIndex: 200,
+      display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+      paddingTop: '12vh',
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: 'min(520px, 94vw)',
+        background: 'var(--bg-surface)',
+        borderRadius: 'var(--r-xl)',
+        border: '1px solid var(--border)',
+        overflow: 'hidden',
+      }}>
+        <div style={{ height: 4, background: 'var(--pink)' }}/>
+        <div style={{ padding: 'var(--s-5)' }}>
+          <div className="row between" style={{ marginBottom: 'var(--s-4)' }}>
+            <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 600 }}>Nova tarefa</h3>
+            <button onClick={onClose} className="btn ghost icon"><Icon name="x" size={14}/></button>
+          </div>
+
+          {/* Título */}
+          <div style={{ marginBottom: 'var(--s-3)' }}>
+            <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Título *</label>
+            <input
+              autoFocus
+              className="textarea"
+              value={titulo}
+              onChange={e => setTitulo(e.target.value)}
+              placeholder="O que precisa ser feito?"
+              style={{ width: '100%', padding: '10px 14px', fontSize: 15, borderRadius: 'var(--r-md)', border: '1px solid var(--border)', background: 'var(--offwhite)', fontFamily: 'var(--font-body)', outline: 'none', boxSizing: 'border-box' }}
+              onKeyDown={e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSave(); }}
+            />
+          </div>
+
+          {/* Prioridade */}
+          <div style={{ marginBottom: 'var(--s-3)' }}>
+            <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Prioridade</label>
+            <div style={{ display: 'flex', gap: 6 }}>
+              {PRIO_OPTS.map(p => (
+                <button key={p.value} onClick={() => setPrio(p.value)} style={{
+                  flex: 1, padding: '7px 4px', borderRadius: 'var(--r-md)', border: 'none', cursor: 'pointer', fontSize: 13, fontFamily: 'var(--font-body)', fontWeight: prio === p.value ? 600 : 400,
+                  background: prio === p.value ? p.color : 'var(--offwhite)',
+                  color: '#201e1f',
+                  transition: 'all .15s',
+                }}>{p.label}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Quando */}
+          <div style={{ marginBottom: 'var(--s-3)' }}>
+            <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Quando</label>
+            <div style={{ display: 'flex', gap: 6, marginBottom: tipo === 'dias' ? 8 : 0 }}>
+              {[['hoje','Hoje'], ['diario','Diária'], ['dias','Dias específicos']].map(([v, l]) => (
+                <button key={v} onClick={() => setTipo(v)} style={{
+                  flex: 1, padding: '7px 4px', borderRadius: 'var(--r-md)', border: 'none', cursor: 'pointer', fontSize: 13, fontFamily: 'var(--font-body)',
+                  background: tipo === v ? '#201e1f' : 'var(--offwhite)',
+                  color: tipo === v ? '#fffcfa' : 'var(--text-secondary)',
+                  transition: 'all .15s',
+                }}>{l}</button>
+              ))}
+            </div>
+            {tipo === 'dias' && (
+              <div style={{ display: 'flex', gap: 4 }}>
+                {DIAS_SEMANA.map((d, i) => (
+                  <button key={i} onClick={() => toggleDia(i)} style={{
+                    flex: 1, padding: '6px 2px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 12, fontFamily: 'var(--font-body)',
+                    background: dias.includes(i) ? 'var(--pink)' : 'var(--offwhite)',
+                    color: dias.includes(i) ? 'white' : 'var(--text-muted)',
+                  }}>{d}</button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Categoria + Cliente */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 'var(--s-4)' }}>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Categoria</label>
+              <select value={cat} onChange={e => setCat(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: 'var(--r-md)', border: '1px solid var(--border)', background: 'var(--offwhite)', fontSize: 14, fontFamily: 'var(--font-body)', color: '#201e1f' }}>
+                {CAT_OPTS.map(c => <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>Cliente (opcional)</label>
+              <select value={cliente} onChange={e => setCliente(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: 'var(--r-md)', border: '1px solid var(--border)', background: 'var(--offwhite)', fontSize: 14, fontFamily: 'var(--font-body)', color: '#201e1f' }}>
+                <option value="">— nenhum —</option>
+                {CLI_OPTS.filter(Boolean).map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="row" style={{ justifyContent: 'flex-end', gap: 8 }}>
+            <Button variant="ghost" onClick={onClose}>Cancelar</Button>
+            <Button variant="primary" onClick={handleSave} disabled={!titulo.trim()}>
+              <Icon name="plus" size={13} color="white"/> Adicionar tarefa
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─────────────────────── TAREFAS ─────────────────────── */
 function TarefasPage() {
   const [filter, setFilter] = useState('hoje');
   const [clientFilter, setClientFilter] = useState('todos');
+  const [showAdd, setShowAdd] = useState(false);
+  const [addCount, setAddCount] = useState(0); // force re-render after adding
   const [deletedIds, setDeletedIds] = useState(() => {
     try { return JSON.parse(localStorage.getItem('lorenna_deleted_tasks') || '[]'); } catch { return []; }
   });
@@ -525,6 +678,12 @@ function TarefasPage() {
 
   return (
     <div className="content">
+      {showAdd && (
+        <NovaTarefaModal
+          onClose={() => setShowAdd(false)}
+          onSave={() => setAddCount(c => c + 1)}
+        />
+      )}
       <div className="col gap-6 fade-up">
 
         {/* ── Header ── */}
@@ -533,7 +692,7 @@ function TarefasPage() {
             <h1 style={{ fontFamily: 'var(--font-title)', fontSize: 28, fontWeight: 700, color: '#201e1f', lineHeight: 1, margin: 0 }}>Tarefas</h1>
             <p style={{ fontSize: 13, color: 'rgba(32,30,31,0.4)', marginTop: 5, marginBottom: 0 }}>{dateLabel}</p>
           </div>
-          <Button variant="primary"><Icon name="plus" size={14} color="white"/> Nova tarefa</Button>
+          <Button variant="primary" onClick={() => setShowAdd(true)}><Icon name="plus" size={14} color="white"/> Nova tarefa</Button>
         </div>
 
         {/* ── Tabs — Apple segmented control ── */}

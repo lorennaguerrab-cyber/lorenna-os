@@ -118,6 +118,20 @@ const RECURRENCES = [
 
 /* ── Tarefas demo ── */
 const DEMO_TASKS = [
+  // ── Separar materiais captação: domingo 25/05
+  {
+    id: 'tcap-25may', titulo: 'Separar materiais de captação',
+    status: 'pendente', prioridade: 'urgente',
+    energia: ['operacional'],
+    categoria: 'gravacao', recorrente: false, diasDaSemana: [0],
+    micro: [
+      { id: 'tcap1', desc: 'Microfone — conferir e carregar', done: false, min: 5 },
+      { id: 'tcap2', desc: 'Celular — memória e bateria ok',  done: false, min: 5 },
+      { id: 'tcap3', desc: 'Luzes — testar e organizar',      done: false, min: 5 },
+      { id: 'tcap4', desc: 'Câmera — conferir bateria e cartão', done: false, min: 5 },
+    ],
+  },
+
   // ── E-mails: diário
   {
     id: 't4', titulo: 'Responder e-mails e DMs pendentes',
@@ -1254,6 +1268,21 @@ VOCÊ TEM PERMISSÃO PARA ACESSAR MEU NOTION.`,
     ],
   },
 ];
+
+// Load user-created tasks from localStorage and merge into DEMO_TASKS
+try {
+  const _saved = JSON.parse(localStorage.getItem('lorenna_user_tasks') || '[]');
+  DEMO_TASKS.push(..._saved);
+} catch {}
+
+window.addUserTask = function(task) {
+  DEMO_TASKS.push(task);
+  try {
+    const saved = JSON.parse(localStorage.getItem('lorenna_user_tasks') || '[]');
+    saved.push(task);
+    localStorage.setItem('lorenna_user_tasks', JSON.stringify(saved));
+  } catch {}
+};
 
 Object.assign(window, {
   ENERGY, ENERGY_LIST, NAV,
