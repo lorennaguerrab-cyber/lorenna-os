@@ -817,7 +817,7 @@ function FormOnboarding({ client, onSent }) {
   );
 }
 
-function ClientesPage({ setRoute }) {
+function ClientesPage({ setRoute, embedded = false }) {
   const [selectedId, setSelectedId] = useState(null);
   const selected = selectedId ? window.DEMO_CLIENTS.find(c => c.id === selectedId) : null;
 
@@ -829,12 +829,11 @@ function ClientesPage({ setRoute }) {
   const meta = 6000;
   const pendentes = window.DEMO_CLIENTS.reduce((s, c) => s + c.pendentes, 0);
 
-  return (
-    <div className="content">
-      <div className="col gap-6 fade-up">
-        <PageHeader title="Clientes" subtitle="Agência Logue · receita ativa, entregas e onboarding em um lugar"
-          action={<Button variant="primary"><Icon name="plus" size={14} color="white"/> Novo cliente</Button>}
-        />
+  const inner = (
+    <div className="col gap-6 fade-up">
+      {!embedded && <PageHeader title="Clientes" subtitle="Agência Logue · receita ativa, entregas e onboarding em um lugar"
+        action={<Button variant="primary"><Icon name="plus" size={14} color="white"/> Novo cliente</Button>}
+      />}
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--s-4)' }}>
           <Card>
@@ -870,9 +869,9 @@ function ClientesPage({ setRoute }) {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: 'var(--s-4)' }}>
           {window.DEMO_CLIENTS.map(c => <ClientCard key={c.id} client={c} onOpen={() => setSelectedId(c.id)}/>)}
         </div>
-      </div>
     </div>
   );
+  return embedded ? inner : <div className="content">{inner}</div>;
 }
 
 /* ─────────────────────── CRM ─────────────────────── */
@@ -1006,7 +1005,7 @@ function CRMPage() {
           })}
         </div>
 
-        {mainTab === 'clientes' && <ClientesPage setRoute={() => {}}/>}
+        {mainTab === 'clientes' && <ClientesPage setRoute={() => {}} embedded />}
 
         {mainTab === 'prospeccao' && (<>
 
