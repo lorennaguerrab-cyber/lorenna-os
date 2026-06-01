@@ -911,7 +911,7 @@ function CRMStatusBadge({ status }) {
 const EMPTY_FORM = { nome: '', empresa: '', tipo: 'agencia', status: 'potencial', nota: '', phone: '' };
 
 function CRMPage() {
-  const [mainTab, setMainTab] = useState('prospeccao');
+  const [mainTab, setMainTab] = useState('clientes');
   const [contacts, setContacts] = useState(DEMO_CONTACTS_WITH_TIPO);
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('agencia');
