@@ -220,15 +220,39 @@ function ProjetoCard({ projeto, onUpdate }) {
           <LStatusBadge status={projeto.status} onChange={s => onUpdate({ ...projeto, status: s })} />
         </div>
 
-        {/* Expand toggle */}
-        <button onClick={() => setOpen(!open)} style={{
-          background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-          fontSize: 13, color: 'var(--pink-deep)', fontFamily: 'var(--font-body)',
-          display: 'flex', alignItems: 'center', gap: 4,
-        }}>
-          <Icon name={open ? 'chev-down' : 'chev-right'} size={12} />
-          {open ? 'Fechar' : 'Ver narração e notas'}
-        </button>
+        {/* Bottom row: expand toggle + mark complete */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginTop: 2 }}>
+          <button onClick={() => setOpen(!open)} style={{
+            background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+            fontSize: 13, color: 'var(--pink-deep)', fontFamily: 'var(--font-body)',
+            display: 'flex', alignItems: 'center', gap: 4,
+          }}>
+            <Icon name={open ? 'chev-down' : 'chev-right'} size={12} />
+            {open ? 'Fechar' : 'Ver narração e notas'}
+          </button>
+
+          {projeto.status !== 'entregue' ? (
+            <button onClick={() => { onUpdate({ ...projeto, status: 'entregue' }); showToast('Marcado como entregue!'); }} style={{
+              background: '#201e1f', border: 'none', cursor: 'pointer', padding: '5px 12px',
+              fontSize: 13, color: '#fffcfa', fontFamily: 'var(--font-body)', fontWeight: 500,
+              borderRadius: 999, display: 'flex', alignItems: 'center', gap: 5,
+            }}>
+              <Icon name="check" size={12} color="#fffcfa" /> Marcar como entregue
+            </button>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 13, color: '#7FB68C', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <Icon name="check" size={12} color="#7FB68C" /> Entregue
+              </span>
+              <button onClick={() => onUpdate({ ...projeto, status: 'pendente' })} style={{
+                background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                fontSize: 13, color: 'var(--text-muted)', fontFamily: 'var(--font-body)',
+              }}>
+                Reabrir
+              </button>
+            </div>
+          )}
+        </div>
 
         {open && (
           <div className="col gap-3" style={{ marginTop: 12 }}>
