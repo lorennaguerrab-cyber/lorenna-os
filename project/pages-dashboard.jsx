@@ -1716,8 +1716,15 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
           </Card>
         </div>
 
-        {/* Rotina da semana — largura total */}
-        <RotinaSemanalWidget />
+        {/* Rotina da semana + Pequenas Vitórias lado a lado */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-4)' }}>
+          <RotinaSemanalWidget />
+          <Card style={{ background: 'color-mix(in oklch, #f1e18d 12%, #fffcfa)' }}>
+            <CardBody>
+              <PequenasVitorias />
+            </CardBody>
+          </Card>
+        </div>
 
         {/* Datas sazonais */}
         <HolidayAlertBanner />
@@ -1794,12 +1801,6 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
           {/* RIGHT */}
           <div className="col gap-4">
             <LembretesHabitosWidget />
-
-            <Card>
-              <CardBody>
-                <PequenasVitorias />
-              </CardBody>
-            </Card>
           </div>
         </div>
 
