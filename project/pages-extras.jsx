@@ -59,7 +59,7 @@ const AGENDA_TYPE_COLORS = {
   admin:    { bg: 'color-mix(in oklch, #ffe1bd 40%, white)', border: '#ffe1bd', text: '#201e1f', dot: '#ffe1bd' },
 };
 
-function AgendaEventCard({ ev }) {
+function AgendaEventCard({ ev, onEdit }) {
   const cfg = AGENDA_TYPE_COLORS[ev.tipo] || AGENDA_TYPE_COLORS.admin;
   const TIPO_LABEL = {
     conteudo: 'Conteúdo', gravacao: 'Gravação', admin: 'Admin',
@@ -89,9 +89,24 @@ function AgendaEventCard({ ev }) {
             {ev.titulo}
           </div>
         </div>
-        {ev.recorrente && (
-          <span title="Recorrente" style={{ fontSize: 11, color: cfg.dot, opacity: 0.75, flexShrink: 0 }}>↻</span>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+          {ev.recorrente && (
+            <span title="Recorrente" style={{ fontSize: 11, color: cfg.dot, opacity: 0.75 }}>↻</span>
+          )}
+          {onEdit && (
+            <button
+              onClick={e => { e.stopPropagation(); onEdit(ev); }}
+              title="Editar"
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                padding: '2px 5px', fontSize: 14, color: cfg.text,
+                opacity: 0.45, fontFamily: 'var(--font-body)', lineHeight: 1,
+              }}
+            >
+              ✎
+            </button>
+          )}
+        </div>
       </div>
       <div style={{ marginTop: 5 }}>
         <span style={{
@@ -107,12 +122,177 @@ function AgendaEventCard({ ev }) {
   );
 }
 
+function AgendaEventModal({ event, onSave, onDelete, onClose }) {
+  const [titulo, setTitulo] = useState(event.titulo || '');
+  const [data, setData] = useState(event.date || '');
+  const [hora, setHora] = useState(event.hora || '');
+  const [tipo, setTipo] = useState(event.tipo || 'admin');
+  const [recorrente, setRecorrente] = useState(event.recorrente || false);
+
+  const isNew = !event.id;
+
+  function handleSave() {
+    if (!titulo.trim() || !data) { showToast('Preencha título e data'); return; }
+    const id = event.id || ('ev-' + Date.now());
+    onSave({ id, titulo: titulo.trim(), date: data, hora: hora || null, tipo, recorrente });
+  }
+
+  const inputStyle = {
+    width: '100%', fontSize: 14, padding: '10px 12px',
+    background: 'var(--offwhite)', borderRadius: 'var(--r-md)',
+    border: 'none', fontFamily: 'var(--font-body)', color: '#201e1f',
+    outline: 'none', boxSizing: 'border-box',
+  };
+
+  return (
+    <div
+      style={{
+        position: 'fixed', inset: 0, background: 'rgba(32,30,31,0.45)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        zIndex: 1000, padding: 16,
+      }}
+      onClick={onClose}
+    >
+      <div
+        style={{
+          background: '#fffcfa', borderRadius: 'var(--r-xl)',
+          width: 'min(480px, 100%)', overflow: 'hidden',
+        }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div style={{ height: 4, background: 'var(--pink)' }} />
+        <div style={{ padding: '28px 28px 24px' }}>
+          <div style={{ fontFamily: 'var(--font-title)', fontSize: 20, fontWeight: 700, color: '#201e1f', marginBottom: 20 }}>
+            {isNew ? 'Novo compromisso' : 'Editar compromisso'}
+          </div>
+
+          <div style={{ marginBottom: 14 }}>
+            <label style={{ display: 'block', fontSize: 14, fontWeight: 500, color: 'var(--gray)', marginBottom: 6 }}>Título</label>
+            <input
+              value={titulo}
+              onChange={e => setTitulo(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSave()}
+              placeholder="Nome do compromisso"
+              autoFocus
+              style={inputStyle}
+            />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
+            <div>
+              <label style={{ display: 'block', fontSize: 14, fontWeight: 500, color: 'var(--gray)', marginBottom: 6 }}>Data</label>
+              <input type="date" value={data} onChange={e => setData(e.target.value)} style={inputStyle} />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: 14, fontWeight: 500, color: 'var(--gray)', marginBottom: 6 }}>Hora (opcional)</label>
+              <input type="time" value={hora} onChange={e => setHora(e.target.value)} style={inputStyle} />
+            </div>
+          </div>
+
+          <div style={{ marginBottom: 14 }}>
+            <label style={{ display: 'block', fontSize: 14, fontWeight: 500, color: 'var(--gray)', marginBottom: 6 }}>Tipo</label>
+            <select value={tipo} onChange={e => setTipo(e.target.value)} style={inputStyle}>
+              <option value="conteudo">Conteúdo</option>
+              <option value="gravacao">Gravação</option>
+              <option value="cliente">Cliente</option>
+              <option value="filho">Filhos</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <input
+              type="checkbox"
+              id="agenda-rec"
+              checked={recorrente}
+              onChange={e => setRecorrente(e.target.checked)}
+              style={{ width: 16, height: 16, cursor: 'pointer', accentColor: 'var(--pink)' }}
+            />
+            <label htmlFor="agenda-rec" style={{ fontSize: 14, color: 'var(--ink)', cursor: 'pointer' }}>
+              Evento recorrente
+            </label>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {!isNew ? (
+              <button
+                onClick={() => onDelete(event.id)}
+                style={{
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  fontSize: 14, color: 'var(--text-muted)', fontFamily: 'var(--font-body)', padding: 0,
+                }}
+              >
+                Excluir
+              </button>
+            ) : <div />}
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button
+                onClick={onClose}
+                style={{
+                  background: 'var(--offwhite)', border: 'none', cursor: 'pointer',
+                  fontSize: 14, color: 'var(--ink)', fontFamily: 'var(--font-body)',
+                  padding: '10px 18px', borderRadius: 'var(--r-md)', fontWeight: 500,
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSave}
+                style={{
+                  background: 'var(--pink)', border: 'none', cursor: 'pointer',
+                  fontSize: 14, color: '#fffcfa', fontFamily: 'var(--font-body)',
+                  padding: '10px 22px', borderRadius: 'var(--r-md)', fontWeight: 500,
+                }}
+              >
+                Salvar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AgendaPage() {
   const [currentView, setCurrentView] = useState('semana');
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 4, 19)); // May 19, 2026
+  const [currentDate, setCurrentDate] = useState(() => {
+    const now = new Date();
+    return now;
+  });
   const [selectedDay, setSelectedDay] = useState(null);
+  const [events, setEvents] = useState(() => {
+    try {
+      const s = localStorage.getItem('lorenna_agenda_events');
+      return s ? JSON.parse(s) : AGENDA_EVENTS;
+    } catch { return AGENDA_EVENTS; }
+  });
+  const [modalEvent, setModalEvent] = useState(null); // null=closed, {}=new, {id,...}=edit
 
   const todayStr = new Date().toISOString().slice(0, 10);
+
+  function saveEvents(next) {
+    setEvents(next);
+    try { localStorage.setItem('lorenna_agenda_events', JSON.stringify(next)); } catch {}
+    window.AGENDA_EVENTS = next;
+  }
+
+  function handleSaveEvent(ev) {
+    const isEdit = !!events.find(e => e.id === ev.id);
+    if (isEdit) {
+      saveEvents(events.map(e => e.id === ev.id ? ev : e));
+    } else {
+      saveEvents([...events, ev]);
+    }
+    setModalEvent(null);
+    showToast(isEdit ? 'Compromisso atualizado' : 'Compromisso adicionado');
+  }
+
+  function handleDeleteEvent(id) {
+    saveEvents(events.filter(e => e.id !== id));
+    setModalEvent(null);
+    showToast('Compromisso excluído');
+  }
 
   // ── helpers ──────────────────────────────────
   function isoDate(d) {
@@ -123,7 +303,7 @@ function AgendaPage() {
   }
 
   function eventsForDate(dateStr) {
-    return AGENDA_EVENTS.filter(e => e.date === dateStr);
+    return events.filter(e => e.date === dateStr);
   }
 
   // ── navigation ───────────────────────────────
@@ -219,7 +399,7 @@ function AgendaPage() {
                         if (!b.hora) return -1;
                         return a.hora.localeCompare(b.hora);
                       })
-                      .map(ev => <AgendaEventCard key={ev.id} ev={ev} />)
+                      .map(ev => <AgendaEventCard key={ev.id} ev={ev} onEdit={setModalEvent} />)
                   )}
                 </div>
               </div>
@@ -344,7 +524,7 @@ function AgendaPage() {
         {events.filter(e => !e.hora).length > 0 && (
           <div className="col gap-2" style={{ marginBottom: 4 }}>
             <div style={{ fontSize: 14.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray)' }}>Dia todo</div>
-            {events.filter(e => !e.hora).map(ev => <AgendaEventCard key={ev.id} ev={ev} />)}
+            {events.filter(e => !e.hora).map(ev => <AgendaEventCard key={ev.id} ev={ev} onEdit={setModalEvent} />)}
           </div>
         )}
         {/* Time slots */}
@@ -369,7 +549,7 @@ function AgendaPage() {
                   {hourStr}
                 </div>
                 <div style={{ padding: '6px 10px' }}>
-                  {hourEvs.map(ev => <AgendaEventCard key={ev.id} ev={ev} />)}
+                  {hourEvs.map(ev => <AgendaEventCard key={ev.id} ev={ev} onEdit={setModalEvent} />)}
                 </div>
               </div>
             );
@@ -391,21 +571,27 @@ function AgendaPage() {
     return currentDate.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
   }
 
-  const totalEvents = AGENDA_EVENTS.length;
-
   return (
     <div className="content">
+      {modalEvent !== null && (
+        <AgendaEventModal
+          event={modalEvent}
+          onSave={handleSaveEvent}
+          onDelete={handleDeleteEvent}
+          onClose={() => setModalEvent(null)}
+        />
+      )}
       <div className="col gap-5 fade-up">
         <PageHeader
           title="Agenda"
-          subtitle={`${totalEvents} compromissos em maio · clique num dia para ver detalhes`}
+          subtitle={`${events.length} compromissos · clique num dia ou ✎ para editar`}
           action={
             <Button
-              variant="ghost"
-              onClick={() => showToast('Em breve · integração Google Calendar')}
+              variant="primary"
+              onClick={() => setModalEvent({ date: todayStr })}
             >
-              <Icon name="calendar" size={14} color="var(--pink-deep)" />
-              Integrar com Google Agenda
+              <Icon name="plus" size={14} color="#fffcfa" />
+              Novo compromisso
             </Button>
           }
         />
