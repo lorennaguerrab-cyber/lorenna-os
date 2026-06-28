@@ -1719,7 +1719,7 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
         {/* Rotina da semana + Pequenas Vitórias lado a lado */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-4)' }}>
           <RotinaSemanalWidget />
-          <Card style={{ background: 'color-mix(in oklch, #bce1f6 18%, #fffcfa)' }}>
+          <Card style={{ background: 'color-mix(in oklch, #f0bff8 18%, #fffcfa)' }}>
             <CardBody>
               <PequenasVitorias />
             </CardBody>
