@@ -218,6 +218,79 @@ function Tweaks() {
   );
 }
 
+function PasswordGate({ children }) {
+  const [auth, setAuth] = useState(() => sessionStorage.getItem('lorenna_auth') === '1');
+  const [input, setInput] = useState('');
+  const [erro, setErro] = useState(false);
+
+  function tentar() {
+    // btoa('lola2026') = 'bG9sYTIwMjY='
+    if (btoa(input) === 'bG9sYTIwMjY=') {
+      sessionStorage.setItem('lorenna_auth', '1');
+      setAuth(true);
+    } else {
+      setErro(true);
+      setInput('');
+      setTimeout(() => setErro(false), 1800);
+    }
+  }
+
+  if (auth) return children;
+
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      minHeight: '100vh', background: 'var(--offwhite)',
+      fontFamily: 'var(--font-body)',
+    }}>
+      <div style={{
+        width: 'min(380px, 92vw)',
+        background: 'var(--white)',
+        borderRadius: 'var(--r-xl)',
+        overflow: 'hidden',
+      }}>
+        <div style={{ height: 4, background: 'var(--pink)' }}/>
+        <div style={{ padding: '40px 36px' }}>
+          {/* Logo */}
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 0, marginBottom: 6 }}>
+            <span style={{ fontFamily: 'Syne, sans-serif', fontSize: 28, fontWeight: 800, color: '#201e1f', letterSpacing: '-0.03em', lineHeight: 1 }}>Córtex</span>
+            <span style={{ fontFamily: 'Syne, sans-serif', fontSize: 28, fontWeight: 800, color: 'var(--pink)', letterSpacing: '-0.03em', lineHeight: 1, marginLeft: 6 }}>Lola</span>
+          </div>
+          <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 32 }}>Área privada · apenas para Lorenna</p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <input
+              type="password"
+              autoFocus
+              className="input"
+              placeholder="Senha"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') tentar(); }}
+              style={{
+                fontSize: 16,
+                background: erro ? 'color-mix(in oklch, #fe7dae 10%, white)' : 'var(--offwhite)',
+                transition: 'background .2s',
+              }}
+            />
+            {erro && (
+              <p style={{ fontSize: 14, color: '#C0392B', margin: 0 }}>Senha incorreta. Tente novamente.</p>
+            )}
+            <button onClick={tentar} style={{
+              background: 'var(--pink)', color: 'white',
+              border: 'none', borderRadius: 'var(--r-md)',
+              padding: '12px', fontSize: 15, fontWeight: 600,
+              fontFamily: 'var(--font-body)', cursor: 'pointer',
+            }}>
+              Entrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [route, setRoute] = useState('/');
   const [energy, setEnergy] = useState('criativa');
@@ -325,4 +398,4 @@ function App() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+ReactDOM.createRoot(document.getElementById('root')).render(<PasswordGate><App /></PasswordGate>);
