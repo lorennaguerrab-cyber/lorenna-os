@@ -1641,8 +1641,8 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
       .filter(t => t.status !== 'concluida')
       .filter(t => {
         if (t.diario) return true;
-        if (t.prioridade === 'urgente') return true;
         if (t.diasDaSemana && t.diasDaSemana.includes(dayOfWeek)) return true;
+        if (t.date && t.date === todayStr) return true;
         return false;
       })
       .sort((a, b) => (prioOrd[a.prioridade] ?? 2) - (prioOrd[b.prioridade] ?? 2))
@@ -1716,13 +1716,11 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
           </Card>
         </div>
 
-        {/* Rotina + Datas sazonais lado a lado */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-4)' }} className="dash-middle-grid">
-          <RotinaSemanalWidget />
-          <div className="col gap-3">
-            <HolidayAlertBanner />
-          </div>
-        </div>
+        {/* Rotina da semana — largura total */}
+        <RotinaSemanalWidget />
+
+        {/* Datas sazonais */}
+        <HolidayAlertBanner />
 
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 'var(--s-5)' }} className="dash-grid">
           {/* LEFT — Tarefas em destaque */}
