@@ -105,7 +105,7 @@ const TYPE_EMOJI = {
 const RECURRENCES = [
   { texto: 'Beber água',                   icon: '💧', hora: 'Ao longo do dia',  cor: '#bce1f6', tipo: 'agua' },
   { texto: 'Comer fruta',                  icon: '🍎', hora: 'Manhã e tarde',    cor: '#f1e18d', tipo: 'habito', id: 'fruta' },
-  { texto: 'Exercício físico',             icon: '🏃', hora: 'Diário',           cor: '#ffe1bd', tipo: 'habito', id: 'exercicio' },
+  { texto: '20 min de bike',               icon: '🚴', hora: 'Diário',           cor: '#ffe1bd', tipo: 'habito', id: 'exercicio' },
   { texto: 'Tomar remédios da manhã',      icon: '💊', hora: 'Manhã (Lorenna)',  cor: '#fe7dae', tipo: 'meds',  ids: ['venvanse','olmesartana','buspirona'],
     desc: 'VENVANSE · OLMESARTANA · BUSPIRONA' },
   { texto: 'Amytril (Lorenna — noite)',    icon: '💊', hora: 'Noite',            cor: '#f0bff8', tipo: 'meds',  ids: ['amytril_lorenna'] },
