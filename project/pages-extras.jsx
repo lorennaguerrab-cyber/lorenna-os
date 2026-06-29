@@ -57,13 +57,45 @@ const AGENDA_TYPE_COLORS = {
   cliente:  { bg: 'color-mix(in oklch, #bce1f6 40%, white)', border: '#bce1f6', text: '#201e1f', dot: '#bce1f6' },
   gravacao: { bg: 'color-mix(in oklch, #f0bff8 40%, white)', border: '#f0bff8', text: '#201e1f', dot: '#f0bff8' },
   admin:    { bg: 'color-mix(in oklch, #ffe1bd 40%, white)', border: '#ffe1bd', text: '#201e1f', dot: '#ffe1bd' },
+  apple:    { bg: 'color-mix(in oklch, #bce1f6 25%, white)', border: '#bce1f6', text: '#201e1f', dot: '#5ca3d4' },
 };
+
+function IcalConnectModal({ currentUrl, onConnect, onDisconnect, onClose }) {
+  const [url, setUrl] = useState(currentUrl || '');
+  const isConnected = !!currentUrl;
+  const inputStyle = { width: '100%', fontSize: 13, padding: '10px 12px', background: 'var(--offwhite)', borderRadius: 'var(--r-md)', border: 'none', fontFamily: 'var(--font-body)', color: '#201e1f', outline: 'none', boxSizing: 'border-box' };
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(32,30,31,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1001, padding: 16 }} onClick={onClose}>
+      <div style={{ background: '#fffcfa', borderRadius: 'var(--r-xl)', width: 'min(500px, 100%)', overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
+        <div style={{ height: 4, background: '#bce1f6' }} />
+        <div style={{ padding: '28px 28px 24px' }}>
+          <div style={{ fontFamily: 'var(--font-title)', fontSize: 20, fontWeight: 700, color: '#201e1f', marginBottom: 8 }}>Conectar Apple Calendar</div>
+          <div style={{ fontSize: 14, color: 'var(--gray)', marginBottom: 20, lineHeight: 1.6 }}>
+            <strong>No iPhone:</strong> app Calendário → toque no calendário → ⓘ → Calendário Público → ativar → Copiar Link<br/>
+            <strong>No Mac:</strong> Calendário → Arquivo → Compartilhar Calendário → Calendário Público → copie o link webcal://
+          </div>
+          <label style={{ display: 'block', fontSize: 14, fontWeight: 500, color: 'var(--gray)', marginBottom: 6 }}>Link webcal:// do calendário</label>
+          <input value={url} onChange={e => setUrl(e.target.value)} placeholder="webcal://p49-caldav.icloud.com/published/2/..." style={{ ...inputStyle, marginBottom: 20 }} />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {isConnected ? (
+              <button onClick={onDisconnect} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, color: 'var(--text-muted)', fontFamily: 'var(--font-body)', padding: 0 }}>Desconectar</button>
+            ) : <div />}
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={onClose} style={{ background: 'var(--offwhite)', border: 'none', cursor: 'pointer', fontSize: 14, color: 'var(--ink)', fontFamily: 'var(--font-body)', padding: '10px 18px', borderRadius: 'var(--r-md)', fontWeight: 500 }}>Cancelar</button>
+              <button onClick={() => url.trim() && onConnect(url.trim())} disabled={!url.trim()} style={{ background: '#bce1f6', border: 'none', cursor: url.trim() ? 'pointer' : 'default', fontSize: 14, color: '#201e1f', fontFamily: 'var(--font-body)', padding: '10px 22px', borderRadius: 'var(--r-md)', fontWeight: 500, opacity: url.trim() ? 1 : 0.5 }}>Conectar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function AgendaEventCard({ ev, onEdit }) {
   const cfg = AGENDA_TYPE_COLORS[ev.tipo] || AGENDA_TYPE_COLORS.admin;
   const TIPO_LABEL = {
     conteudo: 'Conteúdo', gravacao: 'Gravação', admin: 'Admin',
-    cliente: 'Cliente', filho: 'Filhos',
+    cliente: 'Cliente', filho: 'Filhos', apple: 'Apple Cal',
   };
   return (
     <div style={{
@@ -267,9 +299,45 @@ function AgendaPage() {
       return s ? JSON.parse(s) : AGENDA_EVENTS;
     } catch { return AGENDA_EVENTS; }
   });
-  const [modalEvent, setModalEvent] = useState(null); // null=closed, {}=new, {id,...}=edit
+  const [modalEvent, setModalEvent] = useState(null);
+  const [icalUrl, setIcalUrl] = useState(() => localStorage.getItem('lorenna_apple_cal_url') || '');
+  const [appleEvents, setAppleEvents] = useState([]);
+  const [showIcalModal, setShowIcalModal] = useState(false);
+  const [icalLoading, setIcalLoading] = useState(false);
 
   const todayStr = new Date().toISOString().slice(0, 10);
+
+  async function loadAppleCalendar(url) {
+    if (!url) return;
+    setIcalLoading(true);
+    try {
+      const resp = await fetch(`/api/ical-proxy?url=${encodeURIComponent(url)}`);
+      const json = await resp.json();
+      if (!json.error) setAppleEvents(json.events || []);
+      else setAppleEvents([]);
+    } catch { setAppleEvents([]); }
+    setIcalLoading(false);
+  }
+
+  function connectIcal(url) {
+    localStorage.setItem('lorenna_apple_cal_url', url);
+    setIcalUrl(url);
+    setShowIcalModal(false);
+    loadAppleCalendar(url);
+    showToast('Apple Calendar conectado!');
+  }
+
+  function disconnectIcal() {
+    localStorage.removeItem('lorenna_apple_cal_url');
+    setIcalUrl('');
+    setAppleEvents([]);
+    setShowIcalModal(false);
+    showToast('Apple Calendar desconectado');
+  }
+
+  useEffect(() => {
+    if (icalUrl) loadAppleCalendar(icalUrl);
+  }, []);
 
   useEffect(() => {
     if (!window.DB || !window.DB.loadAgendaEvents) return;
@@ -323,7 +391,9 @@ function AgendaPage() {
   }
 
   function eventsForDate(dateStr) {
-    return events.filter(e => e.date === dateStr);
+    const system = events.filter(e => e.date === dateStr);
+    const apple = appleEvents.filter(e => e.date === dateStr).map(e => ({ ...e, _source: 'apple' }));
+    return [...system, ...apple];
   }
 
   // ── navigation ───────────────────────────────
@@ -419,7 +489,7 @@ function AgendaPage() {
                         if (!b.hora) return -1;
                         return a.hora.localeCompare(b.hora);
                       })
-                      .map(ev => <AgendaEventCard key={ev.id} ev={ev} onEdit={setModalEvent} />)
+                      .map(ev => <AgendaEventCard key={ev.id} ev={ev} onEdit={ev._source === 'apple' ? null : setModalEvent} />)
                   )}
                 </div>
               </div>
@@ -544,7 +614,7 @@ function AgendaPage() {
         {events.filter(e => !e.hora).length > 0 && (
           <div className="col gap-2" style={{ marginBottom: 4 }}>
             <div style={{ fontSize: 14.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray)' }}>Dia todo</div>
-            {events.filter(e => !e.hora).map(ev => <AgendaEventCard key={ev.id} ev={ev} onEdit={setModalEvent} />)}
+            {events.filter(e => !e.hora).map(ev => <AgendaEventCard key={ev.id} ev={ev} onEdit={ev._source === 'apple' ? null : setModalEvent} />)}
           </div>
         )}
         {/* Time slots */}
@@ -569,7 +639,7 @@ function AgendaPage() {
                   {hourStr}
                 </div>
                 <div style={{ padding: '6px 10px' }}>
-                  {hourEvs.map(ev => <AgendaEventCard key={ev.id} ev={ev} onEdit={setModalEvent} />)}
+                  {hourEvs.map(ev => <AgendaEventCard key={ev.id} ev={ev} onEdit={ev._source === 'apple' ? null : setModalEvent} />)}
                 </div>
               </div>
             );
@@ -601,18 +671,28 @@ function AgendaPage() {
           onClose={() => setModalEvent(null)}
         />
       )}
+      {showIcalModal && (
+        <IcalConnectModal
+          currentUrl={icalUrl}
+          onConnect={connectIcal}
+          onDisconnect={disconnectIcal}
+          onClose={() => setShowIcalModal(false)}
+        />
+      )}
       <div className="col gap-5 fade-up">
         <PageHeader
           title="Agenda"
-          subtitle={`${events.length} compromissos · clique num dia ou ✎ para editar`}
+          subtitle={`${events.length + appleEvents.length} compromissos${icalLoading ? ' · carregando Apple Calendar…' : icalUrl ? ' · Apple Calendar ✓' : ''}`}
           action={
-            <Button
-              variant="primary"
-              onClick={() => setModalEvent({ date: todayStr })}
-            >
-              <Icon name="plus" size={14} color="#fffcfa" />
-              Novo compromisso
-            </Button>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <Button variant="ghost" size="sm" onClick={() => setShowIcalModal(true)}>
+                {icalUrl ? '🍎 Calendário' : '🍎 Conectar iCal'}
+              </Button>
+              <Button variant="primary" onClick={() => setModalEvent({ date: todayStr })}>
+                <Icon name="plus" size={14} color="#fffcfa" />
+                Novo
+              </Button>
+            </div>
           }
         />
 

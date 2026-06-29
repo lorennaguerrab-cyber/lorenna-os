@@ -2,5 +2,8 @@
   "outputDirectory": "project",
   "buildCommand": null,
   "installCommand": null,
-  "framework": null
+  "framework": null,
+  "functions": {
+    "api/ical-proxy.js": { "runtime": "edge" }
+  }
 }
