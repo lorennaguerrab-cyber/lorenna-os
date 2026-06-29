@@ -723,6 +723,21 @@ function PequenasVitorias() {
   const [newText, setNewText] = useState('');
   const [showing, setShowing] = useState(4);
 
+  useEffect(() => {
+    if (!window.DB || !window.DB.loadVitorias) return;
+    window.DB.loadVitorias().then(data => {
+      if (data && data.length > 0) {
+        const mapped = data.map(v => ({ id: v.id, icon: v.icon || '🎯', text: v.texto }));
+        setCustom(mapped);
+        localStorage.setItem('lorenna_vitorias', JSON.stringify(mapped));
+      } else {
+        // Migrar localStorage → Supabase
+        const local = JSON.parse(localStorage.getItem('lorenna_vitorias') || '[]');
+        local.forEach(v => window.DB.saveVitoria(v).catch(() => {}));
+      }
+    }).catch(() => {});
+  }, []);
+
   const all = [
     ...custom,
     ...completedTasks.map(t => ({ icon: '✅', text: t.titulo, id: t.id })),
@@ -730,10 +745,11 @@ function PequenasVitorias() {
 
   function addVitoria() {
     if (!newText.trim()) return;
-    const v = { icon: '🎯', text: newText.trim(), id: Date.now() };
+    const v = { icon: '🎯', text: newText.trim(), id: String(Date.now()), created_at: new Date().toISOString() };
     const next = [v, ...custom];
     setCustom(next);
     localStorage.setItem('lorenna_vitorias', JSON.stringify(next));
+    if (window.DB && window.DB.saveVitoria) window.DB.saveVitoria(v).catch(() => {});
     setNewText('');
     setAdding(false);
     showToast('Vitória registrada! 🎉');

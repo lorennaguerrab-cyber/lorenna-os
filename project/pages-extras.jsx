@@ -271,6 +271,24 @@ function AgendaPage() {
 
   const todayStr = new Date().toISOString().slice(0, 10);
 
+  useEffect(() => {
+    if (!window.DB || !window.DB.loadAgendaEvents) return;
+    window.DB.loadAgendaEvents().then(data => {
+      if (data && data.length > 0) {
+        setEvents(data);
+        try { localStorage.setItem('lorenna_agenda_events', JSON.stringify(data)); } catch {}
+        window.AGENDA_EVENTS = data;
+      } else {
+        // Migrar localStorage → Supabase (só eventos customizados, não os default hardcoded)
+        const localRaw = localStorage.getItem('lorenna_agenda_events');
+        if (localRaw) {
+          const local = JSON.parse(localRaw);
+          local.forEach(ev => window.DB.saveAgendaEvent(ev).catch(() => {}));
+        }
+      }
+    }).catch(() => {});
+  }, []);
+
   function saveEvents(next) {
     setEvents(next);
     try { localStorage.setItem('lorenna_agenda_events', JSON.stringify(next)); } catch {}
@@ -284,12 +302,14 @@ function AgendaPage() {
     } else {
       saveEvents([...events, ev]);
     }
+    if (window.DB && window.DB.saveAgendaEvent) window.DB.saveAgendaEvent(ev).catch(() => {});
     setModalEvent(null);
     showToast(isEdit ? 'Compromisso atualizado' : 'Compromisso adicionado');
   }
 
   function handleDeleteEvent(id) {
     saveEvents(events.filter(e => e.id !== id));
+    if (window.DB && window.DB.deleteAgendaEvent) window.DB.deleteAgendaEvent(id).catch(() => {});
     setModalEvent(null);
     showToast('Compromisso excluído');
   }

@@ -110,6 +110,7 @@ function HojeView() {
     if (idx >= 0) list[idx] = entry;
     else list.unshift(entry);
     persistEntries(list);
+    if (window.DB && window.DB.saveDiarioEntry) window.DB.saveDiarioEntry(entry).catch(() => {});
   }
 
   function handleSave() {
@@ -136,7 +137,6 @@ function HojeView() {
   }
 
   function handleNovaEntrada() {
-    // Create a truly new entry for today (different id)
     const newId = `d_${Date.now()}`;
     const list = loadEntries();
     const nova = {
@@ -146,8 +146,9 @@ function HojeView() {
     };
     list.unshift(nova);
     persistEntries(list);
+    if (window.DB && window.DB.saveDiarioEntry) window.DB.saveDiarioEntry(nova).catch(() => {});
     showToast('Nova entrada iniciada!');
-    window.location.reload(); // simplest way to refresh state with new entry
+    window.location.reload();
   }
 
   return (
@@ -323,13 +324,31 @@ function HistoricoView() {
   const [loadingRelatorio, setLoadingRelatorio] = useState(false);
 
   useEffect(() => {
-    const all = loadEntries();
-    all.sort((a, b) => {
-      const dateCompare = b.data.localeCompare(a.data);
-      if (dateCompare !== 0) return dateCompare;
-      return (b.hora || '').localeCompare(a.hora || '');
-    });
-    setEntries(all);
+    function sortEntries(list) {
+      return list.slice().sort((a, b) => {
+        const d = b.data.localeCompare(a.data);
+        return d !== 0 ? d : (b.hora || '').localeCompare(a.hora || '');
+      });
+    }
+    // Mostrar localStorage primeiro (rápido)
+    const local = loadEntries();
+    setEntries(sortEntries(local));
+
+    // Sincronizar com Supabase
+    if (!window.DB || !window.DB.loadDiario) return;
+    window.DB.loadDiario().then(data => {
+      if (data && data.length > 0) {
+        // Mesclar: Supabase ganha conflitos
+        const map = new Map(local.map(e => [e.id, e]));
+        data.forEach(e => map.set(e.id, e));
+        const merged = sortEntries([...map.values()]);
+        setEntries(merged);
+        persistEntries(merged);
+      } else if (local.length > 0) {
+        // Migrar localStorage → Supabase
+        local.forEach(e => window.DB.saveDiarioEntry(e).catch(() => {}));
+      }
+    }).catch(() => {});
   }, []);
 
   function filteredEntries() {
