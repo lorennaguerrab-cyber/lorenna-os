@@ -92,18 +92,34 @@ function ConteudoModal({ item, onClose }) {
             <div className="col gap-2">
               <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>Roteiro / Conteúdo</label>
               <textarea
+                defaultValue={item.roteiro || ''}
                 style={{
                   width: '100%', minHeight: 220, padding: '14px 16px',
-                  fontSize: 15, lineHeight: 1.7, color: 'var(--ink)',
+                  fontSize: 14, lineHeight: 1.7, color: 'var(--ink)',
                   background: 'var(--offwhite)', border: '1.5px solid var(--pink-soft)',
                   borderRadius: 15, resize: 'vertical', outline: 'none', boxSizing: 'border-box',
-                  fontFamily: 'var(--font-body)',
+                  fontFamily: 'var(--font-body)', whiteSpace: 'pre-wrap',
                 }}
                 placeholder="Escreva o roteiro, legenda, script ou anotações desse conteúdo…"
                 onFocus={e => e.target.style.borderColor = 'var(--pink)'}
                 onBlur={e => e.target.style.borderColor = 'var(--pink-soft)'}
               />
             </div>
+
+            {item.imagePrompt && (
+              <div className="col gap-2">
+                <label style={{ fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gray)' }}>
+                  Prompt para imagem
+                </label>
+                <div style={{
+                  padding: '12px 16px', fontSize: 14, lineHeight: 1.6,
+                  background: 'color-mix(in oklch, #f0bff8 20%, #fffcfa)',
+                  borderRadius: 12, color: '#201e1f',
+                }}>
+                  {item.imagePrompt}
+                </div>
+              </div>
+            )}
 
             <div className="row gap-2">
               <Button variant="primary" onClick={() => { showToast('Conteúdo salvo!'); onClose(); }}>

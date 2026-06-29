@@ -485,6 +485,278 @@ const DEMO_CONTENT = [
   { id: 'c51', titulo: 'Snippet 60s: entrevista para reels do jornal', tipo: 'reel',
     plataformas: ['instagram'], status: 'ideia', categoria: 'bastidores',
     brand: 'jornal', data: '' },
+
+  /* ── Creator Economy · Junho 2026 ── */
+  {
+    id: 'ce01',
+    titulo: 'Como a IA está mudando o trabalho dos criadores de conteúdo',
+    tipo: 'carrossel', brand: 'lorenna',
+    plataformas: ['instagram', 'linkedin'],
+    status: 'rascunho', categoria: 'inteligencia_artificial',
+    data: 'Urgente — esta semana',
+    roteiro: `SLIDE 1 — CAPA
+"A IA vai mudar TUDO no trabalho do criador"
+(spoiler: já mudou. e sobrevivemos)
+
+SLIDE 2 — Antes vs Depois
+Antes: 4h para escrever uma legenda
+Depois: 20 min para escrever + refinar com IA
+
+Antes: ideia travada por semanas
+Depois: rascunho em 10 min, eu refino com a minha voz
+
+SLIDE 3 — O que a IA faz BEM
+✓ Roteiros e primeiros rascunhos
+✓ Pesquisa e síntese de informação
+✓ Variações de copy para teste
+✓ Legendas e descrições
+
+SLIDE 4 — O que a IA NÃO substitui
+✗ A sua voz e seu ponto de vista
+✗ A sua história real
+✗ A conexão emocional que você cria
+✗ O seu olho para o que é autêntico
+
+SLIDE 5 — A virada de chave
+A IA é ferramenta. Você é a estratégia.
+Quem vai dominar a creator economy não é quem tiver mais seguidores — é quem usar a tecnologia com mais inteligência.
+
+SLIDE 6 — CTA
+Você já usa IA no seu conteúdo?
+Comenta qual ferramenta você não abre mão 👇`,
+    imagePrompt: `MASCOTE (boneca Lola) segurando tablet com ícones de IA ao redor. Fundo off-white com toques de rosa. Estilo vetorial, limpo e moderno. Para slides internos: fundo branco, tipografia clean sem foto de pessoa. Paleta: #201e1f, #fe7dae, #fffcfa.`,
+  },
+  {
+    id: 'ce02',
+    titulo: 'IA vai substituir criadores? Minha visão honesta',
+    tipo: 'reel', brand: 'lorenna',
+    plataformas: ['instagram', 'tiktok'],
+    status: 'ideia', categoria: 'inteligencia_artificial',
+    data: 'Esta semana',
+    roteiro: `[0–3s] HOOK
+Você na câmera, expressão de "será mesmo?"
+TEXT NA TELA: "A IA vai te substituir como criadora?"
+
+[3–10s]
+"Curta se você já ficou com medo de ser substituída pela IA."
+
+[10–28s]
+"Depois de 1 ano usando IA no meu dia a dia, aqui vai minha visão honesta:
+A IA não vai substituir criadores.
+Vai substituir criadores que não usam IA.
+Exatamente como o Instagram não matou fotógrafos — mas matou os que ignoraram o digital."
+
+[28–40s]
+"O que a IA não consegue ter: a sua história, os seus erros, a sua imperfeição humana.
+E é exatamente isso que sua audiência ama em você."
+
+[40–50s] CTA
+"Salva esse vídeo se fez sentido. E me conta nos comentários: você usa IA como ferramenta ou ainda tem medo dela?"
+
+TEXTO SOBRE A TELA (momentos-chave):
+• "A IA não vai te substituir"
+• "Vai substituir quem não usa IA"`,
+    imagePrompt: `FOTO REAL SUA (Lorenna). Expressão séria e direta pra câmera — olho que gera curiosidade. Pode ser selfie casual com boa iluminação natural. Fundo desfocado (quarto, escritório). A imagem vai como thumbnail do Reel — transmita "tenho algo importante a dizer".`,
+  },
+  {
+    id: 'ce03',
+    titulo: 'O mercado de criadores movimenta bilhões — você está dentro ou fora?',
+    tipo: 'carrossel', brand: 'lorenna',
+    plataformas: ['instagram', 'linkedin'],
+    status: 'rascunho', categoria: 'creator_economy',
+    data: 'Esta semana',
+    roteiro: `SLIDE 1 — CAPA
+"Creator economy avança no Brasil e movimenta bilhões"
+Mas o que isso muda para VOCÊ?
+
+SLIDE 2 — Os dados
+📊 Creator economy mundial: US$ 480 bilhões em 2024
+📊 Brasil: 3º maior mercado de criadores do mundo
+📊 Crescimento: +22% ao ano até 2028
+
+SLIDE 3 — O que impulsiona
+→ Marcas migrando budget para criadores (vs anúncio tradicional)
+→ Conteúdo autêntico converte mais que publicidade
+→ Nano e micro criadores cada vez mais valorizados
+
+SLIDE 4 — A oportunidade real
+Você não precisa de 1 milhão de seguidores.
+Uma audiência de 5.000 pessoas engajadas pode gerar mais receita do que 100k desengajados.
+A conta muda quando você cobra certo.
+
+SLIDE 5 — A pergunta que fica
+O mercado cresceu. Mas você cresceu junto?
+Você está cobrando o que o mercado paga? Ou ainda cobra o de 2022?
+
+SLIDE 6 — CTA
+Me conta aqui embaixo: você cobra pelo que realmente vale?
+👇`,
+    imagePrompt: `MASCOTE (boneca Lola) em pose confiante com gráfico de crescimento ao fundo. Para slide de dados: fundo escuro (#201e1f) com números em branco e rosa — mais impacto visual. Sem foto de pessoa neste carrossel. Estilo: dados apresentados de forma visual e limpa.`,
+  },
+  {
+    id: 'ce04',
+    titulo: 'Cannes Lions 2026: o que os cases revelam sobre criadores e publicidade',
+    tipo: 'carrossel', brand: 'lorenna',
+    plataformas: ['instagram'],
+    status: 'rascunho', categoria: 'marketing_publicidade',
+    data: '🔥 URGENTE — publicar agora',
+    roteiro: `SLIDE 1 — CAPA
+"Cannes Lions 2026 anunciou os vencedores de Social & Creator"
+O que os melhores cases ensinam pra gente?
+
+SLIDE 2 — A grande mudança
+Pela primeira vez, criadores estão NO CENTRO da conversa global de publicidade.
+Não como veículo de distribuição — como estratégia criativa.
+
+SLIDE 3 — Padrão nos cases vencedores
+✓ Autenticidade acima de produção impecável
+✓ Narrativa antes de produto
+✓ Criador como co-autor (não só "mídia comprada")
+✓ Comunidade como plataforma, não audiência passiva
+
+SLIDE 4 — O que muda pra você
+Sua voz tem mais valor estratégico do que um anúncio de 30s.
+Marcas precisam de você mais do que nunca.
+O problema: a maioria dos criadores ainda cobra menos do que deveria.
+
+SLIDE 5 — CTA
+Salva esse post para a série que vem por aí.
+E me conta: você sente que as marcas te valorizam como estrategista — ou só como "canal de mídia"?`,
+    imagePrompt: `FOTO REAL SUA (Lorenna) com expressão de análise e autoridade — olhar direto pra câmera. Pode ser foto editorial: você de frente, expressão confiante. Overlay escuro com "Cannes Lions 2026" no thumbnail. Slides internos: fundo escuro (#201e1f) com tipografia bold branca — transmite análise séria e autoridade.`,
+  },
+  {
+    id: 'ce05',
+    titulo: 'O que o Cannes Lions me fez pensar sobre criadores e publicidade',
+    tipo: 'reel', brand: 'lorenna',
+    plataformas: ['instagram', 'tiktok'],
+    status: 'ideia', categoria: 'marketing_publicidade',
+    data: '🔥 URGENTE',
+    roteiro: `[0–3s] HOOK
+TEXT: "Cannes Lions 2026 — e o que isso tem a ver com você"
+
+[3–15s]
+"A Adobe teve um espaço próprio no Cannes Lions chamado Creator Beach.
+Um espaço de criadores dentro do maior festival de publicidade do mundo.
+Isso não é coincidência."
+
+[15–30s]
+"Por muito tempo, criadores eram tratados como canal.
+A publicidade fazia. Criadores distribuíam.
+Em 2026, isso mudou — os vencedores do festival são cases em que o criador é co-autor."
+
+[30–42s]
+"O que isso muda pra você?
+O valor que você cobra precisa mudar junto.
+Você não é mídia. Você é estratégia."
+
+[42–50s] CTA
+"Salva esse vídeo. Me conta: você cobra pelo valor que gera — ou ainda precisa de justificar seu preço toda vez?"`,
+    imagePrompt: `FOTO REAL SUA (Lorenna) em pose confiante, olho direto pra câmera, expressão que diz "preciso que você ouça isso". Selfie com boa iluminação, fundo desfocado. Thumbnail que posiciona você como voz de autoridade em creator economy e marketing.`,
+  },
+  {
+    id: 'ce06',
+    titulo: 'O que a IA não consegue substituir em você (e nunca vai conseguir)',
+    tipo: 'carrossel', brand: 'lorenna',
+    plataformas: ['instagram', 'linkedin'],
+    status: 'rascunho', categoria: 'inteligencia_artificial',
+    data: 'Próxima semana',
+    roteiro: `SLIDE 1 — CAPA
+"A economia da imperfeição"
+Por que o que mais conecta em você é exatamente o que a IA não tem
+
+SLIDE 2
+A IA pode escrever legendas perfeitas.
+Mas não pode hesitar no meio de uma frase porque ficou emocionada.
+Não pode chorar quando fala de luto.
+Não pode rir de si mesma com graça.
+
+SLIDE 3 — O que a IA nunca vai ter
+✗ Memória emocional vivida
+✗ Imperfeições que fazem pessoas se identificarem
+✗ A sua história específica
+✗ O seu olho para o que é bonito
+✗ A sua forma única de organizar o mundo
+
+SLIDE 4 — A virada
+Criadores que usam IA para ser mais eles mesmos ganham.
+Criadores que usam IA para parecer que não foram eles que fizeram, perdem.
+
+SLIDE 5
+A sua imperfeição é sua vantagem competitiva.
+A vulnerabilidade que você tem medo de mostrar é exatamente o que conecta.
+
+SLIDE 6 — CTA
+Qual "imperfeição" sua a audiência mais ama?
+Me conta nos comentários 👇`,
+    imagePrompt: `FOTO REAL SUA (Lorenna) em momento autêntico e descontraído — sorrindo de verdade, expressão leve. Não super produzida. A ideia é mostrar imperfeição intencional. Fundo simples. Para slides internos: background pastel da paleta (lilás #f0bff8 ou rosa claro #fec9df) com texto limpo.`,
+  },
+  {
+    id: 'ce07',
+    titulo: 'Creator economy mudou até a forma de se relacionar (e faturar)',
+    tipo: 'reel', brand: 'papel',
+    plataformas: ['instagram', 'tiktok'],
+    status: 'ideia', categoria: 'creator_economy',
+    data: 'Próxima semana',
+    roteiro: `[0–3s] HOOK
+Foto/vídeo casual — direto pra câmera
+TEXT: "Casais faturando juntos na internet — nova tendência? Não."
+
+[3–15s]
+"A diferença é que agora existe um mercado estruturado para isso.
+Marcas pagando por conteúdo de casal.
+Audiência querendo ver relações reais, sem roteiro."
+
+[15–30s]
+"A creator economy mudou o mercado de trabalho.
+Mas também mudou como as pessoas se relacionam com carreira.
+Parcerias de negócio que também são parcerias afetivas não são mais exceção — são modelo."
+
+[30–42s]
+"O que eu acho fascinante:
+A autenticidade que as marcas querem dos criadores é a mesma que as relações precisam para funcionar.
+Coincidência? Não acho."
+
+[42–50s] CTA
+"Vocês seguem algum casal criador? Me tagueia aqui em baixo 👇"`,
+    imagePrompt: `MASCOTE (boneca Lola) em pose descontraída e alegre — segurando celular, tom leve e bem-humorado. Fundo colorido na paleta (amarelo claro #f1e18d ou rosa #fec9df). Esse conteúdo tem tom leve, não editorial — a mascote combina melhor do que foto profissional.`,
+  },
+  {
+    id: 'ce08',
+    titulo: 'Cases do Cannes Lions 2026 que todo criador BR precisa conhecer [série]',
+    tipo: 'carrossel', brand: 'lorenna',
+    plataformas: ['instagram'],
+    status: 'ideia', categoria: 'marketing_publicidade',
+    data: '🔥 URGENTE — pesquisar cases antes',
+    roteiro: `⚠️ ANTES DE PUBLICAR: pesquisar os vencedores reais do Social & Creator Lions 2026 no site canneslions.com e preencher os slides 2–4 com os cases reais.
+
+SLIDE 1 — CAPA
+"3 cases do Cannes Lions 2026 que todo criador BR precisa conhecer"
+
+SLIDE 2 — CASE 1
+[Nome do case + marca]
+O que fizeram: [descrição do case]
+O que aprendemos: [insight aplicado para criadores brasileiros]
+
+SLIDE 3 — CASE 2
+[Nome do case + marca]
+O que fizeram: [descrição]
+O que aprendemos: [insight]
+
+SLIDE 4 — CASE 3
+[Nome do case + marca]
+O que fizeram: [descrição]
+O que aprendemos: [insight]
+
+SLIDE 5 — Padrão identificado
+Todos os cases premiados colocam o criador como co-autor, não como veículo.
+Sua autoria tem valor — e o mercado global já reconheceu isso.
+
+SLIDE 6 — CTA
+Parte 2 na semana que vem!
+Salva para não perder 🔖
+Qual case você quer que eu analise a seguir?`,
+    imagePrompt: `FOTO REAL SUA (Lorenna) com expressão de análise — talvez segurando celular ou olhando para algo com expressão pensativa. Overlay escuro com "Cannes Lions 2026" em destaque e sua foto ao lado. Para slides internos: design limpo com informações dos cases — pode usar prints ou criar cards visuais com os dados. Fundo escuro + rosa.`,
+  },
 ];
 
 /* ── Clientes (Agência Logue) ── */
