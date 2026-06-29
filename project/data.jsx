@@ -762,7 +762,8 @@ Qual case você quer que eu analise a seguir?`,
 /* ── Clientes (Agência Logue) ── */
 const DEMO_CLIENTS = [
   {
-    id: 'cl1', nome: 'Pratique (Itabira Fit)', setor: 'Fitness · Academia',
+    id: 'cl1', nome: 'Pratique (Itabira Fit)', setor: 'Fitness · Academia', key: 'pratique',
+    quota_mes: 6, entregues_mes: 0,
     cor: 'var(--e-operacional)', receita: 1200, custo_cog: 2, alinhamento: 4, esforco: 3, satisfacao: 4, pendentes: 5,
     inicio: 'Mai 2026', contato: 'Acad. Itabira Fit', whatsapp: '(31) 98818-3496',
     cnpj: '47.239.490/0001-47',
@@ -805,7 +806,8 @@ const DEMO_CLIENTS = [
   },
 
   {
-    id: 'cl2', nome: 'Espaço Criar', setor: 'Educação infantil',
+    id: 'cl2', nome: 'Espaço Criar', setor: 'Educação infantil', key: 'espaco',
+    quota_mes: 9, entregues_mes: 0,
     cor: 'var(--e-cansada)', receita: 600, custo_cog: 1, alinhamento: 5, esforco: 2, satisfacao: 5, pendentes: 2,
     inicio: 'Jan 2026', contato: 'Mariana (sócia)', whatsapp: '(31) 9 7777-5678',
     pacote: '8 posts/mês · stories da semana · 1 reel',
@@ -839,7 +841,8 @@ const DEMO_CLIENTS = [
   },
 
   {
-    id: 'cl3', nome: 'Óptica Igor Giordano', setor: 'Óptica · Varejo',
+    id: 'cl3', nome: 'Ótica Igor Giordano', setor: 'Óptica · Varejo', key: 'otica',
+    quota_mes: 14, entregues_mes: 0,
     cor: 'var(--info)', receita: 1200, custo_cog: 2, alinhamento: 3, esforco: 3, satisfacao: 4, pendentes: 3,
     inicio: 'Set 2025', contato: 'Igor (proprietário)', whatsapp: '(31) 9 6666-2345',
     pacote: '12 posts/mês · stories diários · 2 reels · 1 influencer/dia',
@@ -885,7 +888,8 @@ const DEMO_CLIENTS = [
   },
 
   {
-    id: 'cl4', nome: 'Jornal Cidades Minerais', setor: 'Mídia · Jornalismo',
+    id: 'cl4', nome: 'Jornal Cidades Minerais', setor: 'Mídia · Jornalismo', key: 'jornal',
+    quota_mes: 4, entregues_mes: 0,
     cor: 'var(--e-foco)', receita: 1000, custo_cog: 5, alinhamento: 1, esforco: 5, satisfacao: 2, pendentes: 4,
     inicio: 'Nov 2024', contato: 'Marcos (editor-chefe)', whatsapp: '(31) 9 5555-9012',
     pacote: 'Vídeo semanal · cobertura de pauta · social',

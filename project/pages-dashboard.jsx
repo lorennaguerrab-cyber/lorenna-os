@@ -1512,62 +1512,80 @@ function LogueDashWidget({ setRoute }) {
   if (emAberto.length === 0 && pagsPendentes.length === 0) return null;
 
   const clientesCores = { otica: '#bce1f6', espaco: '#f1e18d', pratique: '#f0bff8', jornal: '#ffe1bd' };
-  const clientesNomes = { otica: 'Ótica Igor', espaco: 'Espaço Criar', pratique: 'Pratique', jornal: 'Jornal' };
+  const INK   = '#fffcfa';
+  const MUTED = 'rgba(255,252,250,0.45)';
 
   return (
-    <Card>
+    <Card style={{ background: '#201e1f' }}>
       <CardHeader>
         <div className="row between">
           <div>
-            <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 500 }}>Agência Logue</h2>
-            <p className="tiny muted" style={{ marginTop: 2 }}>{emAberto.length} vídeos em aberto</p>
+            <h2 style={{ fontFamily: 'var(--font-title)', fontSize: 18, fontWeight: 500, color: INK }}>Agência Logue</h2>
+            <p style={{ marginTop: 2, fontSize: 13, color: MUTED }}>{emAberto.length} vídeos em aberto</p>
           </div>
-          <Button variant="ghost" size="sm" onClick={() => setRoute('/logue')}>
+          <button
+            onClick={() => setRoute('/logue')}
+            style={{ background: 'rgba(255,252,250,0.08)', border: 'none', cursor: 'pointer', padding: '6px 14px', borderRadius: 999, fontSize: 13, color: INK, fontFamily: 'var(--font-body)' }}
+          >
             Ver tudo →
-          </Button>
+          </button>
         </div>
       </CardHeader>
       <CardBody>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-3)' }}>
-          {/* Open projects */}
-          <div className="col gap-2">
-            <div style={{ fontSize: 12, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-muted)', marginBottom: 2 }}>Pendências</div>
-            {emAberto.slice(0, 5).map(p => {
-              const cor = clientesCores[p.cliente] || '#fec9df';
-              const nome = clientesNomes[p.cliente] || p.cliente;
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s-4)' }}>
+
+          {/* Clientes · Entregas do mês */}
+          <div className="col gap-3">
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: MUTED }}>
+              Clientes · Entregas do mês
+            </div>
+            {window.DEMO_CLIENTS.map(c => {
+              const cor = clientesCores[c.key] || '#fec9df';
+              const entregues = c.entregues_mes || 0;
+              const quota = c.quota_mes || 1;
+              const faltam = Math.max(0, quota - entregues);
+              const pct = Math.min(100, (entregues / quota) * 100);
+              const nomeShort = c.nome.split(' (')[0].split(' Cidades')[0];
               return (
-                <div key={p.id} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <div style={{ width: 8, height: 8, borderRadius: 999, background: cor, flexShrink: 0 }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, color: '#201e1f', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.titulo}</div>
-                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{nome}</div>
+                <div key={c.id}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: 999, background: cor, flexShrink: 0 }} />
+                      <span style={{ fontSize: 14, color: INK, fontWeight: 500 }}>{nomeShort}</span>
+                    </div>
+                    <span style={{ fontSize: 13, color: MUTED }}>
+                      {entregues}/{quota} {faltam > 0 ? `· faltam ${faltam}` : '· ✓'}
+                    </span>
+                  </div>
+                  <div style={{ height: 5, background: 'rgba(255,252,250,0.12)', borderRadius: 999, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${pct}%`, background: cor, borderRadius: 999, transition: 'width 0.5s ease' }} />
                   </div>
                 </div>
               );
             })}
-            {emAberto.length > 5 && (
-              <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>+ {emAberto.length - 5} outros</div>
-            )}
           </div>
 
-          {/* Payments */}
-          <div className="col gap-2">
-            <div style={{ fontSize: 12, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-muted)', marginBottom: 2 }}>Equipe — pagamentos</div>
+          {/* Equipe · Pagamentos */}
+          <div className="col gap-3">
+            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: MUTED }}>
+              Equipe · Pagamentos
+            </div>
             {pagsPendentes.map(p => (
-              <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+              <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <div style={{ fontSize: 13, color: '#201e1f' }}>{p.destinatario}</div>
-                  <div style={{ fontSize: 12, color: pagsProximos.some(x => x.id === p.id) ? '#C0392B' : 'var(--text-muted)' }}>
-                    Dia {p.dia} {pagsProximos.some(x => x.id === p.id) ? '· próximo!' : ''}
+                  <div style={{ fontSize: 14, color: INK, fontWeight: 500 }}>{p.destinatario}</div>
+                  <div style={{ fontSize: 12, color: pagsProximos.some(x => x.id === p.id) ? '#fe7dae' : MUTED }}>
+                    Dia {p.dia}{pagsProximos.some(x => x.id === p.id) ? ' · próximo!' : ''}
                   </div>
                 </div>
-                <span style={{ fontFamily: 'var(--font-title)', fontSize: 15, fontWeight: 500, color: '#201e1f' }}>R$ {p.valor}</span>
+                <span style={{ fontFamily: 'var(--font-title)', fontSize: 15, fontWeight: 600, color: INK }}>R$ {p.valor}</span>
               </div>
             ))}
             {pagsPendentes.length === 0 && (
-              <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Todos pagos este mês</div>
+              <div style={{ fontSize: 14, color: MUTED }}>Todos pagos este mês ✓</div>
             )}
           </div>
+
         </div>
       </CardBody>
     </Card>
