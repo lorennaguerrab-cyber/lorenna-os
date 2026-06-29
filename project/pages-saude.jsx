@@ -660,6 +660,43 @@ const DEFAULT_MEALS = {
   jantar: ['Sopa de legumes', 'Omelete + salada', 'Macarrão simples', 'Panqueca de frango', 'Arroz + frango', 'Caldo de feijão', 'Torrada + ovo'],
 };
 
+const SINTOMA_ALIMENTOS = {
+  gripe:        { label: 'Gripe / Resfriado',   emoji: '🤧', cor: '#bce1f6', alimentos: ['Laranja', 'Limão', 'Acerola', 'Gengibre', 'Alho', 'Caldo de frango', 'Mel', 'Camomila'], dica: 'Vitamina C reforça a imunidade. Gengibre e alho têm propriedades antivirais. Caldo quente ajuda a descongestionar.' },
+  febre:        { label: 'Febre',                emoji: '🌡️', cor: '#ffe1bd', alimentos: ['Água de coco', 'Caldo leve', 'Chá de ervas', 'Manga', 'Abacaxi', 'Sopa de legumes'],   dica: 'Hidratação é fundamental. Evite alimentos pesados — prefira caldos e frutas ricas em água.' },
+  dor_cabeca:   { label: 'Dor de cabeça',        emoji: '🤕', cor: '#f0bff8', alimentos: ['Água', 'Gengibre', 'Amêndoas', 'Banana', 'Café (moderado)', 'Espinafre'],              dica: 'Desidratação é causa comum. Magnésio (amêndoas, espinafre) e banana ajudam a aliviar.' },
+  estomago:     { label: 'Problemas estomacais', emoji: '🤢', cor: '#f1e18d', alimentos: ['Banana', 'Arroz branco', 'Torrada', 'Maçã cozida', 'Iogurte natural', 'Chá de boldo'], dica: 'Dieta BRAT (banana, arroz, maçã, torrada) é indicada. Iogurte com probióticos restaura a flora.' },
+  cansaco:      { label: 'Cansaço / Fadiga',     emoji: '😴', cor: '#fec9df', alimentos: ['Ovo', 'Aveia', 'Banana', 'Castanha-do-pará', 'Espinafre', 'Frango', 'Lentilha'],      dica: 'Ferro e B12 combatem fadiga. Proteínas sustentam energia por mais tempo. Evite açúcar refinado.' },
+  alergia:      { label: 'Alergia / Inflamação', emoji: '🌿', cor: '#bce1f6', alimentos: ['Cúrcuma', 'Gengibre', 'Brócolis', 'Peixe', 'Linhaça', 'Chá verde'],                   dica: 'Cúrcuma, gengibre e ômega-3 (peixe, linhaça) reduzem inflamação e sintomas alérgicos.' },
+  ansiedade:    { label: 'Ansiedade / Estresse', emoji: '😰', cor: '#f0bff8', alimentos: ['Camomila', 'Banana', 'Aveia', 'Amêndoas', 'Chocolate amargo', 'Espinafre'],            dica: 'Magnésio (amêndoas, espinafre) e triptofano (banana, aveia) ajudam a regular humor e ansiedade.' },
+  dor_garganta: { label: 'Dor de garganta',      emoji: '🔴', cor: '#ffe1bd', alimentos: ['Mel', 'Limão', 'Chá quente', 'Gengibre', 'Alho', 'Caldo de frango'],                  dica: 'Mel tem propriedades antibacterianas. Chá com mel e limão alivia a irritação da garganta.' },
+  intestino:    { label: 'Intestino preso',       emoji: '🥦', cor: '#f1e18d', alimentos: ['Mamão', 'Ameixa', 'Aveia', 'Brócolis', 'Iogurte', 'Laranja com bagaço'],              dica: 'Fibras e água são essenciais. Mamão e ameixa têm enzimas que auxiliam o trânsito intestinal.' },
+};
+
+const KEYWORD_MAP = {
+  gripe:        ['gripe', 'resfriado', 'coriza', 'espirro', 'nariz entupido', 'sinusite', 'tosse', 'catarro'],
+  febre:        ['febre', 'temperatura alta', 'febril', 'calafrio'],
+  dor_cabeca:   ['dor de cabeça', 'cefaleia', 'enxaqueca', 'cabeça doendo'],
+  estomago:     ['dor de barriga', 'náusea', 'vômito', 'enjoo', 'azia', 'refluxo', 'estômago', 'diarreia', 'colite'],
+  cansaco:      ['cansaço', 'cansada', 'cansado', 'fadiga', 'exaustão', 'sem energia', 'fraqueza'],
+  alergia:      ['alergia', 'alérgico', 'coceira', 'urticária', 'rinite', 'inflamação'],
+  ansiedade:    ['ansiedade', 'ansioso', 'ansiosa', 'estresse', 'nervoso', 'nervosa', 'insônia'],
+  dor_garganta: ['dor de garganta', 'garganta inflamada', 'amigdalite', 'rouquidão'],
+  intestino:    ['prisão de ventre', 'intestino preso', 'constipação'],
+};
+
+function detectarSintomas() {
+  const textoTotal = FAMILIA.flatMap(m => {
+    try {
+      const ns = JSON.parse(localStorage.getItem(`lorenna_saude_${m.id}_notas`) || '[]');
+      return ns.map(n => n.texto.toLowerCase());
+    } catch { return []; }
+  }).join(' ');
+
+  return Object.entries(KEYWORD_MAP)
+    .filter(([, kws]) => kws.some(kw => textoTotal.includes(kw)))
+    .map(([sintoma]) => sintoma);
+}
+
 function CardapioSemanal() {
   const [refeicoes, setRefeicoes] = useState(() => {
     try {
@@ -673,6 +710,8 @@ function CardapioSemanal() {
     return d;
   });
 
+  const [sintomas] = useState(() => detectarSintomas());
+
   function updateCell(refeicao, diaIdx, val) {
     const next = { ...refeicoes, [refeicao]: refeicoes[refeicao].map((v, i) => i === diaIdx ? val : v) };
     setRefeicoes(next);
@@ -684,6 +723,10 @@ function CardapioSemanal() {
       try { const n = JSON.parse(localStorage.getItem(`lorenna_saude_${m.id}_notas`) || '[]'); return n.length > 0 ? `${m.nome}: ${n.slice(0,3).map(x=>x.texto).join('; ')}` : null; } catch { return null; }
     }).filter(Boolean).join('\n');
 
+    const sintomasStr = sintomas.length > 0
+      ? sintomas.map(s => { const c = SINTOMA_ALIMENTOS[s]; return c ? `- ${c.label}: priorize ${c.alimentos.slice(0,4).join(', ')}` : ''; }).filter(Boolean).join('\n')
+      : 'Nenhum sintoma detectado';
+
     const cardapioAtual = DIAS_CARDAPIO.map((dia, i) =>
       `${dia}: ${REFEICOES.map(r => `${r.label}: ${refeicoes[r.id][i]}`).join(' | ')}`
     ).join('\n');
@@ -692,6 +735,9 @@ function CardapioSemanal() {
 
 Observações de saúde:
 ${notas || 'Nenhuma observação registrada'}
+
+Sintomas atuais e alimentos indicados:
+${sintomasStr}
 
 Cardápio atual:
 ${cardapioAtual}
@@ -702,6 +748,7 @@ Considere:
 - Custo acessível (ingredientes simples do cotidiano)
 - Adequadas para crianças de 7 anos e bebê de quase 2 anos
 - Variadas e nutritivas
+- Inclua alimentos que ajudem com os sintomas listados acima
 
 Retorne em formato de tabela com os 7 dias da semana e as 4 refeições.`;
 
@@ -718,15 +765,40 @@ Retorne em formato de tabela com os 7 dias da semana e as 4 refeições.`;
         <Button variant="ghost" onClick={gerarPrompt}><Icon name="copy" size={14}/> Gerar prompt para IA</Button>
       </div>
 
+      {sintomas.length > 0 && (
+        <div className="col gap-3">
+          <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.07em', color: 'var(--text-muted)' }}>
+            Sugestões para sintomas detectados na família
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 10 }}>
+            {sintomas.map(s => {
+              const cfg = SINTOMA_ALIMENTOS[s];
+              if (!cfg) return null;
+              return (
+                <div key={s} style={{ padding: '14px 16px', borderRadius: 12, background: `color-mix(in oklch, ${cfg.cor} 30%, #fffcfa)` }}>
+                  <div className="row gap-2" style={{ marginBottom: 8, alignItems: 'center' }}>
+                    <span style={{ fontSize: 18 }}>{cfg.emoji}</span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: '#201e1f' }}>{cfg.label}</span>
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 8 }}>
+                    {cfg.alimentos.map(a => (
+                      <span key={a} style={{ fontSize: 13, padding: '3px 10px', borderRadius: 999, background: 'rgba(32,30,31,0.1)', color: '#201e1f', fontWeight: 500 }}>{a}</span>
+                    ))}
+                  </div>
+                  <p style={{ fontSize: 13, color: '#201e1f', lineHeight: 1.5, opacity: 0.72 }}>{cfg.dica}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div style={{ overflowX: 'auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '70px repeat(7, 1fr)', gap: 6, minWidth: 600 }}>
-          {/* Header row */}
           <div />
           {DIAS_CARDAPIO.map(d => (
             <div key={d} style={{ fontSize: 13, fontWeight: 500, textAlign: 'center', color: 'var(--text-muted)', paddingBottom: 4 }}>{d}</div>
           ))}
-
-          {/* Meal rows */}
           {REFEICOES.map(r => (
             <React.Fragment key={r.id}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start', paddingTop: 8 }}>
