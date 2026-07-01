@@ -313,7 +313,13 @@ function EnergySelector({ energy, setEnergy }) {
 
 function TaskRow({ task, dense, large, onDelete, onUpdate, showMeta }) {
   const [expanded, setExpanded] = useState(false);
-  const [concluida, setConcluida] = useState(task.status === 'concluida');
+  const [concluida, setConcluida] = useState(() => {
+    try {
+      const s = JSON.parse(localStorage.getItem('lorenna_task_status') || '{}');
+      if (s[task.id] !== undefined) return s[task.id] === 'concluida';
+    } catch {}
+    return task.status === 'concluida';
+  });
   const [microDone, setMicroDone] = useState(() => Object.fromEntries((task.micro || []).map(m => [m.id, m.done])));
   const [editando, setEditando] = useState(false);
   const [tituloEdit, setTituloEdit] = useState(task.titulo);
@@ -365,8 +371,14 @@ function TaskRow({ task, dense, large, onDelete, onUpdate, showMeta }) {
         <div onClick={() => {
           const next = !concluida;
           setConcluida(next);
+          try {
+            const s = JSON.parse(localStorage.getItem('lorenna_task_status') || '{}');
+            next ? (s[task.id] = 'concluida') : delete s[task.id];
+            localStorage.setItem('lorenna_task_status', JSON.stringify(s));
+          } catch {}
           window.DB && window.DB.updateTarefaStatus && window.DB.updateTarefaStatus(task.id, next ? 'concluida' : 'pendente');
-          showToast(concluida ? 'Tarefa reaberta' : 'Tarefa concluída! ✓');
+          showToast(next ? 'Tarefa concluída! ✓' : 'Tarefa reaberta');
+          window.dispatchEvent(new Event('lorenna_task_change'));
         }} style={{
           width: 20, height: 20, borderRadius: 999, flexShrink: 0, marginTop: 1,
           background: concluida ? accent : 'rgba(255,255,255,0.85)',
@@ -1656,13 +1668,28 @@ function SugestoesWidget({ setRoute }) {
 }
 
 function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
+  const [, forceUpdate] = useState(0);
+  useEffect(() => {
+    const h = () => forceUpdate(n => n + 1);
+    window.addEventListener('lorenna_task_change', h);
+    return () => window.removeEventListener('lorenna_task_change', h);
+  }, []);
+
   const e = window.ENERGY[energy];
   const all = window.DEMO_TASKS;
-  const visible = e.show_heavy
-    ? all.filter(t => t.status !== 'concluida')
-    : all.filter(t => t.status !== 'concluida' && (t.micro.length <= 2) && t.prioridade !== 'baixa');
 
-  const next = all.find(t => t.status !== 'concluida' && t.micro.some(m => !m.done));
+  let taskStatus = {};
+  try { taskStatus = JSON.parse(localStorage.getItem('lorenna_task_status') || '{}'); } catch {}
+
+  function isDone(t) {
+    return taskStatus[t.id] !== undefined ? taskStatus[t.id] === 'concluida' : t.status === 'concluida';
+  }
+
+  const visible = e.show_heavy
+    ? all.filter(t => !isDone(t))
+    : all.filter(t => !isDone(t) && (t.micro.length <= 2) && t.prioridade !== 'baixa');
+
+  const next = all.find(t => !isDone(t) && t.micro.some(m => !m.done));
 
   function buildListaHoje() {
     const now = new Date();
@@ -1672,7 +1699,7 @@ function DashboardPage({ energy, setEnergy, setRoute, openCapture }) {
 
     const lista = [];
     [...all]
-      .filter(t => t.status !== 'concluida')
+      .filter(t => !isDone(t))
       .filter(t => {
         if (t.diario) return true;
         if (t.diasDaSemana && t.diasDaSemana.includes(dayOfWeek)) return true;
