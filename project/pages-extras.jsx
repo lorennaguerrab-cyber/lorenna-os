@@ -685,6 +685,11 @@ function AgendaPage() {
           subtitle={`${events.length + appleEvents.length} compromissos${icalLoading ? ' · carregando Apple Calendar…' : icalUrl ? ' · Apple Calendar ✓' : ''}`}
           action={
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              {icalUrl && (
+                <Button variant="ghost" size="sm" onClick={() => loadAppleCalendar(icalUrl)} disabled={icalLoading}>
+                  {icalLoading ? '⟳' : '↺'} Recarregar
+                </Button>
+              )}
               <Button variant="ghost" size="sm" onClick={() => setShowIcalModal(true)}>
                 {icalUrl ? '🍎 Calendário' : '🍎 Conectar iCal'}
               </Button>
